@@ -9,7 +9,8 @@ SA::SA()
   dist = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
-void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations, double temperature, double energyNormalizator)
+void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations, double temperature,
+                double energyNormalizator)
 {
   currEnergy = startPosition->getEnergy();
   bestEnergy = currEnergy;
@@ -20,9 +21,16 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations
   upEnergyChanges = 0;
 
   for (std::size_t idx = 1; idx <= iterations; ++idx) {
+    double energyCandidate;
+    std::shared_ptr<IPosition> neighbour = nullptr;
     auto m = currPosition->getMove();
-    auto neighbour = currPosition->makeMove(m);
-    double energyCandidate = neighbour->getEnergy();
+    auto energyOpt = currPosition->getEnergyInplace(m, currEnergy);
+    if (energyOpt) {
+      energyCandidate = *energyOpt;
+    } else {
+      neighbour = currPosition->makeMove(m);
+      energyCandidate = neighbour->getEnergy();
+    }
     double threshold = std::exp((-(energyCandidate - currEnergy) / energyNormalizator) / temperature);
     double randomResult = dist(mt);
     if (randomResult < threshold) {
@@ -31,7 +39,11 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations
       } else {
         ++downEnergyChanges;
       }
-      currPosition = neighbour;
+      if (neighbour == nullptr) {
+        currPosition->makeMoveInplace(m);
+      } else {
+        currPosition = neighbour;
+      }
       moves.push_back(m);
       currEnergy = energyCandidate;
       energies.push_back(currEnergy);

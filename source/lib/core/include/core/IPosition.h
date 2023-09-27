@@ -3,15 +3,18 @@
 
 #include <core/IMove.h>
 #include <memory>
+#include <optional>
 
 namespace sa::core
 {
 class IPosition
 {
 public:
-  virtual double getEnergy() = 0;
   virtual std::shared_ptr<IMove> getMove() = 0;
-  virtual std::shared_ptr<IPosition> makeMove(std::shared_ptr<IMove>) = 0;
+  virtual double getEnergy() = 0;
+  virtual std::optional<double> getEnergyInplace(const std::shared_ptr<IMove>& imove, double baseEnergy) = 0;
+  virtual std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) = 0;
+  virtual void makeMoveInplace(const std::shared_ptr<IMove>& imove) = 0;
 };
 }  // namespace sa::core
 
