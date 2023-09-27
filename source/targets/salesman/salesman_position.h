@@ -11,7 +11,7 @@ using namespace sa::core;
 class SalesmanPosition : public IPosition
 {
 public:
-  SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
+  SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)), mt(0) {}
 
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx)
   {
@@ -63,8 +63,9 @@ public:
 
   std::shared_ptr<IMove> getMove() override
   {
-    std::size_t cityIdx1 = rand() % cities.size();
-    std::size_t cityIdx2 = rand() % cities.size();
+    std::uniform_int_distribution<> dist(0, cities.size() - 1);
+    std::size_t cityIdx1 = dist(mt);
+    std::size_t cityIdx2 = dist(mt);
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
@@ -87,6 +88,7 @@ public:
   }
 
   std::vector<std::pair<double, double>> cities;
+  std::mt19937 mt;
 };
 
 #endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_

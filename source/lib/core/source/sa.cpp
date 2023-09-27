@@ -1,12 +1,12 @@
 #include <core/sa.h>
 #include <cmath>
+#include <iostream>
 
 using namespace sa::core;
 
 SA::SA()
 {
-  std::random_device rd;
-  mt = std::mt19937(rd());
+  mt = std::mt19937(0);
   dist = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
@@ -22,6 +22,7 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations
   upEnergyChanges = 0;
 
   for (std::size_t idx = 1; idx <= iterations; ++idx) {
+    std::cout << "idx=" << idx << " currEnergy=" << currEnergy << "\n";
     double energyCandidate;
     std::shared_ptr<IPosition> neighbour = nullptr;
     auto m = currPosition->getMove();

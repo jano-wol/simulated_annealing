@@ -6,8 +6,7 @@
 std::vector<std::shared_ptr<IPosition>> getStartPositions(std::size_t numPositions, std::size_t numCities,
                                                           double length)
 {
-  std::random_device rd;
-  std::mt19937 mt = std::mt19937(rd());
+  std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
   std::vector<std::shared_ptr<IPosition>> ret;
   ret.reserve(numPositions);
