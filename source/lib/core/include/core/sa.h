@@ -6,22 +6,28 @@
 class SA
 {
 public:
-  SA(int iterationsLeft_, std::shared_ptr<IPosition> start_);
+  SA();
 
-  void anneal();
-  int iterations;
-  std::shared_ptr<IPosition> start;
-  double temperature;
+  void anneal(std::shared_ptr<IPosition> startPosition, int iterations, double temperature = 1.0,
+              double energyNormalizator = 1.0);
+
+  // Relevant for current annealing process
+  std::shared_ptr<IPosition> currPosition;
+  std::vector<std::shared_ptr<IMove>> moves;
   double currEnergy;
   double bestEnergy;
   std::size_t bestIdx;
-  std::shared_ptr<IPosition> curr;
-  std::vector<std::shared_ptr<IMove>> moves;
   std::vector<double> energies;
+
+  // Only relevant if restarts happen
+  std::shared_ptr<IPosition> bestInit;
+  std::vector<std::shared_ptr<IMove>> bestMoves;
+
+  // Random generator
   std::mt19937 mt;
   std::uniform_real_distribution<> dist;
 
-  // only relevant if restarts happen
-  std::shared_ptr<IPosition> bestInit;
-  std::vector<std::shared_ptr<IMove>> bestMoves;
+  // Diagnostics
+  int positionChanges;
+  int upEnergyChanges;
 };

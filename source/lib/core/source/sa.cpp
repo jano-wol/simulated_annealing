@@ -1,29 +1,35 @@
 #include <core/sa.h>
 #include <cmath>
 
-SA::SA(int iterations_, std::shared_ptr<IPosition> start_) : iterations(iterations_), start(std::move(start_))
+SA::SA()
 {
-  temperature = 1.0;
-  currEnergy = start->getEnergy();
-  bestEnergy = currEnergy;
-  curr = start;
-  bestIdx = 0;
-  energies.push_back(bestEnergy);
   std::random_device rd;
   std::mt19937 mt;
   dist = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
-void SA::anneal()
+void SA::anneal(std::shared_ptr<IPosition> startPosition, int iterations, double temperature, double energyNormalizator)
 {
+  currEnergy = startPosition->getEnergy();
+  bestEnergy = currEnergy;
+  currPosition = startPosition;
+  bestIdx = 0;
+  energies.push_back(bestEnergy);
+  positionChanges = 0;
+  upEnergyChanges = 0;
+
   for (size_t idx = 1; idx <= iterations; ++idx) {
-    auto m = curr->getMove();
-    auto neighbour = curr->makeMove(m);
+    auto m = currPosition->getMove();
+    auto neighbour = currPosition->makeMove(m);
     double energyCandidate = neighbour->getEnergy();
-    double threshold = std::exp(-(energyCandidate - currEnergy) / temperature);
-    double ran = dist(mt);
-    if (ran < threshold) {
-      curr = neighbour;
+    double threshold = std::exp((-(energyCandidate - currEnergy) / energyNormalizator) / temperature);
+    double randomResult = dist(mt);
+    if (randomResult < threshold) {
+      ++positionChanges;
+      if (currEnergy < energyCandidate) {
+        ++upEnergyChanges;
+      }
+      currPosition = neighbour;
       moves.push_back(m);
       currEnergy = energyCandidate;
       energies.push_back(currEnergy);
