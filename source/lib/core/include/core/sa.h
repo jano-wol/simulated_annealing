@@ -27,7 +27,7 @@ public:
   std::mt19937 mt;
   std::uniform_real_distribution<> dist;
 
-  // Diagnostics
-  int positionChanges;
+  // Diagnostics fir current annealing process
+  int downEnergyChanges;
   int upEnergyChanges;
 };

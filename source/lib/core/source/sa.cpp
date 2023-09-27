@@ -15,7 +15,7 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, int iterations, double
   currPosition = startPosition;
   bestIdx = 0;
   energies.push_back(bestEnergy);
-  positionChanges = 0;
+  downEnergyChanges = 0;
   upEnergyChanges = 0;
 
   for (size_t idx = 1; idx <= iterations; ++idx) {
@@ -25,9 +25,10 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, int iterations, double
     double threshold = std::exp((-(energyCandidate - currEnergy) / energyNormalizator) / temperature);
     double randomResult = dist(mt);
     if (randomResult < threshold) {
-      ++positionChanges;
       if (currEnergy < energyCandidate) {
         ++upEnergyChanges;
+      } else {
+        ++downEnergyChanges;
       }
       currPosition = neighbour;
       moves.push_back(m);
