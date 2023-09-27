@@ -11,9 +11,7 @@ using namespace sa::core;
 class SalesmanPosition : public IPosition
 {
 public:
-  SalesmanPosition::SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
-
-  std::vector<std::pair<double, double>> cities;
+  SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
 
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx)
   {
@@ -40,9 +38,10 @@ public:
       const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
       ret += distance(cities[idx], cities[nextIdx]);
     }
+    return ret;
   }
 
-  std::optional<double> getEnergyInplace(const std::shared_ptr<IMove>& imove, double baseEnergy) override
+  std::optional<double> getEnergyFast(const std::shared_ptr<IMove>& imove, double baseEnergy) override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
@@ -86,7 +85,8 @@ public:
     ret->makeMoveInplace(imove);
     return ret;
   }
+
+  std::vector<std::pair<double, double>> cities;
 };
 
 #endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
-

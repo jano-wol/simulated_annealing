@@ -24,7 +24,7 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations
     double energyCandidate;
     std::shared_ptr<IPosition> neighbour = nullptr;
     auto m = currPosition->getMove();
-    auto energyOpt = currPosition->getEnergyInplace(m, currEnergy);
+    auto energyOpt = currPosition->getEnergyFast(m, currEnergy);
     if (energyOpt) {
       energyCandidate = *energyOpt;
     } else {
@@ -47,7 +47,7 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations
       moves.push_back(m);
       currEnergy = energyCandidate;
       energies.push_back(currEnergy);
-      if (currEnergy < bestEnergy) {
+      if (currEnergy <= bestEnergy) {
         bestEnergy = currEnergy;
         bestIdx = idx;
       }

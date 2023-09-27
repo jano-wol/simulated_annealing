@@ -3,6 +3,6 @@
 
 #include "salesman_position.h"
 
-std::vector<std::shared_ptr<IPosition>> getStartPositions() {}
+std::vector<std::shared_ptr<IPosition>> getStartPositions() { return {}; }
 
 #endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_TESTER_H_
