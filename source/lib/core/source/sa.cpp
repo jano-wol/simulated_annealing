@@ -1,14 +1,15 @@
 #include <core/sa.h>
 #include <cmath>
 
+using namespace sa::core;
+
 SA::SA()
 {
   std::random_device rd;
-  std::mt19937 mt;
   dist = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
-void SA::anneal(std::shared_ptr<IPosition> startPosition, int iterations, double temperature, double energyNormalizator)
+void SA::anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations, double temperature, double energyNormalizator)
 {
   currEnergy = startPosition->getEnergy();
   bestEnergy = currEnergy;
@@ -18,7 +19,7 @@ void SA::anneal(std::shared_ptr<IPosition> startPosition, int iterations, double
   downEnergyChanges = 0;
   upEnergyChanges = 0;
 
-  for (size_t idx = 1; idx <= iterations; ++idx) {
+  for (std::size_t idx = 1; idx <= iterations; ++idx) {
     auto m = currPosition->getMove();
     auto neighbour = currPosition->makeMove(m);
     double energyCandidate = neighbour->getEnergy();

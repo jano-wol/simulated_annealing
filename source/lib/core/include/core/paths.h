@@ -1,14 +1,14 @@
-#ifndef BARBAKAN_CORE_PATHS_H_
-#define BARBAKAN_CORE_PATHS_H_
+#ifndef SIMULATED_ANNEALING_CORE_PATHS_H_
+#define SIMULATED_ANNEALING_CORE_PATHS_H_
 
 #include <string>
 
-namespace barbakan::core
+namespace sa::core
 {
 	std::string getRepoFolder();
 	std::string getBuildFolder();
 	std::string getBuildDataFolder();
 	std::string getBuildTestDataFolder();
-}  // namespace barbakan::core
+}  // namespace sa::core
 
-#endif  // BARBAKAN_CORE_PATHS_H_
+#endif  // SIMULATED_ANNEALING_CORE_PATHS_H_

@@ -1,14 +1,19 @@
+#ifndef SIMULATED_ANNEALING_CORE_SA_H_
+#define SIMULATED_ANNEALING_CORE_SA_H_
+
 #include <core/IMove.h>
 #include <core/IPosition.h>
 #include <random>
 #include <vector>
 
+namespace sa::core
+{
 class SA
 {
 public:
   SA();
 
-  void anneal(std::shared_ptr<IPosition> startPosition, int iterations, double temperature = 1.0,
+  void anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations, double temperature = 1.0,
               double energyNormalizator = 1.0);
 
   // Relevant for current annealing process
@@ -31,3 +36,6 @@ public:
   int downEnergyChanges;
   int upEnergyChanges;
 };
+}  // namespace sa::core
+
+#endif  // SIMULATED_ANNEALING_CORE_SA_H_
