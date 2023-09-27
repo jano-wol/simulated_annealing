@@ -1,0 +1,4 @@
+add_subdirectory(core)
+add_subdirectory(data_loader_eval)
+add_subdirectory(data_loader_move_candidate)
+add_subdirectory(position)

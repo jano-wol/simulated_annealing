@@ -1,0 +1,20 @@
+# Files from build
+**/*.o
+**/*.s
+**/*.log
+**/*.out
+**/.depend
+**/.vscode
+**/.idea
+**/__pycache__
+
+# Neural network for the NNUE evaluation
+**/*.nnue
+**/venv
+
+# Training data
+**/*.bin
+**/*.binpack
+
+# Build folder
+/build/
