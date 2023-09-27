@@ -5,10 +5,6 @@ if [[ $1 != "debug" ]] && [[ $1 != "release" ]]; then
     exit 1
 fi	
 CMAKE_BUILD_TYPE=$1
-CMAKE_BUILD_ARCH=default
-if [[ $2 == "avx2" ]]; then
-    CMAKE_BUILD_ARCH="avx2"
-fi	
 SCRIPT_FOLDER=$(dirname "${0}") 
 WORKSPACE_FOLDER=$(readlink -e "${SCRIPT_FOLDER}/../../")
 BUILD_FOLDER="${WORKSPACE_FOLDER}/build/${CMAKE_BUILD_TYPE}"

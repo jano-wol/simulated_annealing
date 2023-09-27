@@ -10,10 +10,7 @@ add_compile_options(-Wall -Wcast-qual -pedantic -Wextra -Wshadow -m64 -DUSE_PTHR
 add_link_options(-Wall -Wcast-qual -pedantic -Wextra -Wshadow -m64 -DUSE_PTHREADS -DIS_64BIT -msse -DUSE_SSE2 -msse2 -flto=auto)
 add_link_options(-Wl,--no-as-needed)
 else()
-add_compile_options(-Wall -Wcast-qual -fno-exceptions -pedantic -Wextra -Wshadow -m64 -DUSE_PTHREADS -DIS_64BIT -msse -DUSE_SSE2 -msse2 -g)
+add_compile_options(-Wall -Wcast-qual -pedantic -Wextra -Wshadow -m64 -DUSE_PTHREADS -DIS_64BIT -msse -DUSE_SSE2 -msse2 -g)
 add_link_options(-m64 -Wl,--no-as-needed)
 endif()
 add_subdirectory(source)
-file(COPY ${PROJECT_SOURCE_DIR}/data DESTINATION ${PROJECT_BINARY_DIR})
-
-
