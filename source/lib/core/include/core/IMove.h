@@ -6,7 +6,7 @@ namespace sa::core
 class IMove
 {
 public:
-  virtual ~IMove() = 0;
+    virtual ~IMove() = default;
 };
 }  // namespace sa::core
 

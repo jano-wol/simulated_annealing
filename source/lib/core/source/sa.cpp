@@ -6,7 +6,7 @@ using namespace sa::core;
 SA::SA()
 {
   std::random_device rd;
-  mt = std::mt19937(rd);
+  mt = std::mt19937(rd());
   dist = std::uniform_real_distribution<double>(0.0, 1.0);
 }
 
