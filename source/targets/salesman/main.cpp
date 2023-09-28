@@ -18,8 +18,17 @@ void print(const std::shared_ptr<IPosition>& iposition)
 int main()
 {
   SA sa;
-  auto positions = getStartPositions(1, 20, 100.0);
-  print(positions[0]);
-  sa.anneal(positions[0], 5000, 1.0, 10.0);
+  auto positions = generateTestCases();
+  std::size_t idx = 0;
+  for (const auto& position : positions) {
+    // print(position);
+    sa.anneal(position, 5000, 1.0, 1.0);
+    std::cout << "idx=" << idx << " currEnergy=" << sa.currEnergy << "\n";
+    sa.anneal(position, 100000, 1.0, 1.0);
+    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << "\n";
+    sa.anneal(position, 10000000, 1.0, 1.0);
+    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << "\n";
+    ++idx;
+  }
   return 0;
 }

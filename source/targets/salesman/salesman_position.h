@@ -21,7 +21,7 @@ public:
     return {prevIdx, nextIdx};
   }
 
-  double distance(const std::pair<std::size_t, std::size_t>& city1, const std::pair<std::size_t, std::size_t>& city2) const
+  double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const
   {
     const auto& [x1, y1] = city1;
     const auto& [x2, y2] = city2;
