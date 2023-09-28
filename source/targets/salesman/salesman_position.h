@@ -14,14 +14,14 @@ class SalesmanPosition : public IPosition
 public:
   SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
 
-  std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx)
+  std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const
   {
     std::size_t prevIdx = (idx == 0) ? (cities.size() - 1) : idx - 1;
     std::size_t nextIdx = (idx == (cities.size() - 1)) ? 0 : idx + 1;
     return {prevIdx, nextIdx};
   }
 
-  double distance(const std::pair<std::size_t, std::size_t>& city1, const std::pair<std::size_t, std::size_t>& city2)
+  double distance(const std::pair<std::size_t, std::size_t>& city1, const std::pair<std::size_t, std::size_t>& city2) const
   {
     const auto& [x1, y1] = city1;
     const auto& [x2, y2] = city2;
@@ -29,7 +29,7 @@ public:
     return std::sqrt(ret);
   }
 
-  double getEnergy() override
+  double getEnergy() const override
   {
     if (cities.empty() || cities.size() == 1) {
       return 0;
@@ -42,12 +42,12 @@ public:
     return ret;
   }
 
-  std::optional<double> getEnergyFast(const std::shared_ptr<IMove>& /*imove*/, double /*baseEnergy*/) override
+  std::optional<double> getEnergyFast(const std::shared_ptr<IMove>& /*imove*/, double /*baseEnergy*/) const override
   {
     return std::nullopt;
   }
 
-  std::shared_ptr<IMove> getMove() override
+  std::shared_ptr<IMove> getMove() const override
   {
     std::uniform_int_distribution<> dist(0, cities.size() - 1);
     std::uniform_int_distribution<> distInner(0, 1);
@@ -96,7 +96,7 @@ public:
     cities = newCities;
   }
 
-  std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) override
+  std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));

@@ -20,6 +20,6 @@ int main()
   SA sa;
   auto positions = getStartPositions(1, 20, 100.0);
   print(positions[0]);
-  sa.anneal(positions[0], 100);
+  sa.anneal(positions[0], 5000, 1.0, 10.0);
   return 0;
 }
