@@ -1,3 +1,6 @@
+#ifndef SIMULATED_ANNEALING_POLICIES_IRESOURCE_POLICY_H_
+#define SIMULATED_ANNEALING_POLICIES_IRESOURCE_POLICY_H_
+
 namespace sa::policies
 {
 class IResourcePolicy
@@ -9,3 +12,5 @@ public:
   virtual ~IResourcePolicy() = default;
 };
 }  // namespace sa::policies
+
+#endif  // SIMULATED_ANNEALING_POLICIES_IRESOURCE_POLICY_H_

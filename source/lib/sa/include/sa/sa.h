@@ -10,11 +10,11 @@
 namespace sa::sa
 {
 
-template <typename ResourcePolicy=policies::IterationPolicy>
+template <typename ResourcePolicy = policies::IterationPolicy>
 class SA
 {
 public:
-  SA()
+  SA(ResourcePolicy r) : resourcePolicy(r)
   {
     mt = std::mt19937(0);
     dist = std::uniform_real_distribution<double>(0.0, 1.0);

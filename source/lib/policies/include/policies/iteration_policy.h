@@ -1,3 +1,6 @@
+#ifndef SIMULATED_ANNEALING_POLICIES_ITERATION_POLICY_H_
+#define SIMULATED_ANNEALING_POLICIES_ITERATION_POLICY_H_
+
 #include <cstddef>
 
 #include <policies/IResourcePolicy.h>
@@ -17,3 +20,5 @@ private:
   double leftIterations;
 };
 }  // namespace sa::policies
+
+#endif  // SIMULATED_ANNEALING_POLICIES_ITERATION_POLICY_H_
