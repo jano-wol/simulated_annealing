@@ -1,7 +1,7 @@
 #ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANMOVE_H_
 #define SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANMOVE_H_
 
-#include <core/IMove.h>
+#include <sa/IMove.h>
 #include <cstdlib>
 
 using namespace sa::core;

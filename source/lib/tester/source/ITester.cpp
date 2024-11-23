@@ -1,8 +1,8 @@
-#include <core/sa.h>
+#include <sa/sa.h>
 #include <cmath>
 #include <iostream>
 
-using namespace sa::core;
+using namespace sa::sa;
 
 SA::SA()
 {

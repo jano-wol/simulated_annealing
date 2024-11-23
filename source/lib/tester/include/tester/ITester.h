@@ -1,7 +1,7 @@
 #ifndef SIMULATED_ANNEALING_TESTER_ITESTER_H_
 #define SIMULATED_ANNEALING_TESTER_ITESTER_H_
 
-#include <core/IPosition.h>
+#include <sa/IPosition.h>
 
 namespace sa::tester
 {

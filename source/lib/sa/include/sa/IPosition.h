@@ -1,11 +1,11 @@
-#ifndef SIMULATED_ANNEALING_CORE_IPOSITION_H_
-#define SIMULATED_ANNEALING_CORE_IPOSITION_H_
+#ifndef SIMULATED_ANNEALING_SA_IPOSITION_H_
+#define SIMULATED_ANNEALING_SA_IPOSITION_H_
 
-#include <core/IMove.h>
+#include <sa/IMove.h>
 #include <memory>
 #include <optional>
 
-namespace sa::core
+namespace sa::sa
 {
 class IPosition
 {
@@ -16,6 +16,6 @@ public:
   virtual std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) const = 0;
   virtual void makeMoveInplace(const std::shared_ptr<IMove>& imove) = 0;
 };
-}  // namespace sa::core
+}  // namespace sa::sa
 
-#endif  // SIMULATED_ANNEALING_CORE_IPOSITION_H_
+#endif  // SIMULATED_ANNEALING_SA_IPOSITION_H_

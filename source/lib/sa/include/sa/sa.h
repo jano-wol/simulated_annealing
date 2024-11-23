@@ -1,12 +1,12 @@
-#ifndef SIMULATED_ANNEALING_CORE_SA_H_
-#define SIMULATED_ANNEALING_CORE_SA_H_
+#ifndef SIMULATED_ANNEALING_SA_SA_H_
+#define SIMULATED_ANNEALING_SA_SA_H_
 
-#include <core/IMove.h>
-#include <core/IPosition.h>
+#include <sa/IMove.h>
+#include <sa/IPosition.h>
 #include <random>
 #include <vector>
 
-namespace sa::core
+namespace sa::sa
 {
 class SA
 {
@@ -38,4 +38,4 @@ public:
 };
 }  // namespace sa::core
 
-#endif  // SIMULATED_ANNEALING_CORE_SA_H_
+#endif  // SIMULATED_ANNEALING_SA_SA_H_

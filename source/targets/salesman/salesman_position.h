@@ -1,7 +1,7 @@
 #ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
 #define SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
 
-#include <core/IPosition.h>
+#include <sa/IPosition.h>
 #include <cmath>
 #include <random>
 #include <vector>
