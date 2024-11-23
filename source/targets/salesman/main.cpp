@@ -23,11 +23,11 @@ int main()
   for (const auto& position : positions) {
     // print(position);
     sa.anneal(position, 5000, 1.0, 1.0);
-    std::cout << "idx=" << idx << " currEnergy=" << sa.currEnergy << "\n";
+    std::cout << "idx=" << idx << " currEnergy=" << sa.currEnergy << " upEnergyChanges=" << sa.upEnergyChanges << "\n";
     sa.anneal(position, 100000, 1.0, 1.0);
-    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << "\n";
+    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << " upEnergyChanges=" << sa.upEnergyChanges << "\n";
     sa.anneal(position, 10000000, 1.0, 1.0);
-    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << "\n";
+    std::cout << "idx=" << idx << " currEnergy=" << sa.bestEnergy << " upEnergyChanges=" << sa.upEnergyChanges << "\n";
     ++idx;
   }
   return 0;
