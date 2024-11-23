@@ -1,10 +1,12 @@
 #ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
 #define SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
 
-#include <sa/IPosition.h>
 #include <cmath>
 #include <random>
 #include <vector>
+
+#include <sa/IPosition.h>
+
 #include "salesman_move.h"
 
 using namespace sa::sa;

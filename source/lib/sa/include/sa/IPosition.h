@@ -1,9 +1,10 @@
 #ifndef SIMULATED_ANNEALING_SA_IPOSITION_H_
 #define SIMULATED_ANNEALING_SA_IPOSITION_H_
 
-#include <sa/IMove.h>
 #include <memory>
 #include <optional>
+
+#include <sa/IMove.h>
 
 namespace sa::sa
 {

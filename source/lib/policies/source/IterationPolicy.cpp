@@ -1,4 +1,4 @@
-#include <policies/iteration_policy.h>
+#include <policies/IterationPolicy.h>
 
 using namespace sa::policies;
 

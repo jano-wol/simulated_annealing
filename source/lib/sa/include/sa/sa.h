@@ -1,11 +1,12 @@
 #ifndef SIMULATED_ANNEALING_SA_SA_H_
 #define SIMULATED_ANNEALING_SA_SA_H_
 
-#include <policies/iteration_policy.h>
-#include <sa/IMove.h>
-#include <sa/IPosition.h>
 #include <random>
 #include <vector>
+
+#include <policies/IterationPolicy.h>
+#include <sa/IMove.h>
+#include <sa/IPosition.h>
 
 namespace sa::sa
 {

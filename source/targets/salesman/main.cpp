@@ -1,6 +1,8 @@
-#include <policies/iteration_policy.h>
-#include <sa/sa.h>
 #include <iostream>
+
+#include <policies/IterationPolicy.h>
+#include <sa/sa.h>
+
 #include "salesman_position.h"
 #include "tester.h"
 
