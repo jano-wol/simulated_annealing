@@ -2,6 +2,8 @@
 
 #include <policies/IResourcePolicy.h>
 
+namespace sa::policies
+{
 class IterationPolicy : public IResourcePolicy
 {
 public:
@@ -14,3 +16,4 @@ private:
   double allIterations;
   double leftIterations;
 };
+}  // namespace sa::policies
