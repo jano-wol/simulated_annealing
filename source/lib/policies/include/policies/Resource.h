@@ -36,7 +36,9 @@ public:
   double getLeft() const
   {
     auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
-    return std::max(0.0, all.count() - elapsed.count());
+    double elapsedSeconds = std::chrono::duration<double>(elapsed).count();
+    double ret = std::max(0.0, all.count() - elapsedSeconds);
+    return ret;
   }
 
   void updateLeft() {}
