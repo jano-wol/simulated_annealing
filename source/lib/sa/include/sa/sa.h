@@ -64,7 +64,7 @@ public:
             bestIdx = idx;
           }
         }
-        temperature -= 1.0 / resourcePolicy.getAll();
+        temperature = (resourcePolicy.getLeft()  / resourcePolicy.getAll());
         resourcePolicy.updateLeft();
         ++idx;
       }
