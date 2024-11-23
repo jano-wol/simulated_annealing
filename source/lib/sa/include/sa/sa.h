@@ -1,6 +1,7 @@
 #ifndef SIMULATED_ANNEALING_SA_SA_H_
 #define SIMULATED_ANNEALING_SA_SA_H_
 
+#include <policies/iteration_policy.h>
 #include <sa/IMove.h>
 #include <sa/IPosition.h>
 #include <random>
@@ -9,11 +10,11 @@
 namespace sa::sa
 {
 
-template <typename ResourcePolicy>
+template <typename ResourcePolicy=policies::IterationPolicy>
 class SA
 {
 public:
-  SA::SA()
+  SA()
   {
     mt = std::mt19937(0);
     dist = std::uniform_real_distribution<double>(0.0, 1.0);
