@@ -4,18 +4,18 @@
 #include <random>
 #include <vector>
 
-#include <policies/IterationPolicy.h>
+#include <policies/Resource.h>
 #include <sa/IMove.h>
 #include <sa/IPosition.h>
 
 namespace sa::sa
 {
 
-template <typename ResourcePolicy = policies::IterationPolicy>
+template <typename Resource = policies::Iteration>
 class SA
 {
 public:
-  SA(ResourcePolicy r) : resourcePolicy(r)
+  SA(Resource resourcePolicy_) : resourcePolicy(std::move(resourcePolicy_))
   {
     mt = std::mt19937(0);
     dist = std::uniform_real_distribution<double>(0.0, 1.0);
@@ -32,7 +32,7 @@ public:
       downEnergyChanges = 0;
       upEnergyChanges = 0;
       size_t idx = 0;
-      while (resourcePolicy.getResourceLeft() > 0) {
+      while (resourcePolicy.getLeft() > 0) {
         double energyCandidate;
         std::shared_ptr<IPosition> neighbour = nullptr;
         auto m = currPosition->getMove();
@@ -64,8 +64,8 @@ public:
             bestIdx = idx;
           }
         }
-        temperature -= 1.0 / resourcePolicy.getResourceAll();
-        resourcePolicy.updateResourceLeft();
+        temperature -= 1.0 / resourcePolicy.getAll();
+        resourcePolicy.updateLeft();
         ++idx;
       }
     }
@@ -92,7 +92,7 @@ public:
   int upEnergyChanges;
 
 private:
-  ResourcePolicy resourcePolicy;
+  Resource resourcePolicy;
 };
 
 }  // namespace sa::sa

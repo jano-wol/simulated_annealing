@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <policies/IterationPolicy.h>
+#include <policies/Resource.h>
 #include <sa/sa.h>
 
 #include "salesman_position.h"
@@ -24,9 +24,9 @@ int main()
   auto positions = generateTestCases();
   std::size_t idx = 0;
   for (const auto& position : positions) {
-    SA sa1(IterationPolicy(5000));
-    SA sa2(IterationPolicy(100000));
-    SA sa3(IterationPolicy(10000000));
+    SA sa1(Iteration(5000));
+    SA sa2(Iteration(100000));
+    SA sa3(Iteration(10000000));
     sa1.anneal(position, 1.0, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa1.currEnergy << " upEnergyChanges=" << sa1.upEnergyChanges
               << "\n";
