@@ -5,6 +5,6 @@ set(headers ${include_path}/sa.h
             )
 set(sources ${source_path}/sa.cpp
 			)
-target_link_libraries(${target} PUBLIC policies)
 add_library(${target} ${sources} ${headers})
+target_link_libraries(${target} PUBLIC policies)
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")

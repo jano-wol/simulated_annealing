@@ -5,6 +5,6 @@ set(headers ${include_path}/IResourcePolicy.h
             ${include_path}/iteration_policy.h
             )
 set(sources ${source_path}/iteration_policy.cpp
-			)
+			)           
 add_library(${target} ${sources} ${headers})
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
