@@ -20,8 +20,7 @@ public:
     dist = std::uniform_real_distribution<double>(0.0, 1.0);
   }
 
-  void anneal(std::shared_ptr<IPosition> startPosition, std::size_t iterations, double temperature = 1.0,
-              double energyNormalizator = 1.0)
+  void anneal(std::shared_ptr<IPosition> startPosition, double temperature = 1.0, double energyNormalizator = 1.0)
   {
     {
       currEnergy = startPosition->getEnergy();
@@ -31,8 +30,8 @@ public:
       energies.push_back(bestEnergy);
       downEnergyChanges = 0;
       upEnergyChanges = 0;
-
-      for (std::size_t idx = 1; idx <= iterations; ++idx) {
+      size_t idx = 0;
+      while (resourcePolicy.getResourceLeft() > 0) {
         double energyCandidate;
         std::shared_ptr<IPosition> neighbour = nullptr;
         auto m = currPosition->getMove();
@@ -64,7 +63,9 @@ public:
             bestIdx = idx;
           }
         }
-        temperature -= 1.0 / double(iterations);
+        temperature -= 1.0 / resourcePolicy.getResourceAll();
+        resourcePolicy.updateResourceLeft();
+        ++idx;
       }
     }
   }
