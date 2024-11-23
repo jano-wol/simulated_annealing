@@ -36,6 +36,10 @@ int main()
     sa3.anneal(position, 1.0, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa3.bestEnergy << " upEnergyChanges=" << sa3.upEnergyChanges
               << "\n";
+    SA sa4(Time(5));
+    sa4.anneal(position, 1.0, 1.0);
+    std::cout << "idx=" << idx << " currEnergy=" << sa4.bestEnergy << " upEnergyChanges=" << sa4.upEnergyChanges
+              << "\n";
     ++idx;
   }
   return 0;
