@@ -10,4 +10,4 @@ public:
 };
 }  // namespace sa::sa
 
-#endif  // SIMULATED_ANNEALING_CORE_IMOVE_H_
+#endif  // SIMULATED_ANNEALING_SA_IMOVE_H_

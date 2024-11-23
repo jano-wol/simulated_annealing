@@ -7,7 +7,7 @@
 #include <vector>
 #include "salesman_move.h"
 
-using namespace sa::core;
+using namespace sa::sa;
 
 class SalesmanPosition : public IPosition
 {

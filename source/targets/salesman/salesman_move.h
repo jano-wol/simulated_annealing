@@ -4,7 +4,7 @@
 #include <sa/IMove.h>
 #include <cstdlib>
 
-using namespace sa::core;
+using namespace sa::sa;
 
 class SalesmanMove : public IMove
 {

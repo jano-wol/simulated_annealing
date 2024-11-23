@@ -36,6 +36,6 @@ public:
   int downEnergyChanges;
   int upEnergyChanges;
 };
-}  // namespace sa::core
+}  // namespace sa::sa
 
 #endif  // SIMULATED_ANNEALING_SA_SA_H_

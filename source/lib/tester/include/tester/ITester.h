@@ -8,7 +8,7 @@ namespace sa::tester
 class ITester
 {
 public:
-    virtual std::shared_ptr<core::IPosition> generateTestCase(int idx);
+    virtual std::shared_ptr<sa::IPosition> generateTestCase(int idx);
     virtual ~ITester() = default;
 };
 }  // namespace sa::tester

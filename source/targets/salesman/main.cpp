@@ -3,7 +3,7 @@
 #include "salesman_position.h"
 #include "tester.h"
 
-using namespace sa::core;
+using namespace sa::sa;
 
 void print(const std::shared_ptr<IPosition>& iposition)
 {
