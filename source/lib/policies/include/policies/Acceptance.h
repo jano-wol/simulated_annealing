@@ -17,7 +17,7 @@ public:
     dist = std::uniform_real_distribution<double>(0.0, 1.0);
   }
 
-  bool accept(double currEnergy, double delta, double temperature)
+  bool accept(double /*currEnergy*/, double delta, double temperature)
   {
     if (delta <= 0)
       return true;

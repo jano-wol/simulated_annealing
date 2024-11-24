@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <policies/Acceptance.h>
 #include <policies/Resource.h>
 #include <sa/sa.h>
 
@@ -24,20 +25,20 @@ int main()
   auto positions = generateTestCases();
   std::size_t idx = 0;
   for (const auto& position : positions) {
-    SA sa1(Iteration(5000));
-    SA sa2(Iteration(100000));
-    SA sa3(Iteration(10000000));
-    sa1.anneal(position, 1.0, 1.0);
+    SA sa1(Iteration(5000), Metropolis());
+    SA sa2(Iteration(100000), Metropolis());
+    SA sa3(Iteration(10000000), Metropolis());
+    sa1.anneal(position, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa1.currEnergy << " upEnergyChanges=" << sa1.upEnergyChanges
               << "\n";
-    sa2.anneal(position, 1.0, 1.0);
+    sa2.anneal(position, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa2.bestEnergy << " upEnergyChanges=" << sa2.upEnergyChanges
               << "\n";
-    sa3.anneal(position, 1.0, 1.0);
+    sa3.anneal(position, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa3.bestEnergy << " upEnergyChanges=" << sa3.upEnergyChanges
               << "\n";
-    SA sa4(Time(5));
-    sa4.anneal(position, 1.0, 1.0);
+    SA sa4(Time(5), Metropolis());
+    sa4.anneal(position, 1.0);
     std::cout << "idx=" << idx << " currEnergy=" << sa4.bestEnergy << " upEnergyChanges=" << sa4.upEnergyChanges
               << "\n";
     ++idx;

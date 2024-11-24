@@ -12,17 +12,15 @@
 namespace sa::sa
 {
 
-template <typename Acceptance = policies::Metropolis, typename Resource = policies::Iteration>
+template <typename Resource = policies::Iteration, typename Acceptance = policies::Metropolis>
 class SA
 {
 public:
-  SA(Resource resourcePolicy_) : resourcePolicy(std::move(resourcePolicy_))
-  {
-    mt = std::mt19937(0);
-    dist = std::uniform_real_distribution<double>(0.0, 1.0);
-  }
+  SA(Resource resourcePolicy_, Acceptance acceptancePolicy_)
+      : resourcePolicy(std::move(resourcePolicy_)), acceptancePolicy(std::move(acceptancePolicy_))
+  {}
 
-  void anneal(std::shared_ptr<IPosition> startPosition, double temperature = 1.0, double energyNormalizator = 1.0)
+  void anneal(std::shared_ptr<IPosition> startPosition, double temperature = 1.0)
   {
     {
       currEnergy = startPosition->getEnergy();
@@ -92,8 +90,8 @@ public:
   int upEnergyChanges;
 
 private:
-  Acceptance acceptancePolicy;
   Resource resourcePolicy;
+  Acceptance acceptancePolicy;
 };
 
 }  // namespace sa::sa
