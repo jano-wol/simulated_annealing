@@ -11,7 +11,7 @@ namespace sa::policies
 class Metropolis
 {
 public:
-  Metropolis()
+  Metropolis(double normalizator_ = 1.0) : normalizator(normalizator_)
   {
     mt = std::mt19937(0);
     dist = std::uniform_real_distribution<double>(0.0, 1.0);
@@ -21,13 +21,14 @@ public:
   {
     if (delta <= 0)
       return true;
-    double threshold = std::exp(-delta / temperature);
+    double threshold = std::exp(-delta / normalizator / temperature);
     double randomResult = dist(mt);
     return randomResult < threshold;
   }
 
   std::mt19937 mt;
   std::uniform_real_distribution<> dist;
+  double normalizator;
 };
 
 class Greedy
