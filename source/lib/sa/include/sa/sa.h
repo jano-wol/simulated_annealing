@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 
+#include <policies/Acceptance.h>
 #include <policies/Resource.h>
 #include <sa/IMove.h>
 #include <sa/IPosition.h>
@@ -11,7 +12,7 @@
 namespace sa::sa
 {
 
-template <typename Resource = policies::Iteration>
+template <typename Acceptance = policies::Metropolis, typename Resource = policies::Iteration>
 class SA
 {
 public:
@@ -43,9 +44,8 @@ public:
           neighbour = currPosition->makeMove(m);
           energyCandidate = neighbour->getEnergy();
         }
-        double threshold = std::exp((-(energyCandidate - currEnergy) / energyNormalizator) / temperature);
-        double randomResult = dist(mt);
-        if (randomResult < threshold) {
+        double delta = energyCandidate - currEnergy;
+        if (acceptancePolicy.accept(currEnergy, delta, temperature)) {
           if (currEnergy < energyCandidate) {
             ++upEnergyChanges;
           } else {
@@ -64,7 +64,7 @@ public:
             bestIdx = idx;
           }
         }
-        temperature = (resourcePolicy.getLeft()  / resourcePolicy.getAll());
+        temperature = (resourcePolicy.getLeft() / resourcePolicy.getAll());
         resourcePolicy.updateLeft();
         ++idx;
       }
@@ -92,6 +92,7 @@ public:
   int upEnergyChanges;
 
 private:
+  Acceptance acceptancePolicy;
   Resource resourcePolicy;
 };
 
