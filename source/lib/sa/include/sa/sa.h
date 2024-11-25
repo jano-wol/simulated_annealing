@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <policies/Acceptance.h>
+#include <policies/Cooling.h>
 #include <policies/Resource.h>
 #include <sa/IMove.h>
 #include <sa/IPosition.h>
@@ -14,15 +15,18 @@
 namespace sa::sa
 {
 
-template <typename Resource = policies::Iteration, typename Acceptance = policies::Metropolis>
+template <typename Resource = policies::Iteration, typename Acceptance = policies::Metropolis,
+          typename Cooling = policies::Linear>
 class SA
 {
 public:
-  SA(Resource resourcePolicy_, Acceptance acceptancePolicy_)
-      : resourcePolicy(std::move(resourcePolicy_)), acceptancePolicy(std::move(acceptancePolicy_))
+  SA(Resource resourcePolicy_, Acceptance acceptancePolicy_, Cooling coolingPolicy_)
+      : resourcePolicy(std::move(resourcePolicy_)),
+        acceptancePolicy(std::move(acceptancePolicy_)),
+        coolingPolicy(std::move(coolingPolicy_))
   {}
 
-  void anneal(std::shared_ptr<IPosition> startPosition, double temperature = 1.0)
+  void anneal(std::shared_ptr<IPosition> startPosition)
   {
     {
       currEnergy = startPosition->getEnergy();
@@ -45,6 +49,8 @@ public:
           energyCandidate = neighbour->getEnergy();
         }
         double delta = energyCandidate - currEnergy;
+        double progress = 1.0 - (resourcePolicy.getLeft() / resourcePolicy.getAll());
+        double temperature = coolingPolicy.getTemperature(progress);
         if (acceptancePolicy.accept(currEnergy, delta, temperature)) {
           if (currEnergy < energyCandidate) {
             ++upEnergyChanges;
@@ -64,7 +70,6 @@ public:
             bestIdx = idx;
           }
         }
-        temperature = (resourcePolicy.getLeft() / resourcePolicy.getAll());
         resourcePolicy.updateLeft();
         ++idx;
       }
@@ -74,7 +79,8 @@ public:
   std::string toString() const
   {
     std::stringstream ss;
-    ss << "<" << resourcePolicy.toString() << ";" << acceptancePolicy.toString() << ">";
+    ss << "<" << resourcePolicy.toString() << ";" << acceptancePolicy.toString() << ";" << coolingPolicy.toString()
+       << ">";
     return ss.str();
   }
 
@@ -101,6 +107,7 @@ public:
 private:
   Resource resourcePolicy;
   Acceptance acceptancePolicy;
+  Cooling coolingPolicy;
 };
 
 }  // namespace sa::sa
