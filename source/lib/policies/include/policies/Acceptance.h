@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include <sstream>
+#include <string>
 
 namespace sa::policies
 {
@@ -26,6 +28,16 @@ public:
     return randomResult < threshold;
   }
 
+  std::string toString() const
+  {
+    std::stringstream ss;
+    ss << "Metropolis";
+    if (normalizator != 1) {
+      ss << "[norm=" << normalizator << "]";
+    }
+    return ss.str();
+  }
+
   std::mt19937 mt;
   std::uniform_real_distribution<> dist;
   double normalizator;
@@ -35,7 +47,10 @@ class Greedy
 {
 public:
   Greedy() {}
+
   bool accept(double /*currEnergy*/, double delta, double /*temperature*/) const { return delta <= 0; }
+
+  std::string toString() const { return "Greedy"; }
 };
 
 }  // namespace sa::policies

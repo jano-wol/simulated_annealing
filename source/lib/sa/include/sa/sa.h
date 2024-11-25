@@ -2,6 +2,8 @@
 #define SIMULATED_ANNEALING_SA_SA_H_
 
 #include <random>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include <policies/Acceptance.h>
@@ -67,6 +69,13 @@ public:
         ++idx;
       }
     }
+  }
+
+  std::string toString() const
+  {
+    std::stringstream ss;
+    ss << "<" << resourcePolicy.toString() << ";" << acceptancePolicy.toString() << ">";
+    return ss.str();
   }
 
   // Relevant for current annealing process

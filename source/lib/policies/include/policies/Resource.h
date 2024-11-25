@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <chrono>
+#include <sstream>
+#include <string>
 
 namespace sa::policies
 {
@@ -10,13 +12,22 @@ class Iteration
 {
 public:
   Iteration(double all_) : all(all_), left(all_) {}
+
   double getAll() const { return all; }
+
   double getLeft() const { return left; }
+
   void updateLeft()
   {
     if (left > 0) {
       --left;
     }
+  }
+  std::string toString() const
+  {
+    std::stringstream ss;
+    ss << "Iteration=" << std::size_t(all);
+    return ss.str();
   }
 
 private:
@@ -42,6 +53,13 @@ public:
   }
 
   void updateLeft() {}
+
+  std::string toString() const
+  {
+    std::stringstream ss;
+    ss << "Time=" << std::size_t(all.count()) << "s";
+    return ss.str();
+  }
 
 private:
   std::chrono::duration<double> all;
