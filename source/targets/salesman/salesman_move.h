@@ -8,12 +8,9 @@
 class SalesmanMove : public sa::core::IMove
 {
 public:
-  SalesmanMove(std::size_t cityIdx1_, std::size_t cityIdx2_, bool inner_)
-      : cityIdx1(cityIdx1_), cityIdx2(cityIdx2_), inner(inner_)
-  {}
-  std::size_t cityIdx1;
-  std::size_t cityIdx2;
-  bool inner;
+  SalesmanMove(std::size_t idx1_, std::size_t idx2_) : idx1(idx1_), idx2(idx2_) {}
+  std::size_t idx1;
+  std::size_t idx2;
 };
 
 #endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANMOVE_H_
