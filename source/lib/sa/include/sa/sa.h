@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 
+#include <core/IMove.h>
+#include <core/IPosition.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
-#include <sa/IMove.h>
-#include <sa/IPosition.h>
 
 namespace sa::sa
 {
@@ -26,7 +26,7 @@ public:
         coolingPolicy(std::move(coolingPolicy_))
   {}
 
-  void anneal(std::shared_ptr<IPosition> startPosition)
+  void anneal(std::shared_ptr<core::IPosition> startPosition)
   {
     {
       currEnergy = startPosition->getEnergy();
@@ -39,7 +39,7 @@ public:
       size_t idx = 0;
       while (resourcePolicy.getLeft() > 0) {
         double energyCandidate;
-        std::shared_ptr<IPosition> neighbour = nullptr;
+        std::shared_ptr<core::IPosition> neighbour = nullptr;
         auto m = currPosition->getMove();
         auto energyOpt = currPosition->getEnergyFast(m, currEnergy);
         if (energyOpt) {
@@ -85,16 +85,16 @@ public:
   }
 
   // Relevant for current annealing process
-  std::shared_ptr<IPosition> currPosition;
-  std::vector<std::shared_ptr<IMove>> moves;
+  std::shared_ptr<core::IPosition> currPosition;
+  std::vector<std::shared_ptr<core::IMove>> moves;
   double currEnergy;
   double bestEnergy;
   std::size_t bestIdx;
   std::vector<double> energies;
 
   // Only relevant if restarts happen
-  std::shared_ptr<IPosition> bestInit;
-  std::vector<std::shared_ptr<IMove>> bestMoves;
+  std::shared_ptr<core::IPosition> bestInit;
+  std::vector<std::shared_ptr<core::IMove>> bestMoves;
 
   // Random generator
   std::mt19937 mt;

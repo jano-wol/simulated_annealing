@@ -3,12 +3,12 @@
 
 #include "salesman_position.h"
 
-std::vector<std::shared_ptr<IPosition>> getStartPositions(std::size_t numPositions, std::size_t numCities,
-                                                          double length)
+std::vector<std::shared_ptr<sa::core::IPosition>> getStartPositions(std::size_t numPositions, std::size_t numCities,
+                                                                    double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
-  std::vector<std::shared_ptr<IPosition>> ret;
+  std::vector<std::shared_ptr<sa::core::IPosition>> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -24,8 +24,8 @@ std::vector<std::shared_ptr<IPosition>> getStartPositions(std::size_t numPositio
   return ret;
 }
 
-std::vector<std::shared_ptr<IPosition>> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities,
-                                                              double length)
+std::vector<std::shared_ptr<sa::core::IPosition>> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities,
+                                                                        double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
@@ -48,7 +48,7 @@ std::vector<std::shared_ptr<IPosition>> getStartPositions_5x5(std::size_t numPos
     }
   }
   auto dist3 = std::uniform_int_distribution<>(0, chosenSubsquaresDensity.size() - 1);
-  std::vector<std::shared_ptr<IPosition>> ret;
+  std::vector<std::shared_ptr<sa::core::IPosition>> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -68,9 +68,9 @@ std::vector<std::shared_ptr<IPosition>> getStartPositions_5x5(std::size_t numPos
   return ret;
 }
 
-std::vector<std::shared_ptr<IPosition>> generateTestCases()
+std::vector<std::shared_ptr<sa::core::IPosition>> generateTestCases()
 {
-  std::vector<std::shared_ptr<IPosition>> r;
+  std::vector<std::shared_ptr<sa::core::IPosition>> r;
   std::vector<int> nc{5, 10, 20, 50, 100, 200, 500, 1000};
   std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
   for (int i = 0; i < 8; ++i) {

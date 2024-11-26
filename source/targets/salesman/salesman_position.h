@@ -5,13 +5,11 @@
 #include <random>
 #include <vector>
 
-#include <sa/IPosition.h>
+#include <core/IPosition.h>
 
 #include "salesman_move.h"
 
-using namespace sa::sa;
-
-class SalesmanPosition : public IPosition
+class SalesmanPosition : public sa::core::IPosition
 {
 public:
   SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
@@ -44,12 +42,13 @@ public:
     return ret;
   }
 
-  std::optional<double> getEnergyFast(const std::shared_ptr<IMove>& /*imove*/, double /*baseEnergy*/) const override
+  std::optional<double> getEnergyFast(const std::shared_ptr<sa::core::IMove>& /*imove*/,
+                                      double /*baseEnergy*/) const override
   {
     return std::nullopt;
   }
 
-  std::shared_ptr<IMove> getMove() const override
+  std::shared_ptr<sa::core::IMove> getMove() const override
   {
     std::uniform_int_distribution<> dist(0, cities.size() - 1);
     std::uniform_int_distribution<> distInner(0, 1);
@@ -59,7 +58,7 @@ public:
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2, inner);
   }
 
-  void makeMoveInplace(const std::shared_ptr<IMove>& imove) override
+  void makeMoveInplace(const std::shared_ptr<sa::core::IMove>& imove) override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
@@ -98,7 +97,7 @@ public:
     cities = newCities;
   }
 
-  std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) const override
+  std::shared_ptr<sa::core::IPosition> makeMove(const std::shared_ptr<sa::core::IMove>& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));

@@ -3,11 +3,9 @@
 
 #include <cstdlib>
 
-#include <sa/IMove.h>
+#include <core/IMove.h>
 
-using namespace sa::sa;
-
-class SalesmanMove : public IMove
+class SalesmanMove : public sa::core::IMove
 {
 public:
   SalesmanMove(std::size_t cityIdx1_, std::size_t cityIdx2_, bool inner_)

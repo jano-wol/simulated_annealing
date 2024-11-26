@@ -8,6 +8,7 @@
 #include "salesman_position.h"
 #include "tester.h"
 
+using namespace sa::core;
 using namespace sa::policies;
 using namespace sa::sa;
 
