@@ -57,13 +57,26 @@ public:
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t idx1 = move->idx1;
     std::size_t idx2 = move->idx2;
+    if (idx1 == idx2 || cities.size() <= 3) {
+      return baseEnergy;
+    }
     const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
     const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-    double subst =
-        distance(idx1, prevIdx1) + distance(idx1, nextIdx1) + distance(idx2, prevIdx2) + distance(idx2, nextIdx2);
-    double add =
-        distance(idx2, prevIdx1) + distance(idx2, nextIdx1) + distance(idx1, prevIdx2) + distance(idx1, nextIdx2);
-    return baseEnergy - subst + add;
+    if (prevIdx1 == idx2) {
+      double subst = distance(idx1, nextIdx1) + distance(idx2, prevIdx2);
+      double add = distance(idx1, prevIdx2) + distance(idx2, nextIdx1);
+      return baseEnergy - subst + add;
+    } else if (nextIdx1 == idx2) {
+      double subst = distance(idx1, prevIdx1) + distance(idx2, nextIdx2);
+      double add = distance(idx1, nextIdx2) + distance(idx2, prevIdx1);
+      return baseEnergy - subst + add;
+    } else {
+      double subst =
+          distance(idx1, prevIdx1) + distance(idx1, nextIdx1) + distance(idx2, prevIdx2) + distance(idx2, nextIdx2);
+      double add =
+          distance(idx2, prevIdx1) + distance(idx2, nextIdx1) + distance(idx1, prevIdx2) + distance(idx1, nextIdx2);
+      return baseEnergy - subst + add;
+    }
   }
 
   std::shared_ptr<sa::core::IMove> getMove() const override
