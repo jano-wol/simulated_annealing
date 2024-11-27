@@ -4,13 +4,13 @@
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
 #include <sa/sa.h>
-
-#include "salesman_position.h"
-#include "tester.h"
+#include <salesman/Position.h>
+#include <salesman/Tester.h>
 
 using namespace sa::core;
 using namespace sa::policies;
 using namespace sa::sa;
+using namespace sa::targets::salesman;
 
 void print(const std::shared_ptr<IPosition>& iposition)
 {
@@ -46,7 +46,7 @@ int main()
     SA sa5(Time(5), Metropolis(), Quadratic());
     sa5.anneal(position);
     std::cout << "idx=" << idx << " currEnergy=" << sa5.bestEnergy << " upEnergyChanges=" << sa5.upEnergyChanges << " "
-              << sa5.toString() << "\n";              
+              << sa5.toString() << "\n";
     ++idx;
   }
   return 0;

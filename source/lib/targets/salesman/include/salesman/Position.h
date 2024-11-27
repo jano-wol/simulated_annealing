@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
-#define SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#ifndef SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#define SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
 
 #include <cmath>
 #include <random>
@@ -7,9 +7,11 @@
 
 #include <core/IPosition.h>
 
-#include "salesman_move.h"
+#include <salesman/Move.h>
 
-class SalesmanPosition : public sa::core::IPosition
+namespace sa::targets::salesman
+{
+class SalesmanPosition : public core::IPosition
 {
 public:
   SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
@@ -42,13 +44,13 @@ public:
     return ret;
   }
 
-  std::optional<double> getEnergyFast(const std::shared_ptr<sa::core::IMove>& /*imove*/,
+  std::optional<double> getEnergyFast(const std::shared_ptr<core::IMove>& /*imove*/,
                                       double /*baseEnergy*/) const override
   {
     return std::nullopt;
   }
 
-  std::shared_ptr<sa::core::IMove> getMove() const override
+  std::shared_ptr<core::IMove> getMove() const override
   {
     std::uniform_int_distribution<> dist(0, cities.size() - 1);
     std::uniform_int_distribution<> distInner(0, 1);
@@ -58,7 +60,7 @@ public:
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2, inner);
   }
 
-  void makeMoveInplace(const std::shared_ptr<sa::core::IMove>& imove) override
+  void makeMoveInplace(const std::shared_ptr<core::IMove>& imove) override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
@@ -97,7 +99,7 @@ public:
     cities = newCities;
   }
 
-  std::shared_ptr<sa::core::IPosition> makeMove(const std::shared_ptr<sa::core::IMove>& imove) const override
+  std::shared_ptr<core::IPosition> makeMove(const std::shared_ptr<core::IMove>& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));
@@ -108,5 +110,6 @@ public:
   std::vector<std::pair<double, double>> cities;
   static std::mt19937 mt;
 };
+}  // namespace sa::targets::salesman
 
-#endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#endif  // SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
