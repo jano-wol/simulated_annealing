@@ -38,17 +38,20 @@ public:
       upEnergyChanges = 0;
       size_t idx = 0;
       while (resourcePolicy.getLeft() > 0) {
+        double delta;
         double energyCandidate;
-        std::shared_ptr<core::IPosition> neighbour = nullptr;
-        auto m = currPosition->getMove();
-        auto energyOpt = currPosition->getEnergyFast(m, currEnergy);
-        if (energyOpt) {
-          energyCandidate = *energyOpt;
-        } else {
-          neighbour = currPosition->makeMove(m);
+        auto m = currPosition->generateMove();
+        std::shared_ptr<core::IPosition> neighbour;
+
+        auto deltaOpt = currPosition->getDelta(m);
+        if (!deltaOpt) {
+          neighbour = currPosition->createNeighbour(m);
           energyCandidate = neighbour->getEnergy();
+          delta = energyCandidate - currEnergy;
+        } else {
+          delta = *deltaOpt;
+          energyCandidate = currEnergy + delta;
         }
-        double delta = energyCandidate - currEnergy;
         double progress = 1.0 - (resourcePolicy.getLeft() / resourcePolicy.getAll());
         double temperature = coolingPolicy.getTemperature(progress);
         if (acceptancePolicy.accept(currEnergy, delta, temperature)) {
@@ -58,7 +61,7 @@ public:
             ++downEnergyChanges;
           }
           if (neighbour == nullptr) {
-            currPosition->makeMoveInplace(m);
+            currPosition->makeMove(m);
           } else {
             currPosition = neighbour;
           }

@@ -60,25 +60,25 @@ void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int 
 {
   SalesmanPosition p(cities);
   std::shared_ptr<IMove> m = std::make_shared<SalesmanMove>(m1, m2);
-  auto p2 = p.makeMove(m);
-  auto p3 = std::dynamic_pointer_cast<SalesmanPosition>(p2);
+  auto n_ = p.createNeighbour(m);
+  auto n = std::dynamic_pointer_cast<SalesmanPosition>(n_);
   if (m2 < m1) {
     std::swap(m1, m2);
   }
   std::size_t tested = 0;
   for (int i = 0; i < m1; ++i) {
-    EXPECT_TRUE(isEqual(cities[i], p3->cities[i]));
+    EXPECT_TRUE(isEqual(cities[i], n->cities[i]));
     ++tested;
   }
   for (int i = 0; i < m2 - m1 + 1; ++i) {
-    EXPECT_TRUE(isEqual(cities[m1 + i], p3->cities[m2 - i]));
+    EXPECT_TRUE(isEqual(cities[m1 + i], n->cities[m2 - i]));
     ++tested;
   }
   for (std::size_t i = m2 + 1; i < cities.size(); ++i) {
-    EXPECT_TRUE(isEqual(cities[i], p3->cities[i]));
+    EXPECT_TRUE(isEqual(cities[i], n->cities[i]));
     ++tested;
   }
-  EXPECT_EQ(cities.size(), p3->cities.size());
+  EXPECT_EQ(cities.size(), n->cities.size());
   EXPECT_EQ(cities.size(), tested);
 }
 
@@ -118,9 +118,9 @@ TEST(Salesman, MoveRand)
   std::shared_ptr<IPosition> curr = std::make_shared<SalesmanPosition>(cities);
   std::vector<std::shared_ptr<IMove>> moves;
   for (int i = 0; i < m; ++i) {
-    auto move = curr->getMove();
+    auto move = curr->generateMove();
     moves.push_back(move);
-    curr = curr->makeMove(move);
+    curr = curr->createNeighbour(move);
   }
   auto endPosition = std::dynamic_pointer_cast<SalesmanPosition>(curr);
   auto cities2 = endPosition->cities;

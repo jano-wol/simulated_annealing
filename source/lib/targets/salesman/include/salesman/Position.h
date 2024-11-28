@@ -44,13 +44,9 @@ public:
     return ret;
   }
 
-  std::optional<double> getEnergyFast(const std::shared_ptr<core::IMove>& /*imove*/,
-                                      double /*baseEnergy*/) const override
-  {
-    return std::nullopt;
-  }
+  std::optional<double> getDelta(const std::shared_ptr<core::IMove>& /*imove*/) const override { return std::nullopt; }
 
-  std::shared_ptr<core::IMove> getMove() const override
+  std::shared_ptr<core::IMove> generateMove() const override
   {
     std::uniform_int_distribution<> dist(0, cities.size() - 1);
     std::size_t cityIdx1 = dist(mt);
@@ -58,7 +54,7 @@ public:
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
-  void makeMoveInplace(const std::shared_ptr<core::IMove>& imove) override
+  void makeMove(const std::shared_ptr<core::IMove>& imove) override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
@@ -76,11 +72,11 @@ public:
     }
   }
 
-  std::shared_ptr<core::IPosition> makeMove(const std::shared_ptr<core::IMove>& imove) const override
+  std::shared_ptr<core::IPosition> createNeighbour(const std::shared_ptr<core::IMove>& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));
-    ret->makeMoveInplace(imove);
+    ret->makeMove(imove);
     return ret;
   }
 
