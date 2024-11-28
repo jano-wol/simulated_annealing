@@ -12,42 +12,43 @@ using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
-void print(const std::shared_ptr<IPosition>& iposition)
+template <typename Resource = Iteration, typename Acceptance = Metropolis, typename Cooling = Linear>
+void print(const SA<Resource, Acceptance, Cooling>& sa, size_t idx)
 {
-  auto position = std::dynamic_pointer_cast<SalesmanPosition>(iposition);
-  const auto& cities = position->cities;
-  for (const auto& [x, y] : cities) {
-    std::cout << "(" << x << " " << y << ") ";
-  }
-  std::cout << "\n";
+  std::cout << "idx=" << idx << " currEnergy=" << sa.currEnergy << " upEnergyChanges=" << sa.upEnergyChanges << " "
+            << sa.toString() << "\n";
 }
 
-int main()
+int main(int argc, char** argv)
 {
+  std::string mode = 1 < argc ? argv[1] : "";
   auto positions = generateTestCases();
-  std::size_t idx = 0;
-  for (const auto& position : positions) {
-    SA sa1(Iteration(5000), Metropolis(), Linear());
-    SA sa2(Iteration(100000), Metropolis(), Linear());
-    SA sa3(Iteration(10000000), Metropolis(), Linear());
-    sa1.anneal(position);
-    std::cout << "idx=" << idx << " currEnergy=" << sa1.currEnergy << " upEnergyChanges=" << sa1.upEnergyChanges << " "
-              << sa1.toString() << "\n";
-    sa2.anneal(position);
-    std::cout << "idx=" << idx << " currEnergy=" << sa2.bestEnergy << " upEnergyChanges=" << sa2.upEnergyChanges << " "
-              << sa2.toString() << "\n";
-    sa3.anneal(position);
-    std::cout << "idx=" << idx << " currEnergy=" << sa3.bestEnergy << " upEnergyChanges=" << sa3.upEnergyChanges << " "
-              << sa3.toString() << "\n";
-    SA sa4(Time(5), Metropolis(), Linear());
-    sa4.anneal(position);
-    std::cout << "idx=" << idx << " currEnergy=" << sa4.bestEnergy << " upEnergyChanges=" << sa4.upEnergyChanges << " "
-              << sa4.toString() << "\n";
-    SA sa5(Time(5), Metropolis(), Quadratic());
-    sa5.anneal(position);
-    std::cout << "idx=" << idx << " currEnergy=" << sa5.bestEnergy << " upEnergyChanges=" << sa5.upEnergyChanges << " "
-              << sa5.toString() << "\n";
-    ++idx;
+  
+  if (mode == "bench") {
+    auto pos = positions.back();
+    SA sa(Iteration(20000), Metropolis(), Linear());
+    sa.anneal(pos);
+    print(sa, 1);
+  } else {
+    std::size_t idx = 0;
+    for (const auto& position : positions) {
+      SA sa1(Iteration(5000), Metropolis(), Linear());
+      SA sa2(Iteration(100000), Metropolis(), Linear());
+      SA sa3(Iteration(10000000), Metropolis(), Linear());
+      sa1.anneal(position);
+      print(sa1, idx);
+      sa2.anneal(position);
+      print(sa2, idx);
+      sa3.anneal(position);
+      print(sa3, idx);
+      SA sa4(Time(5), Metropolis(), Linear());
+      sa4.anneal(position);
+      print(sa4, idx);
+      SA sa5(Time(5), Metropolis(), Quadratic());
+      sa5.anneal(position);
+      print(sa5, idx);
+      ++idx;
+    }
   }
   return 0;
 }
