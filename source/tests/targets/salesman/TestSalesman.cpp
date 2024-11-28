@@ -146,10 +146,10 @@ TEST(Salesman, Annealing)
 {
   int n = 20;
   auto cities = getRandomCities(n);
-  SA sa1(Iteration(1000), Metropolis(), Linear());
+  SA sa(Iteration(1000), Metropolis(), Linear());
   std::shared_ptr<IPosition> position = std::make_shared<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
-  sa1.anneal(position);
-  ASSERT_LE(sa1.bestEnergy, startEnergy);
-  ASSERT_LE(0, sa1.bestEnergy);
+  sa.anneal(position);
+  ASSERT_LE(sa.bestEnergy, startEnergy);
+  ASSERT_LE(0, sa.bestEnergy);
 }
