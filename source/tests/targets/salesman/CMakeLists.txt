@@ -7,6 +7,8 @@ set(sources
 add_executable(${target} ${sources})
 
 target_link_libraries(${target}
+	PUBLIC	
+	salesman	
 	PRIVATE
 	gmock-dev
 	GTest::gtest_main
