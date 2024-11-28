@@ -7,7 +7,8 @@ set(sources
 add_executable(${target} ${sources})
 
 target_link_libraries(${target}
-	PUBLIC	
+	PUBLIC
+	sa	
 	salesman	
 	PRIVATE
 	gmock-dev

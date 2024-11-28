@@ -4,9 +4,16 @@
 #include <memory>
 
 #include <core/IPosition.h>
+#include <policies/Acceptance.h>
+#include <policies/Cooling.h>
+#include <policies/Resource.h>
+#include <sa/sa.h>
 #include <salesman/Position.h>
+#include <salesman/Tester.h>
 
 using namespace sa::core;
+using namespace sa::policies;
+using namespace sa::sa;
 using namespace sa::targets::salesman;
 
 namespace
@@ -133,4 +140,15 @@ TEST(Salesman, MoveRand)
     }
   }
   EXPECT_NE(fixed, n);
+}
+
+TEST(Salesman, Annealing)
+{
+  int n = 20;
+  auto cities = getRandomCities(n);
+  SA sa1(Iteration(1000), Metropolis(), Linear());
+  std::shared_ptr<IPosition> position = std::make_shared<SalesmanPosition>(cities);
+  double startEnergy = position->getEnergy();
+  sa1.anneal(position);
+  ASSERT_LE(sa1.bestEnergy, startEnergy);
 }
