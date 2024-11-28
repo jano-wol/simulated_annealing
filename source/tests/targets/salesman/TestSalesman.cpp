@@ -48,7 +48,6 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
 
   return ret;
 }
-
 }  // namespace
 
 TEST(Salesman, Energy)
