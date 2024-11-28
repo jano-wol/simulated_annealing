@@ -48,6 +48,14 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
 
   return ret;
 }
+
+void printCities(const std::vector<std::pair<double, double>>& cities)
+{
+  for (const auto& [x, y] : cities) {
+    std::cout << "(" << x << "," << y << ");";
+  }
+  std::cout << "\n";
+}
 }  // namespace
 
 TEST(Salesman, Energy)
@@ -67,6 +75,17 @@ TEST(Salesman, Energy)
 }
 
 TEST(Salesman, Move)
+{
+  std::vector<std::pair<double, double>> cities = {{1, 0}, {2, 0}, {3, 1}, {3, 2}, {2, 3}, {1, 3}, {0, 2}, {0, 1}};
+   printCities(cities);
+  SalesmanPosition p(cities);
+  std::shared_ptr<IMove> m = std::make_shared<SalesmanMove>(2, 5);
+  auto p2 = p.makeMove(m);
+  auto p3 = std::dynamic_pointer_cast<SalesmanPosition>(p2);
+  printCities(p3->cities);
+}
+
+TEST(Salesman, MoveRand)
 {
   int n = 20;
   int m = 100;

@@ -53,11 +53,9 @@ public:
   std::shared_ptr<core::IMove> getMove() const override
   {
     std::uniform_int_distribution<> dist(0, cities.size() - 1);
-    std::uniform_int_distribution<> distInner(0, 1);
     std::size_t cityIdx1 = dist(mt);
     std::size_t cityIdx2 = dist(mt);
-    bool inner = distInner(mt);
-    return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2, inner);
+    return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
   void makeMoveInplace(const std::shared_ptr<core::IMove>& imove) override
@@ -65,38 +63,17 @@ public:
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
     std::size_t cityIdx2 = move->cityIdx2;
-    bool inner = move->inner;
     if (cityIdx1 == cityIdx2) {
       return;
     }
-    auto newCities = cities;
-    newCities[cityIdx1] = cities[cityIdx2];
-    newCities[cityIdx2] = cities[cityIdx1];
-    std::size_t backCityIdx;
-    std::size_t forCityIdx;
-    if (cityIdx1 < cityIdx2) {
-      backCityIdx = cityIdx1;
-      forCityIdx = cityIdx2;
-    } else {
-      backCityIdx = cityIdx2;
-      forCityIdx = cityIdx1;
+    if (cityIdx2 < cityIdx1) {
+      std::swap(cityIdx1, cityIdx2);
     }
-    if (inner) {
-      std::size_t j = 1;
-      for (std::size_t i = forCityIdx - 1; i > forCityIdx; --i) {
-        newCities[backCityIdx + j] = cities[i];
-      }
-    } else {
-      std::size_t s = cities.size();
-      std::size_t citiesIdx = (forCityIdx + 1) % s;
-      std::size_t newCitiesIdx = (backCityIdx + s - 1) % s;
-      for (std::size_t i = 0; i < s - (forCityIdx - backCityIdx + 1); ++i) {
-        newCities[newCitiesIdx] = cities[citiesIdx];
-        citiesIdx = (citiesIdx + 1) % s;
-        newCitiesIdx = (newCitiesIdx + s - 1) % s;
-      }
+    while (cityIdx1 < cityIdx2) {
+      std::swap(cities[cityIdx1], cities[cityIdx2]);
+      ++cityIdx1;
+      --cityIdx2;
     }
-    cities = newCities;
   }
 
   std::shared_ptr<core::IPosition> makeMove(const std::shared_ptr<core::IMove>& imove) const override
