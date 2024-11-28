@@ -151,4 +151,5 @@ TEST(Salesman, Annealing)
   double startEnergy = position->getEnergy();
   sa1.anneal(position);
   ASSERT_LE(sa1.bestEnergy, startEnergy);
+  ASSERT_LE(0, sa1.bestEnergy);
 }
