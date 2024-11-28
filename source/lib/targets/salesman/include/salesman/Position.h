@@ -44,7 +44,25 @@ public:
     return ret;
   }
 
-  std::optional<double> getDelta(const std::shared_ptr<core::IMove>& /*imove*/) const override { return std::nullopt; }
+  std::optional<double> getDelta(const std::shared_ptr<core::IMove>& imove) const override
+  {
+    auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
+    std::size_t idx1 = move->cityIdx1;
+    std::size_t idx2 = move->cityIdx2;
+    if (idx1 == idx2) {
+      return 0;
+    }
+    if (idx2 < idx1) {
+      std::swap(idx1, idx2);
+    }
+    if (idx1 == 0 && idx2 == cities.size() - 1) {
+      return 0;
+    }
+    const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
+    const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
+    return distance(cities[idx1], cities[nextIdx2]) + distance(cities[idx2], cities[prevIdx1]) -
+           distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
+  }
 
   std::shared_ptr<core::IMove> generateMove() const override
   {

@@ -142,6 +142,25 @@ TEST(Salesman, MoveRand)
   EXPECT_NE(fixed, n);
 }
 
+TEST(Salesman, Fast)
+{
+  int n = 14;
+  int m = 1000;
+  auto cities = getRandomCities(n);
+  std::shared_ptr<IPosition> currSlow = std::make_shared<SalesmanPosition>(cities);
+  std::shared_ptr<IPosition> currFast = std::make_shared<SalesmanPosition>(cities);
+  double fastEnergy = currFast->getEnergy();
+  std::vector<std::shared_ptr<IMove>> moves;
+  for (int i = 0; i < m; ++i) {
+    EXPECT_NEAR(currSlow->getEnergy(), fastEnergy, delta);
+    auto move = currSlow->generateMove();
+    currSlow = currSlow->createNeighbour(move);
+    auto d = currFast->getDelta(move);
+    currFast->makeMove(move);
+    fastEnergy += *d;
+  }
+}
+
 TEST(Salesman, Annealing)
 {
   int n = 20;
