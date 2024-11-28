@@ -26,7 +26,7 @@ int main(int argc, char** argv)
   
   if (mode == "bench") {
     auto pos = positions.back();
-    SA sa(Iteration(20000), Metropolis(), Linear());
+    SA sa(Iteration(100000), Metropolis(), Linear());
     sa.anneal(pos);
     print(sa, 1);
   } else {
