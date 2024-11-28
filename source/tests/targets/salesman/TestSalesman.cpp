@@ -49,13 +49,32 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
   return ret;
 }
 
-void printCities(const std::vector<std::pair<double, double>>& cities)
+void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int m2)
 {
-  for (const auto& [x, y] : cities) {
-    std::cout << "(" << x << "," << y << ");";
+  SalesmanPosition p(cities);
+  std::shared_ptr<IMove> m = std::make_shared<SalesmanMove>(m1, m2);
+  auto p2 = p.makeMove(m);
+  auto p3 = std::dynamic_pointer_cast<SalesmanPosition>(p2);
+  if (m2 < m1) {
+    std::swap(m1, m2);
   }
-  std::cout << "\n";
+  std::size_t tested = 0;
+  for (int i = 0; i < m1; ++i) {
+    EXPECT_TRUE(isEqual(cities[i], p3->cities[i]));
+    ++tested;
+  }
+  for (int i = 0; i < m2 - m1 + 1; ++i) {
+    EXPECT_TRUE(isEqual(cities[m1 + i], p3->cities[m2 - i]));
+    ++tested;
+  }
+  for (std::size_t i = m2 + 1; i < cities.size(); ++i) {
+    EXPECT_TRUE(isEqual(cities[i], p3->cities[i]));
+    ++tested;
+  }
+  EXPECT_EQ(cities.size(), p3->cities.size());
+  EXPECT_EQ(cities.size(), tested);
 }
+
 }  // namespace
 
 TEST(Salesman, Energy)
@@ -77,12 +96,11 @@ TEST(Salesman, Energy)
 TEST(Salesman, Move)
 {
   std::vector<std::pair<double, double>> cities = {{1, 0}, {2, 0}, {3, 1}, {3, 2}, {2, 3}, {1, 3}, {0, 2}, {0, 1}};
-   printCities(cities);
-  SalesmanPosition p(cities);
-  std::shared_ptr<IMove> m = std::make_shared<SalesmanMove>(2, 5);
-  auto p2 = p.makeMove(m);
-  auto p3 = std::dynamic_pointer_cast<SalesmanPosition>(p2);
-  printCities(p3->cities);
+  for (int i = 0; i < 8; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      testMove(cities, i, j);
+    }
+  }
 }
 
 TEST(Salesman, MoveRand)
