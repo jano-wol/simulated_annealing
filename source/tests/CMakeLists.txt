@@ -1,3 +1,9 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/tests/bin)
+set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
+function(enable_sanitizers TARGET)
+    target_compile_options(${TARGET} PRIVATE ${SANITIZER_FLAGS})
+    target_link_options(${TARGET} PRIVATE ${SANITIZER_FLAGS})
+endfunction()
+
 include(GoogleTest)
 add_subdirectory(targets)

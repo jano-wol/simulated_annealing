@@ -13,6 +13,7 @@ target_link_libraries(${target}
 	gmock-dev
 	GTest::gtest_main
 )
+enable_sanitizers(${target})
 
 gtest_discover_tests(${target})
 
