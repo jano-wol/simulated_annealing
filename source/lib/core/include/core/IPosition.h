@@ -16,6 +16,7 @@ public:
   virtual std::optional<double> getDelta(const std::shared_ptr<IMove>& imove) const = 0;
   virtual void makeMove(const std::shared_ptr<IMove>& imove) = 0;
   virtual std::shared_ptr<IPosition> createNeighbour(const std::shared_ptr<IMove>& imove) const = 0;
+  virtual ~IPosition() = default;
 };
 }  // namespace sa::core
 
