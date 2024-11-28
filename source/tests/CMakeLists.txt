@@ -6,4 +6,5 @@ function(enable_sanitizers TARGET)
 endfunction()
 
 include(GoogleTest)
+add_subdirectory(sa)
 add_subdirectory(targets)
