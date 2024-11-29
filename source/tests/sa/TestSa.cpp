@@ -27,19 +27,19 @@ public:
   DummySlowPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
   DummySlowPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  IMove::Ptr generateMove() const override { return std::make_unique<DummyMove>(); }
+  IMove::CPtr generateMove() const override { return std::make_unique<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
     return energy;
   }
-  std::optional<double> getDelta(const IMove::Ptr& /*imove*/) const override
+  std::optional<double> getDelta(const IMove::CPtr& /*imove*/) const override
   {
     ++getDeltaCounter;
     return std::nullopt;
   }
-  void makeMove(const IMove::Ptr& /*imove*/) override { ++makeMoveCounter; }
-  IPosition::CPtr createNeighbour(const IMove::Ptr& /*imove*/) const override
+  void makeMove(const IMove::CPtr& /*imove*/) override { ++makeMoveCounter; }
+  IPosition::CPtr createNeighbour(const IMove::CPtr& /*imove*/) const override
   {
     ++createNeighbourCounter;
     auto ret = std::make_unique<DummySlowPosition>(energy - 1);
@@ -68,19 +68,19 @@ public:
   DummyFastPosition(const DummyFastPosition& other) : energy(other.energy) { ++created; }
   DummyFastPosition(DummyFastPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  IMove::Ptr generateMove() const override { return std::make_unique<DummyMove>(); }
+  IMove::CPtr generateMove() const override { return std::make_unique<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
     return energy;
   }
-  std::optional<double> getDelta(const IMove::Ptr& /*imove*/) const override
+  std::optional<double> getDelta(const IMove::CPtr& /*imove*/) const override
   {
     ++getDeltaCounter;
     return -1;
   }
-  void makeMove(const IMove::Ptr& /*imove*/) override { ++makeMoveCounter; }
-  IPosition::CPtr createNeighbour(const IMove::Ptr& /*imove*/) const override
+  void makeMove(const IMove::CPtr& /*imove*/) override { ++makeMoveCounter; }
+  IPosition::CPtr createNeighbour(const IMove::CPtr& /*imove*/) const override
   {
     ++createNeighbourCounter;
     auto ret = std::make_unique<DummyFastPosition>(energy - 1);

@@ -44,9 +44,9 @@ public:
     return ret;
   }
 
-  std::optional<double> getDelta(const core::IMove::Ptr& imove) const override
+  std::optional<double> getDelta(const core::IMove::CPtr& imove) const override
   {
-    auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
+    auto* move = dynamic_cast<SalesmanMove*>(imove.get());
     std::size_t idx1 = move->cityIdx1;
     std::size_t idx2 = move->cityIdx2;
     if (idx1 == idx2) {
@@ -64,16 +64,16 @@ public:
            distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
   }
 
-  core::IMove::Ptr generateMove() const override
+  core::IMove::CPtr generateMove() const override
   {
     std::size_t cityIdx1 = core::Random::randomInt(0, cities.size() - 1);
     std::size_t cityIdx2 = core::Random::randomInt(0, cities.size() - 1);
-    return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
+    return std::make_unique<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
-  void makeMove(const core::IMove::Ptr& imove) override
+  void makeMove(const core::IMove::CPtr& imove) override
   {
-    auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
+    auto* move = dynamic_cast<SalesmanMove*>(imove.get());
     std::size_t cityIdx1 = move->cityIdx1;
     std::size_t cityIdx2 = move->cityIdx2;
     if (cityIdx1 == cityIdx2) {
@@ -89,7 +89,7 @@ public:
     }
   }
 
-  core::IPosition::CPtr createNeighbour(const core::IMove::Ptr& imove) const override
+  core::IPosition::CPtr createNeighbour(const core::IMove::CPtr& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_unique<SalesmanPosition>(std::move(cities_));

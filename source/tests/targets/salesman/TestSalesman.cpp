@@ -59,7 +59,7 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
 void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int m2)
 {
   SalesmanPosition p(cities);
-  IMove::Ptr m = std::make_shared<SalesmanMove>(m1, m2);
+  IMove::CPtr m = std::make_unique<SalesmanMove>(m1, m2);
   auto n = Memory::cast<SalesmanPosition>(p.createNeighbour(m));
   if (m2 < m1) {
     std::swap(m1, m2);
@@ -115,11 +115,11 @@ TEST(Salesman, MoveRand)
   int m = 100;
   auto cities = getRandomCities(n);
   IPosition::CPtr curr = std::make_unique<SalesmanPosition>(cities);
-  std::vector<IMove::Ptr> moves;
+  std::vector<IMove::CPtr> moves;
   for (int i = 0; i < m; ++i) {
     auto move = curr->generateMove();
-    moves.push_back(move);
     curr = curr->createNeighbour(move);
+    moves.push_back(std::move(move));
   }
   auto endPosition = Memory::cast<SalesmanPosition>(std::move(curr));
   auto cities2 = endPosition->cities;
@@ -149,7 +149,6 @@ TEST(Salesman, Fast)
   IPosition::CPtr currSlow = std::make_unique<SalesmanPosition>(cities);
   IPosition::CPtr currFast = std::make_unique<SalesmanPosition>(cities);
   double fastEnergy = currFast->getEnergy();
-  std::vector<IMove::Ptr> moves;
   for (int i = 0; i < m; ++i) {
     EXPECT_NEAR(currSlow->getEnergy(), fastEnergy, delta);
     auto move = currSlow->generateMove();

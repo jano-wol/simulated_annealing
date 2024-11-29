@@ -8,7 +8,7 @@ namespace sa::core
 class IMove
 {
 public:
-  using Ptr = std::shared_ptr<IMove>;
+  using CPtr = std::unique_ptr<IMove>;
   virtual ~IMove() = default;
 };
 }  // namespace sa::core

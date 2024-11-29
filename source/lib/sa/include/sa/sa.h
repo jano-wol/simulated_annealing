@@ -62,7 +62,7 @@ public:
           } else {
             currPosition = std::move(neighbour);
           }
-          moves.push_back(m);
+          moves.push_back(std::move(m));
           currEnergy = energyCandidate;
           energies.push_back(currEnergy);
           if (currEnergy <= bestEnergy) {
@@ -86,7 +86,7 @@ public:
 
   // Relevant for current annealing process
   core::IPosition::CPtr currPosition;
-  std::vector<core::IMove::Ptr> moves;
+  std::vector<core::IMove::CPtr> moves;
   double currEnergy;
   double bestEnergy;
   std::size_t bestIdx;
@@ -94,7 +94,7 @@ public:
 
   // Only relevant if restarts happen
   core::IPosition::CPtr bestInit;
-  std::vector<core::IMove::Ptr> bestMoves;
+  std::vector<core::IMove::CPtr> bestMoves;
 
   // Diagnostics fir current annealing process
   int downEnergyChanges;
