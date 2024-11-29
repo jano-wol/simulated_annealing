@@ -16,8 +16,8 @@ namespace sa::sa
 class SA
 {
 public:
-  SA(policies::IResource::Ptr resourcePolicy_, policies::IAcceptance::Ptr acceptancePolicy_,
-     policies::ICooling::Ptr coolingPolicy_)
+  SA(policies::IResource::CPtr resourcePolicy_, policies::IAcceptance::CPtr acceptancePolicy_,
+     policies::ICooling::CPtr coolingPolicy_)
       : resourcePolicy(std::move(resourcePolicy_)),
         acceptancePolicy(std::move(acceptancePolicy_)),
         coolingPolicy(std::move(coolingPolicy_))
@@ -101,9 +101,9 @@ public:
   int upEnergyChanges;
 
 private:
-  policies::IResource::Ptr resourcePolicy;
-  policies::IAcceptance::Ptr acceptancePolicy;
-  policies::ICooling::Ptr coolingPolicy;
+  policies::IResource::CPtr resourcePolicy;
+  policies::IAcceptance::CPtr acceptancePolicy;
+  policies::ICooling::CPtr coolingPolicy;
 };
 
 }  // namespace sa::sa

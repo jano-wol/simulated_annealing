@@ -164,7 +164,7 @@ TEST(Salesman, Annealing)
 {
   int n = 20;
   auto cities = getRandomCities(n);
-  SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
   IPosition::Ptr position = std::make_shared<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);

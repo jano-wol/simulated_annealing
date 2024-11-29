@@ -12,7 +12,7 @@ namespace sa::policies
 class ICooling
 {
 public:
-  using Ptr = std::shared_ptr<ICooling>;
+  using CPtr = std::unique_ptr<ICooling>;
   virtual double getTemperature(double progress) const = 0;
   virtual std::string toString() const = 0;
   virtual ~ICooling() = default;

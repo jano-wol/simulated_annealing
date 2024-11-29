@@ -27,7 +27,7 @@ public:
   DummySlowPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
   DummySlowPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  IMove::Ptr generateMove() const override { return std::make_shared<DummyMove>(); }
+  IMove::Ptr generateMove() const override { return std::make_unique<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
@@ -42,7 +42,7 @@ public:
   IPosition::Ptr createNeighbour(const IMove::Ptr& /*imove*/) const override
   {
     ++createNeighbourCounter;
-    auto ret = std::make_shared<DummySlowPosition>(energy - 1);
+    auto ret = std::make_unique<DummySlowPosition>(energy - 1);
     return ret;
   }
   double energy;
@@ -60,7 +60,7 @@ public:
   DummyFastPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
   DummyFastPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  IMove::Ptr generateMove() const override { return std::make_shared<DummyMove>(); }
+  IMove::Ptr generateMove() const override { return std::make_unique<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
@@ -75,7 +75,7 @@ public:
   IPosition::Ptr createNeighbour(const IMove::Ptr& /*imove*/) const override
   {
     ++createNeighbourCounter;
-    auto ret = std::make_shared<DummySlowPosition>(energy - 1);
+    auto ret = std::make_unique<DummySlowPosition>(energy - 1);
     return ret;
   }
   double energy;
@@ -114,8 +114,8 @@ std::size_t DummyFastPosition::createNeighbourCounter = 0;
 
 TEST(Sa, SlowAnnealing)
 {
-SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
-  IPosition::Ptr position = std::make_shared<DummySlowPosition>(0);
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
+  IPosition::Ptr position = std::make_unique<DummySlowPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummySlowPosition::created, 1001);
   EXPECT_EQ(DummySlowPosition::getEnergyCounter, 1001);
@@ -128,8 +128,8 @@ SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::ma
 
 TEST(Sa, FastAnnealing)
 {
-SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
-  IPosition::Ptr position = std::make_shared<DummyFastPosition>(0);
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
+  IPosition::Ptr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummyFastPosition::created, 1);
   EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1);

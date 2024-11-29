@@ -12,7 +12,7 @@ namespace sa::policies
 class IResource
 {
 public:
-  using Ptr = std::shared_ptr<IResource>;
+  using CPtr = std::unique_ptr<IResource>;
   virtual double getAll() const = 0;
   virtual double getLeft() const = 0;
   virtual void updateLeft() = 0;

@@ -14,7 +14,7 @@ namespace sa::policies
 class IAcceptance
 {
 public:
-  using Ptr = std::shared_ptr<IAcceptance>;
+  using CPtr = std::unique_ptr<IAcceptance>;
   virtual bool accept(double currEnergy, double delta, double temperature) const = 0;
   virtual std::string toString() const = 0;
   virtual ~IAcceptance() = default;
