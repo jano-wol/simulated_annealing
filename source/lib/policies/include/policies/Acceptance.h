@@ -3,9 +3,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <random>
 #include <sstream>
 #include <string>
+
+#include <core/Random.h>
 
 namespace sa::policies
 {
@@ -13,18 +14,14 @@ namespace sa::policies
 class Metropolis
 {
 public:
-  Metropolis(double normalizator_ = 1.0) : normalizator(normalizator_)
-  {
-    mt = std::mt19937(0);
-    dist = std::uniform_real_distribution<double>(0.0, 1.0);
-  }
+  Metropolis(double normalizator_ = 1.0) : normalizator(normalizator_) {}
 
   bool accept(double /*currEnergy*/, double delta, double temperature)
   {
     if (delta <= 0)
       return true;
     double threshold = std::exp(-delta / normalizator / temperature);
-    double randomResult = dist(mt);
+    double randomResult = core::Random::randomDouble(0.0, 1.0);
     return randomResult < threshold;
   }
 
@@ -38,8 +35,6 @@ public:
     return ss.str();
   }
 
-  std::mt19937 mt;
-  std::uniform_real_distribution<> dist;
   double normalizator;
 };
 

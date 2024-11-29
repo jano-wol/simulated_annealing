@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <core/IPosition.h>
+#include <core/Random.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
@@ -34,12 +35,10 @@ bool isEqual(const std::pair<double, double>& p1, const std::pair<double, double
 
 std::vector<std::pair<double, double>> getRandomCities(int n)
 {
-  std::mt19937 mt(0);
-  std::uniform_real_distribution<> dist(0.0, 1.0);
   std::vector<std::pair<double, double>> ret;
   for (int i = 0; i < n; ++i) {
-    double x = dist(mt);
-    double y = dist(mt);
+    double x = sa::core::Random::randomDouble(0, 1);
+    double y = sa::core::Random::randomDouble(0, 1);
     ret.push_back({x * 10.0, y * 10.0});
   }
 

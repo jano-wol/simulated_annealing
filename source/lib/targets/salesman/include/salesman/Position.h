@@ -2,10 +2,10 @@
 #define SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
 
 #include <cmath>
-#include <random>
 #include <vector>
 
 #include <core/IPosition.h>
+#include <core/Random.h>
 
 #include <salesman/Move.h>
 
@@ -66,9 +66,8 @@ public:
 
   std::shared_ptr<core::IMove> generateMove() const override
   {
-    std::uniform_int_distribution<> dist(0, cities.size() - 1);
-    std::size_t cityIdx1 = dist(mt);
-    std::size_t cityIdx2 = dist(mt);
+    std::size_t cityIdx1 = core::Random::randomInt(0, cities.size() - 1);
+    std::size_t cityIdx2 = core::Random::randomInt(0, cities.size() - 1);
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
@@ -99,7 +98,6 @@ public:
   }
 
   std::vector<std::pair<double, double>> cities;
-  static std::mt19937 mt;
 };
 }  // namespace sa::targets::salesman
 

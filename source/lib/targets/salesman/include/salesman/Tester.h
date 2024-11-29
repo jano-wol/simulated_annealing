@@ -1,6 +1,8 @@
 #ifndef SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_TESTER_H_
 #define SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_TESTER_H_
 
+#include <random>
+
 #include <salesman/Position.h>
 
 namespace sa::targets::salesman

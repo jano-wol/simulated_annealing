@@ -1,7 +1,6 @@
 #ifndef SIMULATED_ANNEALING_SA_SA_H_
 #define SIMULATED_ANNEALING_SA_SA_H_
 
-#include <random>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -98,10 +97,6 @@ public:
   // Only relevant if restarts happen
   std::shared_ptr<core::IPosition> bestInit;
   std::vector<std::shared_ptr<core::IMove>> bestMoves;
-
-  // Random generator
-  std::mt19937 mt;
-  std::uniform_real_distribution<> dist;
 
   // Diagnostics fir current annealing process
   int downEnergyChanges;
