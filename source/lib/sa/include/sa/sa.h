@@ -85,16 +85,16 @@ public:
   }
 
   // Relevant for current annealing process
-  std::shared_ptr<core::IPosition> currPosition;
-  std::vector<std::shared_ptr<core::IMove>> moves;
+  core::IPosition::Ptr currPosition;
+  std::vector<core::IMove::Ptr> moves;
   double currEnergy;
   double bestEnergy;
   std::size_t bestIdx;
   std::vector<double> energies;
 
   // Only relevant if restarts happen
-  std::shared_ptr<core::IPosition> bestInit;
-  std::vector<std::shared_ptr<core::IMove>> bestMoves;
+  core::IPosition::Ptr bestInit;
+  std::vector<core::IMove::Ptr> bestMoves;
 
   // Diagnostics fir current annealing process
   int downEnergyChanges;

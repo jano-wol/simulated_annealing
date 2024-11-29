@@ -7,12 +7,11 @@
 
 namespace sa::targets::salesman
 {
-std::vector<std::shared_ptr<core::IPosition>> getStartPositions(std::size_t numPositions, std::size_t numCities,
-                                                                double length)
+std::vector<core::IPosition::Ptr> getStartPositions(std::size_t numPositions, std::size_t numCities, double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
-  std::vector<std::shared_ptr<core::IPosition>> ret;
+  std::vector<core::IPosition::Ptr> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -28,8 +27,7 @@ std::vector<std::shared_ptr<core::IPosition>> getStartPositions(std::size_t numP
   return ret;
 }
 
-std::vector<std::shared_ptr<core::IPosition>> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities,
-                                                                    double length)
+std::vector<core::IPosition::Ptr> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities, double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
@@ -52,7 +50,7 @@ std::vector<std::shared_ptr<core::IPosition>> getStartPositions_5x5(std::size_t 
     }
   }
   auto dist3 = std::uniform_int_distribution<>(0, chosenSubsquaresDensity.size() - 1);
-  std::vector<std::shared_ptr<core::IPosition>> ret;
+  std::vector<core::IPosition::Ptr> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -72,9 +70,9 @@ std::vector<std::shared_ptr<core::IPosition>> getStartPositions_5x5(std::size_t 
   return ret;
 }
 
-std::vector<std::shared_ptr<core::IPosition>> generateTestCases()
+std::vector<core::IPosition::Ptr> generateTestCases()
 {
-  std::vector<std::shared_ptr<core::IPosition>> r;
+  std::vector<core::IPosition::Ptr> r;
   std::vector<int> nc{5, 10, 20, 50, 100, 200, 500, 1000};
   std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
   for (int i = 0; i < 8; ++i) {

@@ -44,7 +44,7 @@ public:
     return ret;
   }
 
-  std::optional<double> getDelta(const std::shared_ptr<core::IMove>& imove) const override
+  std::optional<double> getDelta(const core::IMove::Ptr& imove) const override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t idx1 = move->cityIdx1;
@@ -64,14 +64,14 @@ public:
            distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
   }
 
-  std::shared_ptr<core::IMove> generateMove() const override
+  core::IMove::Ptr generateMove() const override
   {
     std::size_t cityIdx1 = core::Random::randomInt(0, cities.size() - 1);
     std::size_t cityIdx2 = core::Random::randomInt(0, cities.size() - 1);
     return std::make_shared<SalesmanMove>(cityIdx1, cityIdx2);
   }
 
-  void makeMove(const std::shared_ptr<core::IMove>& imove) override
+  void makeMove(const core::IMove::Ptr& imove) override
   {
     auto move = std::dynamic_pointer_cast<SalesmanMove>(imove);
     std::size_t cityIdx1 = move->cityIdx1;
@@ -89,7 +89,7 @@ public:
     }
   }
 
-  std::shared_ptr<core::IPosition> createNeighbour(const std::shared_ptr<core::IMove>& imove) const override
+  core::IPosition::Ptr createNeighbour(const core::IMove::Ptr& imove) const override
   {
     auto cities_ = cities;
     auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));
