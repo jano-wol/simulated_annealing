@@ -58,7 +58,7 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
 void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int m2)
 {
   SalesmanPosition p(cities);
-  std::shared_ptr<IMove> m = std::make_shared<SalesmanMove>(m1, m2);
+  IMove::Ptr m = std::make_shared<SalesmanMove>(m1, m2);
   auto n_ = p.createNeighbour(m);
   auto n = std::dynamic_pointer_cast<SalesmanPosition>(n_);
   if (m2 < m1) {
@@ -114,8 +114,8 @@ TEST(Salesman, MoveRand)
   int n = 20;
   int m = 100;
   auto cities = getRandomCities(n);
-  std::shared_ptr<IPosition> curr = std::make_shared<SalesmanPosition>(cities);
-  std::vector<std::shared_ptr<IMove>> moves;
+  IPosition::Ptr curr = std::make_shared<SalesmanPosition>(cities);
+  std::vector<IMove::Ptr> moves;
   for (int i = 0; i < m; ++i) {
     auto move = curr->generateMove();
     moves.push_back(move);
@@ -146,10 +146,10 @@ TEST(Salesman, Fast)
   int n = 14;
   int m = 1000;
   auto cities = getRandomCities(n);
-  std::shared_ptr<IPosition> currSlow = std::make_shared<SalesmanPosition>(cities);
-  std::shared_ptr<IPosition> currFast = std::make_shared<SalesmanPosition>(cities);
+  IPosition::Ptr currSlow = std::make_shared<SalesmanPosition>(cities);
+  IPosition::Ptr currFast = std::make_shared<SalesmanPosition>(cities);
   double fastEnergy = currFast->getEnergy();
-  std::vector<std::shared_ptr<IMove>> moves;
+  std::vector<IMove::Ptr> moves;
   for (int i = 0; i < m; ++i) {
     EXPECT_NEAR(currSlow->getEnergy(), fastEnergy, delta);
     auto move = currSlow->generateMove();
@@ -164,8 +164,8 @@ TEST(Salesman, Annealing)
 {
   int n = 20;
   auto cities = getRandomCities(n);
-  SA sa(Iteration(1000), Metropolis(), Linear());
-  std::shared_ptr<IPosition> position = std::make_shared<SalesmanPosition>(cities);
+  SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
+  IPosition::Ptr position = std::make_shared<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);
   ASSERT_LE(sa.bestEnergy, startEnergy);

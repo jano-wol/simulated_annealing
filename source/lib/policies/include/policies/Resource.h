@@ -3,27 +3,39 @@
 
 #include <algorithm>
 #include <chrono>
+#include <memory>
 #include <sstream>
 #include <string>
 
 namespace sa::policies
 {
-class Iteration
+class IResource
+{
+public:
+  using Ptr = std::shared_ptr<IResource>;
+  virtual double getAll() const = 0;
+  virtual double getLeft() const = 0;
+  virtual void updateLeft() = 0;
+  virtual std::string toString() const = 0;
+  virtual ~IResource() = default;
+};
+
+class Iteration final : public IResource
 {
 public:
   Iteration(double all_) : all(all_), left(all_) {}
 
-  double getAll() const { return all; }
+  double getAll() const override { return all; }
 
-  double getLeft() const { return left; }
+  double getLeft() const override { return left; }
 
-  void updateLeft()
+  void updateLeft() override
   {
     if (left > 0) {
       --left;
     }
   }
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Iteration=" << std::size_t(all);
@@ -35,16 +47,16 @@ private:
   double left;
 };
 
-class Time
+class Time final : public IResource
 {
 public:
   Time(double allInSeconds)
       : all(std::chrono::duration<double>(allInSeconds)), startTime(std::chrono::high_resolution_clock::now())
   {}
 
-  double getAll() const { return all.count(); }
+  double getAll() const override { return all.count(); }
 
-  double getLeft() const
+  double getLeft() const override
   {
     auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
     double elapsedSeconds = std::chrono::duration<double>(elapsed).count();
@@ -52,9 +64,9 @@ public:
     return ret;
   }
 
-  void updateLeft() {}
+  void updateLeft() override {}
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Time=" << std::size_t(all.count()) << "s";

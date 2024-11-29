@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -10,13 +11,21 @@
 
 namespace sa::policies
 {
+class IAcceptance
+{
+public:
+  using Ptr = std::shared_ptr<IAcceptance>;
+  virtual bool accept(double currEnergy, double delta, double temperature) const = 0;
+  virtual std::string toString() const = 0;
+  virtual ~IAcceptance() = default;
+};
 
-class Metropolis
+class Metropolis final : public IAcceptance
 {
 public:
   Metropolis(double normalizator_ = 1.0) : normalizator(normalizator_) {}
 
-  bool accept(double /*currEnergy*/, double delta, double temperature)
+  bool accept(double /*currEnergy*/, double delta, double temperature) const override
   {
     if (delta <= 0)
       return true;
@@ -25,7 +34,7 @@ public:
     return randomResult < threshold;
   }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Metropolis";
@@ -38,16 +47,15 @@ public:
   double normalizator;
 };
 
-class Greedy
+class Greedy final : public IAcceptance
 {
 public:
   Greedy() {}
 
-  bool accept(double /*currEnergy*/, double delta, double /*temperature*/) const { return delta <= 0; }
+  bool accept(double /*currEnergy*/, double delta, double /*temperature*/) const override { return delta <= 0; }
 
-  std::string toString() const { return "Greedy"; }
+  std::string toString() const override { return "Greedy"; }
 };
-
 }  // namespace sa::policies
 
 #endif  // SIMULATED_ANNEALING_POLICIES_ACCEPTANCE_H_

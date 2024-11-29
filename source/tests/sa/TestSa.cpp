@@ -27,19 +27,19 @@ public:
   DummySlowPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
   DummySlowPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  std::shared_ptr<IMove> generateMove() const override { return std::make_shared<DummyMove>(); }
+  IMove::Ptr generateMove() const override { return std::make_shared<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
     return energy;
   }
-  std::optional<double> getDelta(const std::shared_ptr<IMove>& /*imove*/) const override
+  std::optional<double> getDelta(const IMove::Ptr& /*imove*/) const override
   {
     ++getDeltaCounter;
     return std::nullopt;
   }
-  void makeMove(const std::shared_ptr<IMove>& /*imove*/) override { ++makeMoveCounter; }
-  std::shared_ptr<IPosition> createNeighbour(const std::shared_ptr<IMove>& /*imove*/) const override
+  void makeMove(const IMove::Ptr& /*imove*/) override { ++makeMoveCounter; }
+  IPosition::Ptr createNeighbour(const IMove::Ptr& /*imove*/) const override
   {
     ++createNeighbourCounter;
     auto ret = std::make_shared<DummySlowPosition>(energy - 1);
@@ -60,19 +60,19 @@ public:
   DummyFastPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
   DummyFastPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
 
-  std::shared_ptr<IMove> generateMove() const override { return std::make_shared<DummyMove>(); }
+  IMove::Ptr generateMove() const override { return std::make_shared<DummyMove>(); }
   double getEnergy() const override
   {
     ++getEnergyCounter;
     return energy;
   }
-  std::optional<double> getDelta(const std::shared_ptr<IMove>& /*imove*/) const override
+  std::optional<double> getDelta(const IMove::Ptr& /*imove*/) const override
   {
     ++getDeltaCounter;
     return -1;
   }
-  void makeMove(const std::shared_ptr<IMove>& /*imove*/) override { ++makeMoveCounter; }
-  std::shared_ptr<IPosition> createNeighbour(const std::shared_ptr<IMove>& /*imove*/) const override
+  void makeMove(const IMove::Ptr& /*imove*/) override { ++makeMoveCounter; }
+  IPosition::Ptr createNeighbour(const IMove::Ptr& /*imove*/) const override
   {
     ++createNeighbourCounter;
     auto ret = std::make_shared<DummySlowPosition>(energy - 1);
@@ -114,8 +114,8 @@ std::size_t DummyFastPosition::createNeighbourCounter = 0;
 
 TEST(Sa, SlowAnnealing)
 {
-  SA sa(Iteration(1000), Metropolis(), Linear());
-  std::shared_ptr<IPosition> position = std::make_shared<DummySlowPosition>(0);
+SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
+  IPosition::Ptr position = std::make_shared<DummySlowPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummySlowPosition::created, 1001);
   EXPECT_EQ(DummySlowPosition::getEnergyCounter, 1001);
@@ -128,8 +128,8 @@ TEST(Sa, SlowAnnealing)
 
 TEST(Sa, FastAnnealing)
 {
-  SA sa(Iteration(1000), Metropolis(), Linear());
-  std::shared_ptr<IPosition> position = std::make_shared<DummyFastPosition>(0);
+SA sa(std::make_shared<Iteration>(1000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
+  IPosition::Ptr position = std::make_shared<DummyFastPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummyFastPosition::created, 1);
   EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1);

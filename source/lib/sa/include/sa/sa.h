@@ -13,19 +13,17 @@
 
 namespace sa::sa
 {
-
-template <typename Resource = policies::Iteration, typename Acceptance = policies::Metropolis,
-          typename Cooling = policies::Linear>
 class SA
 {
 public:
-  SA(Resource resourcePolicy_, Acceptance acceptancePolicy_, Cooling coolingPolicy_)
+  SA(policies::IResource::Ptr resourcePolicy_, policies::IAcceptance::Ptr acceptancePolicy_,
+     policies::ICooling::Ptr coolingPolicy_)
       : resourcePolicy(std::move(resourcePolicy_)),
         acceptancePolicy(std::move(acceptancePolicy_)),
         coolingPolicy(std::move(coolingPolicy_))
   {}
 
-  void anneal(std::shared_ptr<core::IPosition> startPosition)
+  void anneal(core::IPosition::Ptr startPosition)
   {
     {
       currEnergy = startPosition->getEnergy();
@@ -36,11 +34,11 @@ public:
       downEnergyChanges = 0;
       upEnergyChanges = 0;
       size_t idx = 0;
-      while (resourcePolicy.getLeft() > 0) {
+      while (resourcePolicy->getLeft() > 0) {
         double delta;
         double energyCandidate;
         auto m = currPosition->generateMove();
-        std::shared_ptr<core::IPosition> neighbour;
+        core::IPosition::Ptr neighbour;
 
         auto deltaOpt = currPosition->getDelta(m);
         if (!deltaOpt) {
@@ -51,9 +49,9 @@ public:
           delta = *deltaOpt;
           energyCandidate = currEnergy + delta;
         }
-        double progress = 1.0 - (resourcePolicy.getLeft() / resourcePolicy.getAll());
-        double temperature = coolingPolicy.getTemperature(progress);
-        if (acceptancePolicy.accept(currEnergy, delta, temperature)) {
+        double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
+        double temperature = coolingPolicy->getTemperature(progress);
+        if (acceptancePolicy->accept(currEnergy, delta, temperature)) {
           if (currEnergy < energyCandidate) {
             ++upEnergyChanges;
           } else {
@@ -72,7 +70,7 @@ public:
             bestIdx = idx;
           }
         }
-        resourcePolicy.updateLeft();
+        resourcePolicy->updateLeft();
         ++idx;
       }
     }
@@ -81,7 +79,7 @@ public:
   std::string toString() const
   {
     std::stringstream ss;
-    ss << "<" << resourcePolicy.toString() << ";" << acceptancePolicy.toString() << ";" << coolingPolicy.toString()
+    ss << "<" << resourcePolicy->toString() << ";" << acceptancePolicy->toString() << ";" << coolingPolicy->toString()
        << ">";
     return ss.str();
   }
@@ -103,9 +101,9 @@ public:
   int upEnergyChanges;
 
 private:
-  Resource resourcePolicy;
-  Acceptance acceptancePolicy;
-  Cooling coolingPolicy;
+  policies::IResource::Ptr resourcePolicy;
+  policies::IAcceptance::Ptr acceptancePolicy;
+  policies::ICooling::Ptr coolingPolicy;
 };
 
 }  // namespace sa::sa

@@ -3,19 +3,29 @@
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 #include <sstream>
 #include <string>
 
 namespace sa::policies
 {
-class Linear
+class ICooling
+{
+public:
+  using Ptr = std::shared_ptr<ICooling>;
+  virtual double getTemperature(double progress) const = 0;
+  virtual std::string toString() const = 0;
+  virtual ~ICooling() = default;
+};
+
+class Linear final : public ICooling
 {
 public:
   Linear(double temperature_ = 1.0) : t0(temperature_) {}
 
-  double getTemperature(double progress) const { return t0 * (1.0 - progress); }
+  double getTemperature(double progress) const override { return t0 * (1.0 - progress); }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Linear";
@@ -29,14 +39,14 @@ private:
   double t0;
 };
 
-class Exponential
+class Exponential final : public ICooling
 {
 public:
   Exponential(double c_, double temperature_ = 1.0) : c(c_), t0(temperature_) {}
 
-  double getTemperature(double progress) const { return t0 * std::exp(c * progress); }
+  double getTemperature(double progress) const override { return t0 * std::exp(c * progress); }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Exponential[c=" << c;
@@ -52,14 +62,14 @@ private:
   double t0;
 };
 
-class Logarithmic
+class Logarithmic final : public ICooling
 {
 public:
   Logarithmic(double c_, double temperature_ = 1.0) : c(c_), t0(temperature_) {}
 
-  double getTemperature(double progress) const { return t0 / (1 + c * std::log(1.0 + progress)); }
+  double getTemperature(double progress) const override { return t0 / (1 + c * std::log(1.0 + progress)); }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Logarithmic[c=" << c;
@@ -75,14 +85,14 @@ private:
   double t0;
 };
 
-class Quadratic
+class Quadratic final : public ICooling
 {
 public:
   Quadratic(double temperature_ = 1.0) : t0(temperature_) {}
 
-  double getTemperature(double progress) const { return t0 * (1.0 - progress * progress); }
+  double getTemperature(double progress) const override { return t0 * (1.0 - progress * progress); }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Quadratic";
@@ -96,14 +106,14 @@ private:
   double t0;
 };
 
-class Cosine
+class Cosine final : public ICooling
 {
 public:
   Cosine(double temperature_ = 1.0) : t0(temperature_) {}
 
-  double getTemperature(double progress) const { return t0 * (1.0 + std::cos(M_PI * progress)) / 2.0; }
+  double getTemperature(double progress) const override { return t0 * (1.0 + std::cos(M_PI * progress)) / 2.0; }
 
-  std::string toString() const
+  std::string toString() const override
   {
     std::stringstream ss;
     ss << "Cosine";
