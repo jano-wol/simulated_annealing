@@ -24,12 +24,12 @@ int main(int argc, char** argv)
   auto positions = generateTestCases();
 
   if (mode == "profile") {
-    auto pos = positions.back();
+    auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
     sa.anneal(pos);
     print(sa, 1);
   } else if (mode == "mem_check") {
-    auto pos = positions.back();
+    auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
     sa.anneal(pos);
     print(sa, 1);

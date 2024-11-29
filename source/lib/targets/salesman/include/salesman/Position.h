@@ -89,13 +89,15 @@ public:
     }
   }
 
-  core::IPosition::Ptr createNeighbour(const core::IMove::Ptr& imove) const override
+  core::IPosition::CPtr createNeighbour(const core::IMove::Ptr& imove) const override
   {
     auto cities_ = cities;
-    auto ret = std::make_shared<SalesmanPosition>(std::move(cities_));
+    auto ret = std::make_unique<SalesmanPosition>(std::move(cities_));
     ret->makeMove(imove);
     return ret;
   }
+
+  core::IPosition::CPtr clone() const override { return std::make_unique<SalesmanPosition>(cities); }
 
   std::vector<std::pair<double, double>> cities;
 };

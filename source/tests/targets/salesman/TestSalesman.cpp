@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <core/IPosition.h>
+#include <core/Memory.h>
 #include <core/Random.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -59,8 +60,7 @@ void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int 
 {
   SalesmanPosition p(cities);
   IMove::Ptr m = std::make_shared<SalesmanMove>(m1, m2);
-  auto n_ = p.createNeighbour(m);
-  auto n = std::dynamic_pointer_cast<SalesmanPosition>(n_);
+  auto n = Memory::cast<SalesmanPosition>(p.createNeighbour(m));
   if (m2 < m1) {
     std::swap(m1, m2);
   }
@@ -114,14 +114,14 @@ TEST(Salesman, MoveRand)
   int n = 20;
   int m = 100;
   auto cities = getRandomCities(n);
-  IPosition::Ptr curr = std::make_shared<SalesmanPosition>(cities);
+  IPosition::CPtr curr = std::make_unique<SalesmanPosition>(cities);
   std::vector<IMove::Ptr> moves;
   for (int i = 0; i < m; ++i) {
     auto move = curr->generateMove();
     moves.push_back(move);
     curr = curr->createNeighbour(move);
   }
-  auto endPosition = std::dynamic_pointer_cast<SalesmanPosition>(curr);
+  auto endPosition = Memory::cast<SalesmanPosition>(std::move(curr));
   auto cities2 = endPosition->cities;
   for (const auto& city : cities2) {
     int count = 0;
@@ -146,8 +146,8 @@ TEST(Salesman, Fast)
   int n = 14;
   int m = 1000;
   auto cities = getRandomCities(n);
-  IPosition::Ptr currSlow = std::make_shared<SalesmanPosition>(cities);
-  IPosition::Ptr currFast = std::make_shared<SalesmanPosition>(cities);
+  IPosition::CPtr currSlow = std::make_unique<SalesmanPosition>(cities);
+  IPosition::CPtr currFast = std::make_unique<SalesmanPosition>(cities);
   double fastEnergy = currFast->getEnergy();
   std::vector<IMove::Ptr> moves;
   for (int i = 0; i < m; ++i) {
@@ -165,7 +165,7 @@ TEST(Salesman, Annealing)
   int n = 20;
   auto cities = getRandomCities(n);
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
-  IPosition::Ptr position = std::make_shared<SalesmanPosition>(cities);
+  IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);
   ASSERT_LE(sa.bestEnergy, startEnergy);

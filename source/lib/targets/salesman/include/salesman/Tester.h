@@ -7,11 +7,11 @@
 
 namespace sa::targets::salesman
 {
-std::vector<core::IPosition::Ptr> getStartPositions(std::size_t numPositions, std::size_t numCities, double length)
+std::vector<core::IPosition::CPtr> getStartPositions(std::size_t numPositions, std::size_t numCities, double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
-  std::vector<core::IPosition::Ptr> ret;
+  std::vector<core::IPosition::CPtr> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -21,13 +21,13 @@ std::vector<core::IPosition::Ptr> getStartPositions(std::size_t numPositions, st
       double randomResult2 = dist(mt);
       cities.push_back({length * randomResult1, length * randomResult2});
     }
-    auto startPosition = std::make_shared<SalesmanPosition>(cities);
-    ret.push_back(startPosition);
+    auto startPosition = std::make_unique<SalesmanPosition>(cities);
+    ret.push_back(std::move(startPosition));
   }
   return ret;
 }
 
-std::vector<core::IPosition::Ptr> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities, double length)
+std::vector<core::IPosition::CPtr> getStartPositions_5x5(std::size_t numPositions, std::size_t numCities, double length)
 {
   std::mt19937 mt = std::mt19937(0);
   auto dist = std::uniform_real_distribution<>(0.0, 1.0);
@@ -50,7 +50,7 @@ std::vector<core::IPosition::Ptr> getStartPositions_5x5(std::size_t numPositions
     }
   }
   auto dist3 = std::uniform_int_distribution<>(0, chosenSubsquaresDensity.size() - 1);
-  std::vector<core::IPosition::Ptr> ret;
+  std::vector<core::IPosition::CPtr> ret;
   ret.reserve(numPositions);
   for (std::size_t idx = 0; idx < numPositions; ++idx) {
     std::vector<std::pair<double, double>> cities;
@@ -64,22 +64,22 @@ std::vector<core::IPosition::Ptr> getStartPositions_5x5(std::size_t numPositions
       double randomResult2 = dist(mt);
       cities.push_back({(x + randomResult1) * length, (y + randomResult2) * length});
     }
-    auto startPosition = std::make_shared<SalesmanPosition>(cities);
-    ret.push_back(startPosition);
+    auto startPosition = std::make_unique<SalesmanPosition>(cities);
+    ret.push_back(std::move(startPosition));
   }
   return ret;
 }
 
-std::vector<core::IPosition::Ptr> generateTestCases()
+std::vector<core::IPosition::CPtr> generateTestCases()
 {
-  std::vector<core::IPosition::Ptr> r;
+  std::vector<core::IPosition::CPtr> r;
   std::vector<int> nc{5, 10, 20, 50, 100, 200, 500, 1000};
   std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
   for (int i = 0; i < 8; ++i) {
-    auto x = getStartPositions(1, nc[i], l[i])[0];
-    auto y = getStartPositions_5x5(1, nc[i], l[i])[0];
-    r.push_back(x);
-    r.push_back(y);
+    auto x = getStartPositions(1, nc[i], l[i]);
+    auto y = getStartPositions_5x5(1, nc[i], l[i]);
+    r.push_back(std::move(x[0]));
+    r.push_back(std::move(y[0]));
   }
   return r;
 }

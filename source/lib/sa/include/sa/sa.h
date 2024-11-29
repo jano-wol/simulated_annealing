@@ -23,12 +23,12 @@ public:
         coolingPolicy(std::move(coolingPolicy_))
   {}
 
-  void anneal(core::IPosition::Ptr startPosition)
+  void anneal(const core::IPosition::CPtr& startPosition)
   {
     {
       currEnergy = startPosition->getEnergy();
       bestEnergy = currEnergy;
-      currPosition = startPosition;
+      currPosition = startPosition->clone();
       bestIdx = 0;
       energies.push_back(bestEnergy);
       downEnergyChanges = 0;
@@ -38,7 +38,7 @@ public:
         double delta;
         double energyCandidate;
         auto m = currPosition->generateMove();
-        core::IPosition::Ptr neighbour;
+        core::IPosition::CPtr neighbour;
 
         auto deltaOpt = currPosition->getDelta(m);
         if (!deltaOpt) {
@@ -60,7 +60,7 @@ public:
           if (neighbour == nullptr) {
             currPosition->makeMove(m);
           } else {
-            currPosition = neighbour;
+            currPosition = std::move(neighbour);
           }
           moves.push_back(m);
           currEnergy = energyCandidate;
@@ -85,7 +85,7 @@ public:
   }
 
   // Relevant for current annealing process
-  core::IPosition::Ptr currPosition;
+  core::IPosition::CPtr currPosition;
   std::vector<core::IMove::Ptr> moves;
   double currEnergy;
   double bestEnergy;
@@ -93,7 +93,7 @@ public:
   std::vector<double> energies;
 
   // Only relevant if restarts happen
-  core::IPosition::Ptr bestInit;
+  core::IPosition::CPtr bestInit;
   std::vector<core::IMove::Ptr> bestMoves;
 
   // Diagnostics fir current annealing process
