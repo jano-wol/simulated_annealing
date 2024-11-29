@@ -5,7 +5,7 @@ source "$(dirname "${0}")/../build/init.sh" ${BUILD_TYPE}
 timestamp() {
     date +"%Y%m%d%H%M%S"
 }
-if [[ ! " ${TARGETS} " =~ " $1 " ]]; then
+if [[ -z "$1" || ! " ${TARGETS} " =~ " $1 " ]]; then
     echo "'$1' is not a correct target. Targets=${TARGETS}."
     exit 1
 fi
