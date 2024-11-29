@@ -23,12 +23,18 @@ int main(int argc, char** argv)
   std::string mode = 1 < argc ? argv[1] : "";
   auto positions = generateTestCases();
 
-  if (mode == "bench") {
+  if (mode == "profile") {
     auto pos = positions.back();
     SA sa(std::make_shared<Iteration>(100000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
     sa.anneal(pos);
     print(sa, 1);
-  } else {
+  } else if (mode == "mem_check") {
+    auto pos = positions.back();
+    SA sa(std::make_shared<Iteration>(100000), std::make_shared<Metropolis>(), std::make_shared<Linear>());
+    sa.anneal(pos);
+    print(sa, 1);
+  }
+  else {
     std::size_t idx = 0;
     for (const auto& position : positions) {
       SA sa1(std::make_shared<Iteration>(5000), std::make_shared<Metropolis>(), std::make_shared<Linear>());

@@ -1,13 +1,21 @@
 #!/bin/bash
 set -ex
-source "$(dirname "${0}")/../build/init.sh" relwithdebinfo
+BUILD_TYPE="relwithdebinfo"
+source "$(dirname "${0}")/../build/init.sh" ${BUILD_TYPE}
 timestamp() {
     date +"%Y%m%d%H%M%S"
 }
+if [[ ! " ${TARGETS} " =~ " $1 " ]]; then
+    echo "'$1' is not a correct target. Targets=${TARGETS}."
+    exit 1
+fi
 TS=$(timestamp)
-TARGET="${2}-bin"
+TARGET="${1}-bin"
 OUT_FOLDER="${BUILD_FOLDER}/bin/${TARGET}"
 BINARY="${OUT_FOLDER}/${TARGET}"
 OUT_NAME="${OUT_FOLDER}/profile_${TS}.out"
-valgrind --tool=callgrind --callgrind-out-file="${OUT_NAME}" "${BINARY}" bench
+
+${SCRIPT_FOLDER}/configure.sh ${BUILD_TYPE}
+${SCRIPT_FOLDER}/build.sh ${BUILD_TYPE}
+valgrind --tool=callgrind --callgrind-out-file="${OUT_NAME}" "${BINARY}" profile
 kcachegrind "${OUT_NAME}" >/dev/null 2>&1 &
