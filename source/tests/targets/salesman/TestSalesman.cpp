@@ -4,7 +4,6 @@
 #include <memory>
 
 #include <core/IPosition.h>
-#include <core/Memory.h>
 #include <core/Random.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -60,7 +59,8 @@ void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int 
 {
   SalesmanPosition p(cities);
   IMove::CPtr m = std::make_unique<SalesmanMove>(m1, m2);
-  auto n = Memory::cast<SalesmanPosition>(p.createNeighbour(m));
+  auto n_ = p.createNeighbour(m);
+  auto* n = dynamic_cast<SalesmanPosition*>(n_.get());
   if (m2 < m1) {
     std::swap(m1, m2);
   }
@@ -121,7 +121,7 @@ TEST(Salesman, MoveRand)
     curr = curr->createNeighbour(move);
     moves.push_back(std::move(move));
   }
-  auto endPosition = Memory::cast<SalesmanPosition>(std::move(curr));
+  auto* endPosition = dynamic_cast<SalesmanPosition*>(curr.get());
   auto cities2 = endPosition->cities;
   for (const auto& city : cities2) {
     int count = 0;
