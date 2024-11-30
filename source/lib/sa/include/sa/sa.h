@@ -25,54 +25,52 @@ public:
 
   void anneal(const core::IPosition::CPtr& startPosition)
   {
-    {
-      currEnergy = startPosition->getEnergy();
-      bestEnergy = currEnergy;
-      currPosition = startPosition->clone();
-      bestIdx = 0;
-      energies.push_back(bestEnergy);
-      downEnergyChanges = 0;
-      upEnergyChanges = 0;
-      size_t idx = 0;
-      while (resourcePolicy->getLeft() > 0) {
-        double delta;
-        double energyCandidate;
-        auto m = currPosition->generateMove();
-        core::IPosition::CPtr neighbour;
+    currEnergy = startPosition->getEnergy();
+    bestEnergy = currEnergy;
+    currPosition = startPosition->clone();
+    bestIdx = 0;
+    energies.push_back(bestEnergy);
+    downEnergyChanges = 0;
+    upEnergyChanges = 0;
+    size_t idx = 0;
+    while (resourcePolicy->getLeft() > 0) {
+      double delta;
+      double energyCandidate;
+      auto m = currPosition->generateMove();
+      core::IPosition::CPtr neighbour;
 
-        auto deltaOpt = currPosition->getDelta(m);
-        if (!deltaOpt) {
-          neighbour = currPosition->createNeighbour(m);
-          energyCandidate = neighbour->getEnergy();
-          delta = energyCandidate - currEnergy;
-        } else {
-          delta = *deltaOpt;
-          energyCandidate = currEnergy + delta;
-        }
-        double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
-        double temperature = coolingPolicy->getTemperature(progress);
-        if (acceptancePolicy->accept(currEnergy, delta, temperature)) {
-          if (currEnergy < energyCandidate) {
-            ++upEnergyChanges;
-          } else {
-            ++downEnergyChanges;
-          }
-          if (neighbour == nullptr) {
-            currPosition->makeMove(m);
-          } else {
-            currPosition = std::move(neighbour);
-          }
-          moves.push_back(std::move(m));
-          currEnergy = energyCandidate;
-          energies.push_back(currEnergy);
-          if (currEnergy <= bestEnergy) {
-            bestEnergy = currEnergy;
-            bestIdx = idx;
-          }
-        }
-        resourcePolicy->updateLeft();
-        ++idx;
+      auto deltaOpt = currPosition->getDelta(m);
+      if (!deltaOpt) {
+        neighbour = currPosition->createNeighbour(m);
+        energyCandidate = neighbour->getEnergy();
+        delta = energyCandidate - currEnergy;
+      } else {
+        delta = *deltaOpt;
+        energyCandidate = currEnergy + delta;
       }
+      double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
+      double temperature = coolingPolicy->getTemperature(progress);
+      if (acceptancePolicy->accept(currEnergy, delta, temperature)) {
+        if (currEnergy < energyCandidate) {
+          ++upEnergyChanges;
+        } else {
+          ++downEnergyChanges;
+        }
+        if (neighbour == nullptr) {
+          currPosition->makeMove(m);
+        } else {
+          currPosition = std::move(neighbour);
+        }
+        moves.push_back(std::move(m));
+        currEnergy = energyCandidate;
+        energies.push_back(currEnergy);
+        if (currEnergy <= bestEnergy) {
+          bestEnergy = currEnergy;
+          bestIdx = idx;
+        }
+      }
+      resourcePolicy->updateLeft();
+      ++idx;
     }
   }
 
