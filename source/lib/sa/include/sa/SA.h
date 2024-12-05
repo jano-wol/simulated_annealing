@@ -10,6 +10,7 @@
 #include <core/MoveCandidate.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
+#include <policies/MoveSelector.h>
 #include <policies/Resource.h>
 
 namespace sa::sa
@@ -18,31 +19,12 @@ class SA
 {
 public:
   SA(policies::IResource::CPtr resourcePolicy_, policies::IAcceptance::CPtr acceptancePolicy_,
-     policies::ICooling::CPtr coolingPolicy_)
+     policies::ICooling::CPtr coolingPolicy_, policies::IMoveSelector::CPtr moveSelectorPolicy_)
       : resourcePolicy(std::move(resourcePolicy_)),
         acceptancePolicy(std::move(acceptancePolicy_)),
-        coolingPolicy(std::move(coolingPolicy_))
+        coolingPolicy(std::move(coolingPolicy_)),
+        moveSelectorPolicy(std::move(moveSelectorPolicy_))
   {}
-
-  core::MoveCandidate getMoveCandidate()
-  {
-    double delta;
-    double energyCandidate;
-    auto m = currPosition->generateMove();
-    core::IPosition::CPtr neighbour;
-
-    auto deltaOpt = currPosition->getDelta(m);
-    if (!deltaOpt) {
-      neighbour = currPosition->createNeighbour(m);
-      energyCandidate = neighbour->getEnergy();
-      delta = energyCandidate - currEnergy;
-    } else {
-      delta = *deltaOpt;
-      energyCandidate = currEnergy + delta;
-    }
-
-    return {delta, energyCandidate, std::move(m), std::move(neighbour)};
-  }
 
   void anneal(const core::IPosition::CPtr& startPosition)
   {
@@ -55,7 +37,7 @@ public:
     upEnergyChanges = 0;
     size_t idx = 0;
     while (resourcePolicy->getLeft() > 0) {
-      auto moveCandidate = getMoveCandidate();
+      auto moveCandidate = moveSelectorPolicy->selectMove(currPosition, currEnergy);
       double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
       double temperature = coolingPolicy->getTemperature(progress);
       if (acceptancePolicy->accept(currEnergy, moveCandidate.delta, temperature)) {
@@ -110,6 +92,7 @@ private:
   policies::IResource::CPtr resourcePolicy;
   policies::IAcceptance::CPtr acceptancePolicy;
   policies::ICooling::CPtr coolingPolicy;
+  policies::IMoveSelector::CPtr moveSelectorPolicy;
 };
 
 }  // namespace sa::sa

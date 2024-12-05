@@ -163,7 +163,8 @@ TEST(Salesman, Annealing)
 {
   int n = 20;
   auto cities = getRandomCities(n);
-  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1));
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);

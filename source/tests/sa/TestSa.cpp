@@ -134,7 +134,7 @@ std::size_t DummyFastPosition::cloneCounter = 0;
 
 TEST(Sa, SlowAnnealing)
 {
-  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(), std::make_unique<KBest>(1));
   IPosition::CPtr position = std::make_unique<DummySlowPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummySlowPosition::created, 1002);
@@ -149,7 +149,7 @@ TEST(Sa, SlowAnnealing)
 
 TEST(Sa, FastAnnealing)
 {
-  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>());
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(), std::make_unique<KBest>(1));
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummyFastPosition::created, 2);
