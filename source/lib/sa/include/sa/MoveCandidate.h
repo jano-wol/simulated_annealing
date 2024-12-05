@@ -24,4 +24,4 @@ public:
 };
 }  // namespace sa::sa
 
-#endif  // SIMULATED_ANNEALING_SA_SA_H_
+#endif  // SIMULATED_ANNEALING_SA_MOVE_CANDIDATE_H_
