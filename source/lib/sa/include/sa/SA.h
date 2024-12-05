@@ -68,7 +68,7 @@ public:
   {
     std::stringstream ss;
     ss << "<" << resourcePolicy->toString() << ";" << acceptancePolicy->toString() << ";" << coolingPolicy->toString()
-       << ">";
+       << ";" << moveSelectorPolicy->toString() << ">";
     return ss.str();
   }
 
