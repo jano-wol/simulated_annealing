@@ -7,7 +7,7 @@
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
-#include <sa/sa.h>
+#include <sa/SA.h>
 
 using namespace sa::core;
 using namespace sa::policies;

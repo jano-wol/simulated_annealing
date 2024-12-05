@@ -3,7 +3,7 @@
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
-#include <sa/sa.h>
+#include <sa/SA.h>
 #include <salesman/Position.h>
 #include <salesman/Tester.h>
 

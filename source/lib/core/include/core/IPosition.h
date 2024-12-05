@@ -12,8 +12,8 @@ class IPosition
 {
 public:
   using CPtr = std::unique_ptr<IPosition>;
-  virtual IMove::CPtr generateMove() const = 0;
   virtual double getEnergy() const = 0;
+  virtual IMove::CPtr generateMove() const = 0;
   virtual std::optional<double> getDelta(const IMove::CPtr& imove) const = 0;
   virtual void makeMove(const IMove::CPtr& imove) = 0;
   virtual CPtr createNeighbour(const IMove::CPtr& imove) const = 0;

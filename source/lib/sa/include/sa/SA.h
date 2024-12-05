@@ -10,6 +10,7 @@
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
+#include <sa/MoveCandidate.h>
 
 namespace sa::sa
 {
@@ -23,6 +24,26 @@ public:
         coolingPolicy(std::move(coolingPolicy_))
   {}
 
+  MoveCandidate getMoveCandidate()
+  {
+    double delta;
+    double energyCandidate;
+    auto m = currPosition->generateMove();
+    core::IPosition::CPtr neighbour;
+
+    auto deltaOpt = currPosition->getDelta(m);
+    if (!deltaOpt) {
+      neighbour = currPosition->createNeighbour(m);
+      energyCandidate = neighbour->getEnergy();
+      delta = energyCandidate - currEnergy;
+    } else {
+      delta = *deltaOpt;
+      energyCandidate = currEnergy + delta;
+    }
+
+    return {delta, energyCandidate, std::move(m), std::move(neighbour)};
+  }
+
   void anneal(const core::IPosition::CPtr& startPosition)
   {
     currEnergy = startPosition->getEnergy();
@@ -34,35 +55,22 @@ public:
     upEnergyChanges = 0;
     size_t idx = 0;
     while (resourcePolicy->getLeft() > 0) {
-      double delta;
-      double energyCandidate;
-      auto m = currPosition->generateMove();
-      core::IPosition::CPtr neighbour;
-
-      auto deltaOpt = currPosition->getDelta(m);
-      if (!deltaOpt) {
-        neighbour = currPosition->createNeighbour(m);
-        energyCandidate = neighbour->getEnergy();
-        delta = energyCandidate - currEnergy;
-      } else {
-        delta = *deltaOpt;
-        energyCandidate = currEnergy + delta;
-      }
+      auto moveCandidate = getMoveCandidate();
       double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
       double temperature = coolingPolicy->getTemperature(progress);
-      if (acceptancePolicy->accept(currEnergy, delta, temperature)) {
-        if (currEnergy < energyCandidate) {
+      if (acceptancePolicy->accept(currEnergy, moveCandidate.delta, temperature)) {
+        if (currEnergy < moveCandidate.energyCandidate) {
           ++upEnergyChanges;
         } else {
           ++downEnergyChanges;
         }
-        if (neighbour == nullptr) {
-          currPosition->makeMove(m);
+        if (moveCandidate.neighbour == nullptr) {
+          currPosition->makeMove(moveCandidate.move);
         } else {
-          currPosition = std::move(neighbour);
+          currPosition = std::move(moveCandidate.neighbour);
         }
-        moves.push_back(std::move(m));
-        currEnergy = energyCandidate;
+        moves.push_back(std::move(moveCandidate.move));
+        currEnergy = moveCandidate.energyCandidate;
         energies.push_back(currEnergy);
         if (currEnergy <= bestEnergy) {
           bestEnergy = currEnergy;
