@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_SA_MOVE_CANDIDATE_H_
-#define SIMULATED_ANNEALING_SA_MOVE_CANDIDATE_H_
+#ifndef SIMULATED_ANNEALING_CORE_MOVE_CANDIDATE_H_
+#define SIMULATED_ANNEALING_CORE_MOVE_CANDIDATE_H_
 
 #include <sstream>
 #include <string>
@@ -8,7 +8,7 @@
 #include <core/IMove.h>
 #include <core/IPosition.h>
 
-namespace sa::sa
+namespace sa::core
 {
 class MoveCandidate
 {
@@ -22,6 +22,6 @@ public:
   core::IMove::CPtr move;
   core::IPosition::CPtr neighbour;
 };
-}  // namespace sa::sa
+}  // namespace sa::core
 
-#endif  // SIMULATED_ANNEALING_SA_MOVE_CANDIDATE_H_
+#endif  // SIMULATED_ANNEALING_CORE_MOVE_CANDIDATE_H_

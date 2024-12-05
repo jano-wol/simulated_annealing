@@ -7,10 +7,10 @@
 
 #include <core/IMove.h>
 #include <core/IPosition.h>
+#include <core/MoveCandidate.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
-#include <sa/MoveCandidate.h>
 
 namespace sa::sa
 {
@@ -24,7 +24,7 @@ public:
         coolingPolicy(std::move(coolingPolicy_))
   {}
 
-  MoveCandidate getMoveCandidate()
+  core::MoveCandidate getMoveCandidate()
   {
     double delta;
     double energyCandidate;
