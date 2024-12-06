@@ -18,6 +18,7 @@ public:
   virtual void makeMove(const IMove::CPtr& imove) = 0;
   virtual CPtr createNeighbour(const IMove::CPtr& imove) const = 0;
   virtual CPtr clone() const = 0;
+  virtual int size() const = 0;
   virtual ~IPosition() = default;
 };
 }  // namespace sa::core

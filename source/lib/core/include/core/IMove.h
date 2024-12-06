@@ -9,6 +9,7 @@ class IMove
 {
 public:
   using CPtr = std::unique_ptr<IMove>;
+  virtual int size() const = 0;
   virtual ~IMove() = default;
 };
 }  // namespace sa::core

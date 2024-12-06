@@ -99,6 +99,11 @@ public:
 
   core::IPosition::CPtr clone() const override { return std::make_unique<SalesmanPosition>(cities); }
 
+  int size() const override
+  {
+    return sizeof(std::vector<std::pair<double, double>>) + sizeof(std::pair<double, double>) * cities.capacity();
+  }
+
   std::vector<std::pair<double, double>> cities;
 };
 }  // namespace sa::targets::salesman
