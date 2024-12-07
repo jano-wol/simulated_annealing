@@ -44,12 +44,20 @@ class DummyFastMove : public IMove
 class DummySlowPosition : public IPosition
 {
 public:
-  DummySlowPosition(double energy_) : energy(energy_) { ++created; }
-  DummySlowPosition(const DummySlowPosition& other) : energy(other.energy) { ++created; }
-  DummySlowPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++created; }
-
+  DummySlowPosition(double energy_) : energy(energy_) { ++energyConstructorCounter; }
+  DummySlowPosition(const DummySlowPosition& other) : energy(other.energy) { ++copyConstructorCounter; }
+  DummySlowPosition(DummySlowPosition&& other) noexcept : energy(other.energy) { ++moveConstructorCounter; }
+  DummySlowPosition& operator=(const DummySlowPosition& other)
+  {
+    ++copyAssignmentCounter;
+    if (this != &other) {
+      energy = other.energy;
+    }
+    return *this;
+  }
   DummySlowPosition& operator=(DummySlowPosition&& other) noexcept
   {
+    ++moveAssignmentCounter;
     if (this != &other) {
       energy = std::move(other.energy);
     }
@@ -86,8 +94,13 @@ public:
   }
 
   double energy;
-  static std::size_t created;
+  static std::size_t energyConstructorCounter;
+  static std::size_t copyConstructorCounter;
+  static std::size_t moveConstructorCounter;
+  static std::size_t copyAssignmentCounter;
+  static std::size_t moveAssignmentCounter;
   static std::size_t getEnergyCounter;
+  static std::size_t generateMoveCounter;
   static std::size_t makeMoveCounter;
   static std::size_t cloneCounter;
 };
@@ -95,9 +108,25 @@ public:
 class DummyFastPosition : public IPosition
 {
 public:
-  DummyFastPosition(double energy_) : energy(energy_) { ++created; }
-  DummyFastPosition(const DummyFastPosition& other) : energy(other.energy) { ++created; }
-  DummyFastPosition(DummyFastPosition&& other) noexcept : energy(other.energy) { ++created; }
+  DummyFastPosition(double energy_) : energy(energy_) { ++energyConstructorCounter; }
+  DummyFastPosition(const DummyFastPosition& other) : energy(other.energy) { ++copyConstructorCounter; }
+  DummyFastPosition(DummyFastPosition&& other) noexcept : energy(other.energy) { ++moveConstructorCounter; }
+  DummyFastPosition& operator=(const DummyFastPosition& other)
+  {
+    ++copyAssignmentCounter;
+    if (this != &other) {
+      energy = other.energy;
+    }
+    return *this;
+  }
+  DummyFastPosition& operator=(DummyFastPosition&& other) noexcept
+  {
+    ++moveAssignmentCounter;
+    if (this != &other) {
+      energy = std::move(other.energy);
+    }
+    return *this;
+  }
 
   double getEnergy() const override
   {
@@ -119,37 +148,56 @@ public:
   }
 
   double energy;
-  static std::size_t created;
+  static std::size_t energyConstructorCounter;
+  static std::size_t copyConstructorCounter;
+  static std::size_t moveConstructorCounter;
+  static std::size_t copyAssignmentCounter;
+  static std::size_t moveAssignmentCounter;
   static std::size_t getEnergyCounter;
-  static std::size_t getDeltaCounter;
+  static std::size_t generateMoveCounter;
   static std::size_t makeMoveCounter;
-  static std::size_t createNeighbourCounter;
   static std::size_t cloneCounter;
 };
 
 void nullStatics()
 {
-  DummySlowPosition::created = 0;
+  DummySlowPosition::energyConstructorCounter = 0;
+  DummySlowPosition::copyConstructorCounter = 0;
+  DummySlowPosition::moveConstructorCounter = 0;
+  DummySlowPosition::copyAssignmentCounter = 0;
+  DummySlowPosition::moveAssignmentCounter = 0;
   DummySlowPosition::getEnergyCounter = 0;
+  DummySlowPosition::generateMoveCounter = 0;
   DummySlowPosition::makeMoveCounter = 0;
   DummySlowPosition::cloneCounter = 0;
-  DummyFastPosition::created = 0;
+  DummyFastPosition::energyConstructorCounter = 0;
+  DummyFastPosition::copyConstructorCounter = 0;
+  DummyFastPosition::moveConstructorCounter = 0;
+  DummyFastPosition::copyAssignmentCounter = 0;
+  DummyFastPosition::moveAssignmentCounter = 0;
   DummyFastPosition::getEnergyCounter = 0;
-  DummyFastPosition::getDeltaCounter = 0;
+  DummyFastPosition::generateMoveCounter = 0;
   DummyFastPosition::makeMoveCounter = 0;
-  DummyFastPosition::createNeighbourCounter = 0;
   DummyFastPosition::cloneCounter = 0;
 }
 
-std::size_t DummySlowPosition::created = 0;
+std::size_t DummySlowPosition::energyConstructorCounter = 0;
+std::size_t DummySlowPosition::copyConstructorCounter = 0;
+std::size_t DummySlowPosition::moveConstructorCounter = 0;
+std::size_t DummySlowPosition::copyAssignmentCounter = 0;
+std::size_t DummySlowPosition::moveAssignmentCounter = 0;
 std::size_t DummySlowPosition::getEnergyCounter = 0;
+std::size_t DummySlowPosition::generateMoveCounter = 0;
 std::size_t DummySlowPosition::makeMoveCounter = 0;
 std::size_t DummySlowPosition::cloneCounter = 0;
-std::size_t DummyFastPosition::created = 0;
+std::size_t DummyFastPosition::energyConstructorCounter = 0;
+std::size_t DummyFastPosition::copyConstructorCounter = 0;
+std::size_t DummyFastPosition::moveConstructorCounter = 0;
+std::size_t DummyFastPosition::copyAssignmentCounter = 0;
+std::size_t DummyFastPosition::moveAssignmentCounter = 0;
 std::size_t DummyFastPosition::getEnergyCounter = 0;
-std::size_t DummyFastPosition::getDeltaCounter = 0;
+std::size_t DummyFastPosition::generateMoveCounter = 0;
 std::size_t DummyFastPosition::makeMoveCounter = 0;
-std::size_t DummyFastPosition::createNeighbourCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
 }  // namespace
 
@@ -159,7 +207,11 @@ TEST(Sa, SlowAnnealing)
         std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<DummySlowPosition>(0);
   sa.anneal(position);
-  EXPECT_EQ(DummySlowPosition::created, 1002);
+  EXPECT_EQ(DummySlowPosition::energyConstructorCounter, 2);
+  EXPECT_EQ(DummySlowPosition::copyConstructorCounter, 1000);
+  EXPECT_EQ(DummySlowPosition::copyAssignmentCounter, 0);
+  EXPECT_EQ(DummySlowPosition::moveConstructorCounter, 0);
+  EXPECT_EQ(DummySlowPosition::moveAssignmentCounter, 1000);
   EXPECT_EQ(DummySlowPosition::getEnergyCounter, 1000);
   EXPECT_EQ(DummySlowPosition::makeMoveCounter, 1000);
   EXPECT_EQ(DummySlowPosition::cloneCounter, 1);
@@ -173,7 +225,11 @@ TEST(Sa, FastAnnealing)
         std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
-  EXPECT_EQ(DummyFastPosition::created, 2);
+  EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 2);
+  EXPECT_EQ(DummyFastPosition::copyConstructorCounter, 0);
+  EXPECT_EQ(DummyFastPosition::copyAssignmentCounter, 0);
+  EXPECT_EQ(DummyFastPosition::moveConstructorCounter, 0);
+  EXPECT_EQ(DummyFastPosition::moveAssignmentCounter, 0);
   EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1000);
   EXPECT_EQ(DummyFastPosition::makeMoveCounter, 1000);
   EXPECT_EQ(DummyFastPosition::cloneCounter, 1);
