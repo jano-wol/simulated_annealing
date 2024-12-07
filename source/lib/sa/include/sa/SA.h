@@ -1,14 +1,12 @@
 #ifndef SIMULATED_ANNEALING_SA_SA_H_
 #define SIMULATED_ANNEALING_SA_SA_H_
 
-#include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <core/IMove.h>
 #include <core/IPosition.h>
-#include <core/MoveCandidate.h>
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -23,8 +21,7 @@ public:
   SA(policies::IResource::CPtr resourcePolicy_, policies::IAcceptance::CPtr acceptancePolicy_,
      policies::ICooling::CPtr coolingPolicy_, policies::IMoveSelector::CPtr moveSelectorPolicy_,
      monitor::Monitor monitor_)
-      : currEnergy(std::numeric_limits<double>::max()),
-        currPosition(nullptr),
+      : currPosition(nullptr),
         resourcePolicy(std::move(resourcePolicy_)),
         acceptancePolicy(std::move(acceptancePolicy_)),
         coolingPolicy(std::move(coolingPolicy_)),
@@ -34,21 +31,15 @@ public:
 
   void anneal(const core::IPosition::CPtr& startPosition)
   {
-    currEnergy = startPosition->getEnergy();
     currPosition = startPosition->clone();
     while (resourcePolicy->getLeft() > 0) {
-      auto moveCandidate = moveSelectorPolicy->selectMove(currPosition, currEnergy);
+      auto move = moveSelectorPolicy->selectMove(currPosition);
       double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
       double temperature = coolingPolicy->getTemperature(progress);
       monitor.candidatePhase();
-      if (acceptancePolicy->accept(currEnergy, moveCandidate.delta, temperature)) {
+      if (acceptancePolicy->accept(currPosition->getEnergy(), move->getDelta(), temperature)) {
         monitor.acceptancePhase();
-        if (moveCandidate.neighbour == nullptr) {
-          currPosition->makeMove(moveCandidate.move);
-        } else {
-          currPosition = std::move(moveCandidate.neighbour);
-        }
-        currEnergy = moveCandidate.energyCandidate;
+        currPosition->makeMove(std::move(move));
       }
       resourcePolicy->updateLeft();
     }
@@ -62,8 +53,6 @@ public:
     return ss.str();
   }
 
-private:
-  double currEnergy;
   core::IPosition::CPtr currPosition;
   policies::IResource::CPtr resourcePolicy;
   policies::IAcceptance::CPtr acceptancePolicy;

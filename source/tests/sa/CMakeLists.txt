@@ -8,7 +8,8 @@ add_executable(${target} ${sources})
 
 target_link_libraries(${target}
 	PUBLIC
-	sa	
+	monitor
+	sa
 	PRIVATE
 	gmock-dev
 	GTest::gtest_main

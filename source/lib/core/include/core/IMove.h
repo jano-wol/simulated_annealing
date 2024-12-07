@@ -9,6 +9,7 @@ class IMove
 {
 public:
   using CPtr = std::unique_ptr<IMove>;
+  virtual double getDelta() const = 0;
   virtual int size() const = 0;
   virtual ~IMove() = default;
 };

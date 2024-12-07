@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/MoveSelector.h>
@@ -9,14 +10,15 @@
 #include <salesman/Tester.h>
 
 using namespace sa::core;
+using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
 void print(const SA& sa, size_t idx)
 {
-  std::cout << "idx=" << idx << " currEnergy=" << sa.currEnergy << " upEnergyChanges=" << sa.upEnergyChanges << " "
-            << sa.toString() << "\n";
+  std::cout << "idx=" << idx << " currEnergy=" << sa.currPosition->getEnergy()
+            << " upEnergyChanges=" << sa.monitor.upEnergyChanges << " " << sa.toString() << "\n";
 }
 
 int main(int argc, char** argv)
@@ -27,24 +29,24 @@ int main(int argc, char** argv)
   if (mode == "profile") {
     auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-          std::make_unique<KBest>(1));
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
     print(sa, 1);
   } else if (mode == "mem_check") {
     auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-          std::make_unique<KBest>(1));
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
     print(sa, 1);
   } else {
     std::size_t idx = 0;
     for (const auto& position : positions) {
       SA sa1(std::make_unique<Iteration>(5000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-             std::make_unique<KBest>(1));
+             std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       SA sa2(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-             std::make_unique<KBest>(1));
+             std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       SA sa3(std::make_unique<Iteration>(10000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-             std::make_unique<KBest>(1));
+             std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa1.anneal(position);
       print(sa1, idx);
       sa2.anneal(position);
@@ -52,11 +54,11 @@ int main(int argc, char** argv)
       sa3.anneal(position);
       print(sa3, idx);
       SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-             std::make_unique<KBest>(1));
+             std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa4.anneal(position);
       print(sa4, idx);
       SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
-             std::make_unique<KBest>(1));
+             std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa5.anneal(position);
       print(sa5, idx);
       ++idx;

@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
-#define SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#define SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_
 
 #include <cmath>
 #include <vector>
@@ -14,7 +14,63 @@ namespace sa::targets::salesman
 class SalesmanPosition : public core::IPosition
 {
 public:
-  SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_)) {}
+  SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_))
+  {
+    energy = calcEnergy();
+  }
+
+  SalesmanPosition(double energy_, std::vector<std::pair<double, double>> cities_)
+      : energy(energy_), cities(std::move(cities_))
+  {}
+
+  double getEnergy() const override { return energy; }
+
+  core::IMove::CPtr generateMove() const override
+  {
+    std::size_t idx1 = core::Random::randomInt(0, cities.size() - 1);
+    std::size_t idx2 = core::Random::randomInt(0, cities.size() - 1);
+    if (idx1 == idx2) {
+      return std::make_unique<SalesmanMove>(idx1, idx2, 0);
+    }
+    if (idx2 < idx1) {
+      std::swap(idx1, idx2);
+    }
+    if (idx1 == 0 && idx2 == cities.size() - 1) {
+      return std::make_unique<SalesmanMove>(idx1, idx2, 0);
+    }
+    const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
+    const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
+    double delta = distance(cities[idx1], cities[nextIdx2]) + distance(cities[idx2], cities[prevIdx1]) -
+                   distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
+    return std::make_unique<SalesmanMove>(idx1, idx2, delta);
+  }
+
+  void makeMove(core::IMove::CPtr move) override
+  {
+    auto* m = dynamic_cast<SalesmanMove*>(move.get());
+    energy += m->getDelta();
+    std::size_t cityIdx1 = m->cityIdx1;
+    std::size_t cityIdx2 = m->cityIdx2;
+    if (cityIdx1 == cityIdx2) {
+      return;
+    }
+    if (cityIdx2 < cityIdx1) {
+      std::swap(cityIdx1, cityIdx2);
+    }
+    while (cityIdx1 < cityIdx2) {
+      std::swap(cities[cityIdx1], cities[cityIdx2]);
+      ++cityIdx1;
+      --cityIdx2;
+    }
+  }
+
+  int size() const override
+  {
+    return sizeof(double) + sizeof(std::vector<std::pair<double, double>>) +
+           sizeof(std::pair<double, double>) * cities.capacity();
+  }
+
+  core::IPosition::CPtr clone() const override { return std::make_unique<SalesmanPosition>(energy, cities); }
 
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const
   {
@@ -31,7 +87,7 @@ public:
     return std::sqrt(ret);
   }
 
-  double getEnergy() const override
+  double calcEnergy()
   {
     if (cities.empty() || cities.size() == 1) {
       return 0;
@@ -40,72 +96,13 @@ public:
     for (std::size_t idx = 0; idx < cities.size(); ++idx) {
       const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
       ret += distance(cities[idx], cities[nextIdx]);
-    }
+    };
     return ret;
   }
 
-  std::optional<double> getDelta(const core::IMove::CPtr& imove) const override
-  {
-    auto* move = dynamic_cast<SalesmanMove*>(imove.get());
-    std::size_t idx1 = move->cityIdx1;
-    std::size_t idx2 = move->cityIdx2;
-    if (idx1 == idx2) {
-      return 0;
-    }
-    if (idx2 < idx1) {
-      std::swap(idx1, idx2);
-    }
-    if (idx1 == 0 && idx2 == cities.size() - 1) {
-      return 0;
-    }
-    const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
-    const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-    return distance(cities[idx1], cities[nextIdx2]) + distance(cities[idx2], cities[prevIdx1]) -
-           distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
-  }
-
-  core::IMove::CPtr generateMove() const override
-  {
-    std::size_t cityIdx1 = core::Random::randomInt(0, cities.size() - 1);
-    std::size_t cityIdx2 = core::Random::randomInt(0, cities.size() - 1);
-    return std::make_unique<SalesmanMove>(cityIdx1, cityIdx2);
-  }
-
-  void makeMove(const core::IMove::CPtr& imove) override
-  {
-    auto* move = dynamic_cast<SalesmanMove*>(imove.get());
-    std::size_t cityIdx1 = move->cityIdx1;
-    std::size_t cityIdx2 = move->cityIdx2;
-    if (cityIdx1 == cityIdx2) {
-      return;
-    }
-    if (cityIdx2 < cityIdx1) {
-      std::swap(cityIdx1, cityIdx2);
-    }
-    while (cityIdx1 < cityIdx2) {
-      std::swap(cities[cityIdx1], cities[cityIdx2]);
-      ++cityIdx1;
-      --cityIdx2;
-    }
-  }
-
-  core::IPosition::CPtr createNeighbour(const core::IMove::CPtr& imove) const override
-  {
-    auto cities_ = cities;
-    auto ret = std::make_unique<SalesmanPosition>(std::move(cities_));
-    ret->makeMove(imove);
-    return ret;
-  }
-
-  core::IPosition::CPtr clone() const override { return std::make_unique<SalesmanPosition>(cities); }
-
-  int size() const override
-  {
-    return sizeof(std::vector<std::pair<double, double>>) + sizeof(std::pair<double, double>) * cities.capacity();
-  }
-
+  double energy;
   std::vector<std::pair<double, double>> cities;
 };
 }  // namespace sa::targets::salesman
 
-#endif  // SIMULATED_ANNEALING_LIB_TARGETS_SALESMAN_SALESMANPOSITION_H_
+#endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_SALESMANPOSITION_H_

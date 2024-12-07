@@ -6,5 +6,5 @@ set(headers ${include_path}/SA.h
 set(sources ${source_path}/SA.cpp
 			)
 add_library(${target} ${sources} ${headers})
-target_link_libraries(${target} PUBLIC core policies)
+target_link_libraries(${target} PUBLIC core monitor policies)
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")

@@ -8,20 +8,12 @@
 
 #include <core/IMove.h>
 #include <core/IPosition.h>
-#include <core/MoveCandidate.h>
+#include <core/Statistics.h>
 
 namespace sa::monitor
 {
 
 enum class MonitorLevel { Low, Medium, High };
-
-class MonitorConfig
-{
-public:
-  MonitorLevel level;
-  size_t checkpointFrequency = 10000;
-  size_t deltaHistorySize = 1000;
-};
 
 class SnapShot
 {
@@ -30,20 +22,21 @@ class SnapShot
   double localDerivative;
   std::pair<double, double> energyWindow;
   core::IPosition::CPtr position;
-  Statistics deltaStats;
+  core::Statistics deltaStats;
 };
 
 class Monitor
 {
 public:
-  Monitor(MonitorConfig config_) : config(std::move(config_)) {}
+  Monitor(MonitorLevel level_) : level(level_) {}
 
   void candidatePhase() {}
   void acceptancePhase() {}
-  std::string toString() const {}
+  std::string toString() const { return ""; }
 
-private:
-  MonitorConfig config;
+  MonitorLevel level;
+  size_t checkpointFrequency = 10000;
+  size_t deltaHistorySize = 1000;
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;

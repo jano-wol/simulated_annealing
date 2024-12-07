@@ -8,6 +8,7 @@ add_executable(${target} ${sources})
 
 target_link_libraries(${target}
 	PUBLIC
+	monitor
 	sa	
 	salesman	
 	PRIVATE

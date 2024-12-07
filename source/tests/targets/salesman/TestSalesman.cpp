@@ -5,6 +5,7 @@
 
 #include <core/IPosition.h>
 #include <core/Random.h>
+#include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
@@ -13,24 +14,25 @@
 #include <salesman/Tester.h>
 
 using namespace sa::core;
+using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
 namespace
 {
-double delta = 1e-9;
+double precision = 1e-9;
 
 void testEnergy(std::vector<std::pair<double, double>> cities, double expected)
 {
   SalesmanPosition p(cities);
   double energy = p.getEnergy();
-  EXPECT_NEAR(expected, energy, delta);
+  EXPECT_NEAR(expected, energy, precision);
 }
 
 bool isEqual(const std::pair<double, double>& p1, const std::pair<double, double>& p2)
 {
-  return std::abs(p1.first - p2.first) < delta && std::abs(p1.second - p2.second) < delta;
+  return std::abs(p1.first - p2.first) < precision && std::abs(p1.second - p2.second) < precision;
 }
 
 std::vector<std::pair<double, double>> getRandomCities(int n)
@@ -58,26 +60,25 @@ std::vector<std::pair<double, double>> getRandomCities(int n)
 void testMove(const std::vector<std::pair<double, double>>& cities, int m1, int m2)
 {
   SalesmanPosition p(cities);
-  IMove::CPtr m = std::make_unique<SalesmanMove>(m1, m2);
-  auto n_ = p.createNeighbour(m);
-  auto* n = dynamic_cast<SalesmanPosition*>(n_.get());
+  IMove::CPtr m = std::make_unique<SalesmanMove>(m1, m2, 0);
+  p.makeMove(std::move(m));
   if (m2 < m1) {
     std::swap(m1, m2);
   }
   std::size_t tested = 0;
   for (int i = 0; i < m1; ++i) {
-    EXPECT_TRUE(isEqual(cities[i], n->cities[i]));
+    EXPECT_TRUE(isEqual(cities[i], p.cities[i]));
     ++tested;
   }
   for (int i = 0; i < m2 - m1 + 1; ++i) {
-    EXPECT_TRUE(isEqual(cities[m1 + i], n->cities[m2 - i]));
+    EXPECT_TRUE(isEqual(cities[m1 + i], p.cities[m2 - i]));
     ++tested;
   }
   for (std::size_t i = m2 + 1; i < cities.size(); ++i) {
-    EXPECT_TRUE(isEqual(cities[i], n->cities[i]));
+    EXPECT_TRUE(isEqual(cities[i], p.cities[i]));
     ++tested;
   }
-  EXPECT_EQ(cities.size(), n->cities.size());
+  EXPECT_EQ(cities.size(), p.cities.size());
   EXPECT_EQ(cities.size(), tested);
 }
 
@@ -115,11 +116,9 @@ TEST(Salesman, MoveRand)
   int m = 100;
   auto cities = getRandomCities(n);
   IPosition::CPtr curr = std::make_unique<SalesmanPosition>(cities);
-  std::vector<IMove::CPtr> moves;
   for (int i = 0; i < m; ++i) {
     auto move = curr->generateMove();
-    curr = curr->createNeighbour(move);
-    moves.push_back(std::move(move));
+    curr->makeMove(std::move(move));
   }
   auto* endPosition = dynamic_cast<SalesmanPosition*>(curr.get());
   auto cities2 = endPosition->cities;
@@ -146,16 +145,12 @@ TEST(Salesman, Fast)
   int n = 14;
   int m = 1000;
   auto cities = getRandomCities(n);
-  IPosition::CPtr currSlow = std::make_unique<SalesmanPosition>(cities);
-  IPosition::CPtr currFast = std::make_unique<SalesmanPosition>(cities);
-  double fastEnergy = currFast->getEnergy();
+  IPosition::CPtr curr = std::make_unique<SalesmanPosition>(cities);
   for (int i = 0; i < m; ++i) {
-    EXPECT_NEAR(currSlow->getEnergy(), fastEnergy, delta);
-    auto move = currSlow->generateMove();
-    currSlow = currSlow->createNeighbour(move);
-    auto d = currFast->getDelta(move);
-    currFast->makeMove(move);
-    fastEnergy += *d;
+    auto* p = dynamic_cast<SalesmanPosition*>(curr.get());
+    EXPECT_NEAR(curr->getEnergy(), p->calcEnergy(), precision);
+    auto move = curr->generateMove();
+    curr->makeMove(std::move(move));
   }
 }
 
@@ -164,10 +159,10 @@ TEST(Salesman, Annealing)
   int n = 20;
   auto cities = getRandomCities(n);
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1));
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);
-  ASSERT_LE(sa.bestEnergy, startEnergy);
-  ASSERT_LE(0, sa.bestEnergy);
+  ASSERT_LE(sa.currPosition->getEnergy(), startEnergy);
+  ASSERT_LE(0, sa.currPosition->getEnergy());
 }
