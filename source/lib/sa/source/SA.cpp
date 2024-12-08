@@ -22,6 +22,7 @@ void SA::anneal(const IPosition::CPtr& startPosition)
     }
     resourcePolicy->updateLeft();
   }
+  monitor.onEnd();
 }
 
 std::string SA::toString() const

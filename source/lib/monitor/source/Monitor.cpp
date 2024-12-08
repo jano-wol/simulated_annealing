@@ -53,6 +53,6 @@ std::ostream& sa::monitor::operator<<(std::ostream& os, const GlobalMetrics& gm)
 {
   os << "GlobalMetrics[" << "bestEnergy=" << gm.bestEnergy << ",bestIdx=" << gm.bestIdx << ",allIt=" << gm.idx
      << ",acceptedIt=" << gm.acceptance << ",upEnergyChanges=" << gm.upEnergyChanges << ",bestClone=" << gm.bestCatch
-     << ",duration=" << gm.duration << "s,speed=" << gm.speed << "/s" << "]";
+     << ",duration=" << gm.duration << "s,speed=" << int(gm.speed) << "/s" << "]";
   return os;
 }
