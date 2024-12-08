@@ -1,9 +1,7 @@
 #ifndef SIMULATED_ANNEALING_SA_SA_H_
 #define SIMULATED_ANNEALING_SA_SA_H_
 
-#include <sstream>
 #include <string>
-#include <vector>
 
 #include <core/IMove.h>
 #include <core/IPosition.h>
@@ -29,29 +27,8 @@ public:
         monitor(std::move(monitor_))
   {}
 
-  void anneal(const core::IPosition::CPtr& startPosition)
-  {
-    currPosition = startPosition->clone();
-    while (resourcePolicy->getLeft() > 0) {
-      auto move = moveSelectorPolicy->selectMove(currPosition);
-      double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
-      double temperature = coolingPolicy->getTemperature(progress);
-      monitor.candidatePhase();
-      if (acceptancePolicy->accept(currPosition->getEnergy(), move->getDelta(), temperature)) {
-        monitor.acceptancePhase();
-        currPosition->makeMove(std::move(move));
-      }
-      resourcePolicy->updateLeft();
-    }
-  }
-
-  std::string toString() const
-  {
-    std::stringstream ss;
-    ss << "<" << resourcePolicy->toString() << ";" << acceptancePolicy->toString() << ";" << coolingPolicy->toString()
-       << ";" << moveSelectorPolicy->toString() << ";" << monitor.toString() << ">";
-    return ss.str();
-  }
+  void anneal(const core::IPosition::CPtr& startPosition);
+  std::string toString() const;
 
   core::IPosition::CPtr currPosition;
   policies::IResource::CPtr resourcePolicy;
@@ -60,7 +37,6 @@ public:
   policies::IMoveSelector::CPtr moveSelectorPolicy;
   monitor::Monitor monitor;
 };
-
 }  // namespace sa::sa
 
 #endif  // SIMULATED_ANNEALING_SA_SA_H_
