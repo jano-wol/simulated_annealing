@@ -1,7 +1,6 @@
 #ifndef SIMULATED_ANNEALING_POLICIES_MOVE_SELECTOR_H_
 #define SIMULATED_ANNEALING_POLICIES_MOVE_SELECTOR_H_
 
-#include <sstream>
 #include <string>
 
 #include <core/IPosition.h>
@@ -22,27 +21,8 @@ class KBest final : public IMoveSelector
 public:
   KBest(int k_) : k(k_) {}
 
-  core::IMove::CPtr selectMove(const core::IPosition::CPtr& position) const override
-  {
-    auto bestMove = position->generateMove();
-    for (int i = 1; i < k; ++i) {
-      auto move = position->generateMove();
-      if (move->getDelta() < bestMove->getDelta()) {
-        bestMove = std::move(move);
-      }
-    }
-    return bestMove;
-  }
-
-  std::string toString() const override
-  {
-    std::stringstream ss;
-    ss << "KBest";
-    if (k != 1) {
-      ss << "[k=" << k << "]";
-    }
-    return ss.str();
-  }
+  core::IMove::CPtr selectMove(const core::IPosition::CPtr& position) const override;
+  std::string toString() const override;
 
 private:
   int k;
