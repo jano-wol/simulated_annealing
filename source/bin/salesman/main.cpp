@@ -15,7 +15,7 @@ using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
-void print(const SA& sa) { std::cout << sa.toString() << "\n" << sa.monitor.globalMetrics << "\n-----\n"; }
+void print(const SA& sa, int idx) { std::cout << sa.toString() << "\nidx=" << idx << " " << sa.monitor.globalMetrics << "\n-----\n"; }
 
 int main(int argc, char** argv)
 {
@@ -27,13 +27,13 @@ int main(int argc, char** argv)
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
-    print(sa);
+    print(sa, 1);
   } else if (mode == "mem_check") {
     auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
-    print(sa);
+    print(sa, 1);
   } else {
     std::size_t idx = 0;
     for (const auto& position : positions) {
@@ -44,19 +44,19 @@ int main(int argc, char** argv)
       SA sa3(std::make_unique<Iteration>(10000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa1.anneal(position);
-      print(sa1);
+      print(sa1, idx);
       sa2.anneal(position);
-      print(sa2);
+      print(sa2, idx);
       sa3.anneal(position);
-      print(sa3);
+      print(sa3, idx);
       SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa4.anneal(position);
-      print(sa4);
+      print(sa4, idx);
       SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa5.anneal(position);
-      print(sa5);
+      print(sa5, idx);
       ++idx;
     }
   }
