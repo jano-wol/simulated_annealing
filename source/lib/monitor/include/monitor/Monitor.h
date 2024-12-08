@@ -73,8 +73,6 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const GlobalMetrics& globalMetrics);
-std::ostream& operator<<(std::ostream& os, const Monitor& monitor);
-
 }  // namespace sa::monitor
 
 #endif  // SIMULATED_ANNEALING_MONITOR_MONITOR_H_
