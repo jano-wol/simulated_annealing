@@ -36,8 +36,10 @@ private:
 class Time final : public IResource
 {
 public:
-  Time(double allInSeconds)
-      : all(std::chrono::duration<double>(allInSeconds)), startTime(std::chrono::high_resolution_clock::now())
+  Time(double allInSeconds, int quant_ = 20)
+      : all(std::chrono::duration<double>(allInSeconds)),
+        startTime(std::chrono::high_resolution_clock::now()),
+        quant(quant_)
   {}
 
   double getAll() const override;
@@ -48,6 +50,9 @@ public:
 private:
   std::chrono::duration<double> all;
   std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+  int quant;
+  mutable int state = 0;
+  mutable double lastRet = 0;
 };
 }  // namespace sa::policies
 

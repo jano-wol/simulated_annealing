@@ -25,10 +25,16 @@ double Time::getAll() const { return all.count(); }
 
 double Time::getLeft() const
 {
-  auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
-  double elapsedSeconds = std::chrono::duration<double>(elapsed).count();
-  double ret = std::max(0.0, all.count() - elapsedSeconds);
-  return ret;
+  if (state == 0) {
+    state = quant;
+    auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
+    double elapsedSeconds = std::chrono::duration<double>(elapsed).count();
+    lastRet = std::max(0.0, all.count() - elapsedSeconds);
+    return lastRet;
+  } else {
+    --state;
+    return lastRet;
+  }
 }
 
 void Time::updateLeft() {}
