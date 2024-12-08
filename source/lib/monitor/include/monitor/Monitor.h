@@ -30,9 +30,9 @@ class Monitor
 public:
   Monitor(MonitorLevel level_) : level(level_) {}
 
-  void candidatePhase() {}
-  void acceptancePhase() {}
-  std::string toString() const { return ""; }
+  void candidatePhase();
+  void acceptancePhase();
+  std::string toString() const;
 
   MonitorLevel level;
   size_t checkpointFrequency = 10000;
