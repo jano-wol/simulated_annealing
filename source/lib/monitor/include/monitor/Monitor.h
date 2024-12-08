@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include <core/CircularBuffer.h>
 #include <core/IMove.h>
 #include <core/IPosition.h>
 #include <core/Statistics.h>
@@ -28,7 +29,7 @@ class SnapShot
 class Monitor
 {
 public:
-  Monitor(MonitorLevel level_) : level(level_) {}
+  Monitor(MonitorLevel level_) : level(level_), deltas(deltaHistorySize), energies(deltaHistorySize) {}
 
   void candidatePhase();
   void acceptancePhase();
@@ -49,8 +50,8 @@ public:
 
   // medium
   double speed = 0;
-  std::vector<double> deltas;
-  std::vector<double> energies;
+  core::CircularBuffer deltas;
+  core::CircularBuffer energies;
   std::vector<core::IPosition::CPtr> checkpoints;
 
   // high
