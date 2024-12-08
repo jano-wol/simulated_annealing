@@ -15,11 +15,7 @@ using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
-void print(const SA& sa, size_t idx)
-{
-  std::cout << "idx=" << idx << " currEnergy=" << sa.currPosition->getEnergy()
-            << " upEnergyChanges=" << sa.monitor.upEnergyChanges << " " << sa.toString() << "\n";
-}
+void print(const SA& sa) { std::cout << sa.toString() << "\n" << sa.monitor.globalMetrics << "\n-----\n"; }
 
 int main(int argc, char** argv)
 {
@@ -31,13 +27,13 @@ int main(int argc, char** argv)
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
-    print(sa, 1);
+    print(sa);
   } else if (mode == "mem_check") {
     auto pos = std::move(positions.back());
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
     sa.anneal(pos);
-    print(sa, 1);
+    print(sa);
   } else {
     std::size_t idx = 0;
     for (const auto& position : positions) {
@@ -48,19 +44,19 @@ int main(int argc, char** argv)
       SA sa3(std::make_unique<Iteration>(10000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa1.anneal(position);
-      print(sa1, idx);
+      print(sa1);
       sa2.anneal(position);
-      print(sa2, idx);
+      print(sa2);
       sa3.anneal(position);
-      print(sa3, idx);
+      print(sa3);
       SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa4.anneal(position);
-      print(sa4, idx);
+      print(sa4);
       SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
              std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
       sa5.anneal(position);
-      print(sa5, idx);
+      print(sa5);
       ++idx;
     }
   }

@@ -26,6 +26,19 @@ class SnapShot
   core::Statistics deltaStats;
 };
 
+class GlobalMetrics
+{
+public:
+  double bestEnergy = 0;
+  std::size_t bestIdx = 0;
+  std::size_t idx = 0;
+  std::size_t upEnergyChanges = 0;
+  std::size_t acceptance = 0;
+  std::size_t bestCatch = 0;
+  double duration = 0;
+  double speed = 0;
+};
+
 class Monitor
 {
 public:
@@ -47,15 +60,10 @@ public:
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;
-  double bestEnergy = 0;
-  std::size_t bestIdx = 0;
-  std::size_t idx = 0;
-  std::size_t upEnergyChanges = 0;
-  std::size_t acceptance = 0;
-  std::size_t stalledAcceptance = 0;
-  double speed = 0;
+  GlobalMetrics globalMetrics;
 
   // medium
+  std::size_t stalledAcceptance = 0;
   core::CircularBuffer deltas;
   core::CircularBuffer energies;
   std::vector<core::IPosition::CPtr> checkpoints;
@@ -63,6 +71,10 @@ public:
   // high
   std::vector<core::IMove::CPtr> moves;
 };
+
+std::ostream& operator<<(std::ostream& os, const GlobalMetrics& globalMetrics);
+std::ostream& operator<<(std::ostream& os, const Monitor& monitor);
+
 }  // namespace sa::monitor
 
 #endif  // SIMULATED_ANNEALING_MONITOR_MONITOR_H_
