@@ -17,7 +17,7 @@ void Iteration::updateLeft()
 std::string Iteration::toString() const
 {
   std::stringstream ss;
-  ss << "Iteration=" << std::size_t(all);
+  ss << "Iteration[" << std::size_t(all) << "]";
   return ss.str();
 }
 
@@ -42,6 +42,6 @@ void Time::updateLeft() {}
 std::string Time::toString() const
 {
   std::stringstream ss;
-  ss << "Time=" << std::size_t(all.count()) << "s";
+  ss << "Time[" << std::size_t(all.count()) << "s,quant=" << quant << "]";
   return ss.str();
 }
