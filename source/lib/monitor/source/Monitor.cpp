@@ -20,7 +20,8 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
     ++globalMetrics.upEnergyChanges;
   }
   double energy = position->getEnergy();
-  if (energy < globalMetrics.bestEnergy || ((energy == globalMetrics.bestEnergy) && !bestPosition)) {
+  if ((energy < globalMetrics.bestEnergy) ||
+      (bestCatchQ < progress && !bestPosition && (energy - globalMetrics.bestEnergy < catchPrecision))) {
     globalMetrics.bestEnergy = energy;
     globalMetrics.bestIdx = globalMetrics.idx;
     bestCatch(position, progress);
@@ -45,7 +46,8 @@ void Monitor::bestCatch(const core::IPosition::CPtr& position, double progress)
 std::string Monitor::toString() const
 {
   std::stringstream ss;
-  ss << "Monitor[level=" << static_cast<int>(level) << ";localEnv=" << localEnv << ";bestCatchQ=" << bestCatchQ;
+  ss << "Monitor[level=" << static_cast<int>(level) << ";localEnv=" << localEnv << ";bestCatchQ=" << bestCatchQ
+     << ";catchPrecision=" << catchPrecision << "]";
   return ss.str();
 }
 

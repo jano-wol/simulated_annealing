@@ -42,8 +42,13 @@ public:
 class Monitor
 {
 public:
-  Monitor(MonitorLevel level_, std::size_t localEnv_ = 1000, double bestCatchQ_ = 0.9)
-      : level(level_), localEnv(localEnv_), bestCatchQ(bestCatchQ_), deltas(localEnv), energies(localEnv)
+  Monitor(MonitorLevel level_, std::size_t localEnv_ = 1000, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6)
+      : level(level_),
+        localEnv(localEnv_),
+        bestCatchQ(bestCatchQ_),
+        catchPrecision(catchPrecision_),
+        deltas(localEnv),
+        energies(localEnv)
   {}
 
   void onStart(const core::IPosition::CPtr& startPosition);
@@ -56,6 +61,7 @@ public:
   MonitorLevel level;
   std::size_t localEnv;
   double bestCatchQ;
+  double catchPrecision;
   std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
   // low
