@@ -15,7 +15,12 @@ using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman;
 
-void print(const SA& sa, int idx) { std::cout << sa.toString() << "\nidx=" << idx << " " << sa.monitor.globalMetrics << "\n-----\n"; }
+void print(const SA& sa, int idx)
+{
+  std::cout << "idx=" << idx << "\n"
+            << sa.toString() << "\n"
+            << sa.monitor.globalMetrics << "\ncurrEnergy=" << sa.currPosition->getEnergy() << "\n----\n";
+}
 
 int main(int argc, char** argv)
 {
