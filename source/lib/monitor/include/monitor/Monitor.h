@@ -29,15 +29,15 @@ class SnapShot
 class Monitor
 {
 public:
-  Monitor(MonitorLevel level_) : level(level_), deltas(deltaHistorySize), energies(deltaHistorySize) {}
+  Monitor(MonitorLevel level_, size_t deltaHistorySize = 1000)
+      : level(level_), deltas(deltaHistorySize), energies(deltaHistorySize)
+  {}
 
   void candidatePhase();
   void acceptancePhase();
   std::string toString() const;
 
   MonitorLevel level;
-  size_t checkpointFrequency = 10000;
-  size_t deltaHistorySize = 1000;
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;
