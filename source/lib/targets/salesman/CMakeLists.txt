@@ -5,7 +5,8 @@ set(headers ${include_path}/Move.h
             ${include_path}/Position.h
             ${include_path}/Tester.h
             )
-set(sources ${source_path}/Position.cpp
+set(sources ${source_path}/Move.cpp
+            ${source_path}/Position.cpp
 			)           
 add_library(${target} ${sources} ${headers})
 target_link_libraries(${target} PUBLIC core)

@@ -14,8 +14,8 @@ public:
       : cityIdx1(cityIdx1_), cityIdx2(cityIdx2_), delta(delta_)
   {}
 
-  double getDelta() const override { return delta; }
-  int size() const override { return 2 * sizeof(std::size_t); }
+  double getDelta() const override;
+  int size() const override;
 
   std::size_t cityIdx1;
   std::size_t cityIdx2;
