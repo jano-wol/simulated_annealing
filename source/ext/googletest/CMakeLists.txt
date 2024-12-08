@@ -6,6 +6,10 @@ set(gtest_force_shared_crt        ON  CACHE BOOL "")
 set(gtest_hide_internal_symbols   OFF CACHE BOOL "")
 
 add_subdirectory(googletest-release-1.12.1)
+set_target_properties(gtest PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
+set_target_properties(gtest_main PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
+set_target_properties(gmock PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
+set_target_properties(gmock_main PROPERTIES INTERPROCEDURAL_OPTIMIZATION OFF)
 
 add_library(gmock-dev INTERFACE)
 
