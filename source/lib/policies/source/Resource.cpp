@@ -14,6 +14,7 @@ void Iteration::updateLeft()
     --left;
   }
 }
+
 std::string Iteration::toString() const
 {
   std::stringstream ss;
