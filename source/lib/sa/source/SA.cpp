@@ -7,15 +7,18 @@ using namespace sa::sa;
 
 void SA::anneal(const IPosition::CPtr& startPosition)
 {
+  monitor.onStart(startPosition);
   currPosition = startPosition->clone();
   while (resourcePolicy->getLeft() > 0) {
     auto move = moveSelectorPolicy->selectMove(currPosition);
     double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
     double temperature = coolingPolicy->getTemperature(progress);
-    monitor.candidatePhase();
-    if (acceptancePolicy->accept(currPosition->getEnergy(), move->getDelta(), temperature)) {
-      monitor.acceptancePhase();
+    double delta = move->getDelta();
+    double energy = currPosition->getEnergy();
+    monitor.onCandidate(move, delta);
+    if (acceptancePolicy->accept(energy, delta, temperature)) {
       currPosition->makeMove(std::move(move));
+      monitor.onAcceptance(currPosition, delta, progress);
     }
     resourcePolicy->updateLeft();
   }

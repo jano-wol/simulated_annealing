@@ -1,7 +1,7 @@
 #ifndef SIMULATED_ANNEALING_MONITOR_MONITOR_H_
 #define SIMULATED_ANNEALING_MONITOR_MONITOR_H_
 
-#include <limits>
+#include <chrono>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -29,27 +29,33 @@ class SnapShot
 class Monitor
 {
 public:
-  Monitor(MonitorLevel level_, size_t deltaHistorySize = 1000)
-      : level(level_), deltas(deltaHistorySize), energies(deltaHistorySize)
+  Monitor(MonitorLevel level_, std::size_t localEnv_ = 1000, double bestCatchQ_ = 0.9)
+      : level(level_), localEnv(localEnv_), bestCatchQ(bestCatchQ_), deltas(localEnv), energies(localEnv)
   {}
 
-  void candidatePhase();
-  void acceptancePhase();
+  void onStart(const core::IPosition::CPtr& startPosition);
+  void onCandidate(const core::IMove::CPtr& move, double delta);
+  void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress);
+  void onEnd();
+  void bestCatch(const core::IPosition::CPtr& position, double progress);
   std::string toString() const;
 
   MonitorLevel level;
+  std::size_t localEnv;
+  double bestCatchQ;
+  std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;
-  double bestEnergy = std::numeric_limits<double>::max();
+  double bestEnergy = 0;
   std::size_t bestIdx = 0;
   std::size_t idx = 0;
   std::size_t upEnergyChanges = 0;
   std::size_t acceptance = 0;
   std::size_t stalledAcceptance = 0;
+  double speed = 0;
 
   // medium
-  double speed = 0;
   core::CircularBuffer deltas;
   core::CircularBuffer energies;
   std::vector<core::IPosition::CPtr> checkpoints;
