@@ -23,7 +23,7 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
   }
   stalledAcceptance = 0;
   double energy = position->getEnergy();
-  if (energy < bestEnergy) {
+  if (energy < bestEnergy || ((energy == bestEnergy) && !bestPosition)) {
     bestEnergy = energy;
     bestIdx = idx;
     bestCatch(position, progress);
