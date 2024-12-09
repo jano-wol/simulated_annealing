@@ -52,7 +52,7 @@ public:
   {}
 
   void onStart(const core::IPosition::CPtr& startPosition);
-  void onCandidate(const core::IMove::CPtr& move, double delta);
+  void onCandidate(double delta, double energy);
   void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress);
   void onEnd();
   void bestCatch(const core::IPosition::CPtr& position, double progress);

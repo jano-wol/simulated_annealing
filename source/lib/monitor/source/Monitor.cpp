@@ -11,7 +11,15 @@ void Monitor::onStart(const core::IPosition::CPtr& startPosition)
   bestCatch(startPosition, 0);
 }
 
-void Monitor::onCandidate(const core::IMove::CPtr& /*move*/, double /*delta*/) { ++globalMetrics.idx; }
+void Monitor::onCandidate(double delta, double energy)
+{
+  if (level > MonitorLevel::Low) {
+    deltas.push(delta);
+    energies.push(energy);
+    ++stalledAcceptance;
+  }
+  ++globalMetrics.idx;
+}
 
 void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, double progress)
 {
@@ -25,6 +33,9 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
     globalMetrics.bestEnergy = energy;
     globalMetrics.bestIdx = globalMetrics.idx;
     bestCatch(position, progress);
+  }
+  if (level > MonitorLevel::Low) {
+    stalledAcceptance = 0;
   }
 }
 
