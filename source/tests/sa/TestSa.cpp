@@ -301,6 +301,7 @@ TEST(Sa, FastAnnealingMonitorMedium)
     EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
     EXPECT_NEAR(*snapshot.deltaStats.mean, -1, precision);
     EXPECT_NEAR(*snapshot.deltaStats.deviation, 0, precision);
+    EXPECT_NEAR(snapshot.localDerivative, -1, precision);
     EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
   }
   nullStatics();
