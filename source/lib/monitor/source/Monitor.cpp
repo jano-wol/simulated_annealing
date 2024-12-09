@@ -104,8 +104,12 @@ void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double p
 std::string Monitor::toString() const
 {
   std::stringstream ss;
-  ss << "Monitor[level=" << static_cast<int>(level) << ";localEnv=" << localEnv << ";bestCatchQ=" << bestCatchQ
-     << ";catchPrecision=" << catchPrecision << "]";
+  ss << "Monitor[level=" << static_cast<int>(level) << ";bestCatchQ=" << bestCatchQ
+     << ";catchPrecision=" << catchPrecision;
+  if (level > MonitorLevel::Low) {
+    ss << ";localEnv=" << localEnv << ";steps=" << steps;
+  }
+  ss << "]";
   return ss.str();
 }
 
