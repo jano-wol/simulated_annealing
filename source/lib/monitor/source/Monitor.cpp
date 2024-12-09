@@ -64,6 +64,7 @@ void Monitor::onEnd(const core::IPosition::CPtr& position)
 {
   refreshGlobalMetrics();
   if (level > MonitorLevel::Low) {
+    energies.push(position->getEnergy());
     addSnapshot(position);
   }
 }
@@ -91,7 +92,7 @@ void Monitor::addSnapshot(const core::IPosition::CPtr& position)
 
 void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double progress)
 {
-  if (0 < progress && snapshots.size() + 1 < steps && snapshots.size() < progress * double(steps)) {
+  if (snapshots.size() < steps && snapshots.size() < progress * double(steps)) {
     addSnapshot(position);
   }
 }

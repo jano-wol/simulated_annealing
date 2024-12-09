@@ -263,8 +263,7 @@ TEST(Sa, FastAnnealingMonitorLow)
 TEST(Sa, FastAnnealingMonitorMedium)
 {
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
-  sa.monitor.steps = 20;      
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));     
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 122);
