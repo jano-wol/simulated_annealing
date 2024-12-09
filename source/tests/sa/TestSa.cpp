@@ -41,6 +41,14 @@ class DummyFastMove : public IMove
   int size() const override { return 0; }
 };
 
+class DummyFastMove2 : public IMove
+{
+public:
+  double getDelta() const override { return d--; }
+  int size() const override { return 0; }
+  static int d;
+};
+
 class DummySlowPosition : public IPosition
 {
 public:
@@ -179,6 +187,7 @@ void nullStatics()
   DummyFastPosition::generateMoveCounter = 0;
   DummyFastPosition::makeMoveCounter = 0;
   DummyFastPosition::cloneCounter = 0;
+  DummyFastMove2::d = 0;
 }
 
 std::size_t DummySlowPosition::energyConstructorCounter = 0;
@@ -199,6 +208,7 @@ std::size_t DummyFastPosition::getEnergyCounter = 0;
 std::size_t DummyFastPosition::generateMoveCounter = 0;
 std::size_t DummyFastPosition::makeMoveCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
+int DummyFastMove2::d = 0;
 }  // namespace
 
 TEST(Sa, SlowAnnealing)
@@ -280,6 +290,19 @@ TEST(Sa, FastAnnealingMonitorMedium)
   EXPECT_EQ(sa.monitor.globalMetrics.upEnergyChanges, 0);
   EXPECT_EQ(sa.monitor.globalMetrics.bestEnergy, -1000);
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
+  auto& snapshot0 = sa.monitor.snapshots[0];
+  EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
+  EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
+  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+  std::vector<int> toTest{1, 2, 3, 17, 18, 19, 20};
+  for (auto idx : toTest) {
+    auto& snapshot = sa.monitor.snapshots[idx];
+    EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
+    EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
+    EXPECT_NEAR(*snapshot.deltaStats.mean, -1, precision);
+    EXPECT_NEAR(*snapshot.deltaStats.deviation, 0, precision);
+    EXPECT_NEAR(snapshot.localDerivative, -1, precision);
+  }
   nullStatics();
 }
 

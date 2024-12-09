@@ -16,7 +16,11 @@ Snapshot::Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalM
   } else {
     auto sp = energies.getData();
     auto [minIt, maxIt] = std::minmax_element(sp.begin(), sp.end());
-    localDerivative = (deltas.getNewest() - deltas.getOldest()) / double(deltas.getCount());
+    if (energies.getCount() == 1) {
+      localDerivative = 0;
+    } else {
+      localDerivative = (energies.getNewest() - energies.getOldest()) / double(energies.getCount() - 1);
+    }
     minEnergy = *minIt;
     maxEnergy = *maxIt;
   }
