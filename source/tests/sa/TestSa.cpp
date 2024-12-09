@@ -263,17 +263,17 @@ TEST(Sa, FastAnnealingMonitorLow)
 TEST(Sa, FastAnnealingMonitorMedium)
 {
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));     
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
-  EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 122);
+  EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 123);
   EXPECT_EQ(DummyFastPosition::copyConstructorCounter, 0);
   EXPECT_EQ(DummyFastPosition::copyAssignmentCounter, 0);
   EXPECT_EQ(DummyFastPosition::moveConstructorCounter, 0);
   EXPECT_EQ(DummyFastPosition::moveAssignmentCounter, 0);
-  EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1001);
+  EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1002);
   EXPECT_EQ(DummyFastPosition::makeMoveCounter, 1000);
-  EXPECT_EQ(DummyFastPosition::cloneCounter, 121);
+  EXPECT_EQ(DummyFastPosition::cloneCounter, 122);
   EXPECT_EQ(sa.monitor.globalMetrics.acceptance, 1000);
   EXPECT_EQ(sa.monitor.globalMetrics.idx, 1000);
   EXPECT_EQ(sa.monitor.globalMetrics.bestIdx, 1000);
@@ -281,4 +281,22 @@ TEST(Sa, FastAnnealingMonitorMedium)
   EXPECT_EQ(sa.monitor.globalMetrics.bestEnergy, -1000);
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
   nullStatics();
+}
+
+TEST(Sa, SnapshotCount)
+{
+  for (int i = 1; i < 100; ++i) {
+    SA sa(std::make_unique<Iteration>(100), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
+    sa.monitor.steps = i;
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    EXPECT_EQ(sa.monitor.snapshots.size(), i + 1);
+    nullStatics();
+    int gap = sa.monitor.snapshots[1].globalMetrics.idx - sa.monitor.snapshots[0].globalMetrics.idx;
+    for (std::size_t j = 1; j < sa.monitor.snapshots.size(); ++j) {
+      int currGap = sa.monitor.snapshots[j].globalMetrics.idx - sa.monitor.snapshots[j - 1].globalMetrics.idx;
+      EXPECT_TRUE(std::abs(currGap - gap) < 3.0);
+    }
+  }
 }
