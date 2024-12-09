@@ -13,6 +13,10 @@ public:
 
   void push(double value);
   std::span<const double> getData() const;
+  bool isEmpty() const;
+  double getNewest() const;
+  double getOldest() const;
+  std::size_t getCount() const;
 
 private:
   std::vector<double> buffer;

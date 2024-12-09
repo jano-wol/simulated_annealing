@@ -16,16 +16,6 @@ namespace sa::monitor
 
 enum class MonitorLevel { Low, Medium, High };
 
-class SnapShot
-{
-  SnapShot() {}
-
-  double localDerivative;
-  std::pair<double, double> energyWindow;
-  core::IPosition::CPtr position;
-  core::Statistics deltaStats;
-};
-
 class GlobalMetrics
 {
 public:
@@ -39,30 +29,50 @@ public:
   double speed = 0;
 };
 
+class Snapshot
+{
+public:
+  Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_, const core::CircularBuffer& deltas,
+           const core::CircularBuffer& energies);
+
+  double localDerivative;
+  double minEnergy;
+  double maxEnergy;
+  core::Statistics deltaStats;
+  GlobalMetrics globalMetrics;
+  core::IPosition::CPtr position;
+};
+
 class Monitor
 {
 public:
-  Monitor(MonitorLevel level_, std::size_t localEnv_ = 1000, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6)
+  Monitor(MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
+          std::size_t steps_ = 20)
       : level(level_),
-        localEnv(localEnv_),
         bestCatchQ(bestCatchQ_),
         catchPrecision(catchPrecision_),
+        localEnv(localEnv_),
+        steps(steps_),
         deltas(localEnv),
         energies(localEnv)
   {}
 
   void onStart(const core::IPosition::CPtr& startPosition);
-  void onCandidate(double delta, double energy);
-  void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress);
-  void onEnd();
+  void onCandidate(const core::IPosition::CPtr& position, double delta, double energy, double progress);
+  void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress, double energy);
+  void onEnd(const core::IPosition::CPtr& position);
   void bestCatch(const core::IPosition::CPtr& position, double progress);
+  void addSnapshot(const core::IPosition::CPtr& position);
+  void addSnapshotChecked(const core::IPosition::CPtr& position, double progress);
+  void refreshGlobalMetrics();
   std::string toString() const;
 
   MonitorLevel level;
-  std::size_t localEnv;
   double bestCatchQ;
   double catchPrecision;
   std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+  std::size_t localEnv;
+  std::size_t steps;
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;
@@ -72,7 +82,7 @@ public:
   std::size_t stalledAcceptance = 0;
   core::CircularBuffer deltas;
   core::CircularBuffer energies;
-  std::vector<core::IPosition::CPtr> checkpoints;
+  std::vector<Snapshot> snapshots;
 
   // high
   std::vector<core::IMove::CPtr> moves;

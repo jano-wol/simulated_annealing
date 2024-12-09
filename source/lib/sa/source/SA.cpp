@@ -15,14 +15,14 @@ void SA::anneal(const IPosition::CPtr& startPosition)
     double temperature = coolingPolicy->getTemperature(progress);
     double delta = move->getDelta();
     double energy = currPosition->getEnergy();
-    monitor.onCandidate(delta, energy);
+    monitor.onCandidate(currPosition, delta, energy, progress);
     if (acceptancePolicy->accept(energy, delta, temperature)) {
       currPosition->makeMove(std::move(move));
-      monitor.onAcceptance(currPosition, delta, progress);
+      monitor.onAcceptance(currPosition, delta, delta + energy, progress);
     }
     resourcePolicy->updateLeft();
   }
-  monitor.onEnd();
+  monitor.onEnd(currPosition);
 }
 
 std::string SA::toString() const

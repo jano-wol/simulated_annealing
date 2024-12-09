@@ -204,7 +204,7 @@ std::size_t DummyFastPosition::cloneCounter = 0;
 TEST(Sa, SlowAnnealing)
 {
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low, 1.1));
   IPosition::CPtr position = std::make_unique<DummySlowPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummySlowPosition::energyConstructorCounter, 2);
@@ -212,7 +212,7 @@ TEST(Sa, SlowAnnealing)
   EXPECT_EQ(DummySlowPosition::copyAssignmentCounter, 0);
   EXPECT_EQ(DummySlowPosition::moveConstructorCounter, 0);
   EXPECT_EQ(DummySlowPosition::moveAssignmentCounter, 1000);
-  EXPECT_EQ(DummySlowPosition::getEnergyCounter, 1000);
+  EXPECT_EQ(DummySlowPosition::getEnergyCounter, 1001);
   EXPECT_EQ(DummySlowPosition::makeMoveCounter, 1000);
   EXPECT_EQ(DummySlowPosition::cloneCounter, 1);
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
@@ -222,7 +222,7 @@ TEST(Sa, SlowAnnealing)
 TEST(Sa, FastAnnealing)
 {
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low, 1.1));
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
   EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 2);
@@ -230,7 +230,7 @@ TEST(Sa, FastAnnealing)
   EXPECT_EQ(DummyFastPosition::copyAssignmentCounter, 0);
   EXPECT_EQ(DummyFastPosition::moveConstructorCounter, 0);
   EXPECT_EQ(DummyFastPosition::moveAssignmentCounter, 0);
-  EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1000);
+  EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1001);
   EXPECT_EQ(DummyFastPosition::makeMoveCounter, 1000);
   EXPECT_EQ(DummyFastPosition::cloneCounter, 1);
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
