@@ -44,7 +44,7 @@ class DummyFastMove : public IMove
 class DummyFastMove2 : public IMove
 {
 public:
-  double getDelta() const override { return d--; }
+  double getDelta() const override { return d; }
   int size() const override { return 0; }
   static int d;
 };
@@ -141,7 +141,14 @@ public:
     ++getEnergyCounter;
     return energy;
   }
-  IMove::CPtr generateMove() const override { return std::make_unique<DummyFastMove>(); }
+  IMove::CPtr generateMove() const override
+  {
+    if (mode == 0) {
+      return std::make_unique<DummyFastMove>();
+    } else {
+      return std::make_unique<DummyFastMove2>();
+    }
+  }
   void makeMove(IMove::CPtr move) override
   {
     energy += move->getDelta();
@@ -165,6 +172,7 @@ public:
   static std::size_t generateMoveCounter;
   static std::size_t makeMoveCounter;
   static std::size_t cloneCounter;
+  static int mode;
 };
 
 void nullStatics()
@@ -187,6 +195,7 @@ void nullStatics()
   DummyFastPosition::generateMoveCounter = 0;
   DummyFastPosition::makeMoveCounter = 0;
   DummyFastPosition::cloneCounter = 0;
+  DummyFastPosition::mode = 0;
   DummyFastMove2::d = 0;
 }
 
@@ -208,6 +217,7 @@ std::size_t DummyFastPosition::getEnergyCounter = 0;
 std::size_t DummyFastPosition::generateMoveCounter = 0;
 std::size_t DummyFastPosition::makeMoveCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
+int DummyFastPosition::mode = 0;
 int DummyFastMove2::d = 0;
 }  // namespace
 
@@ -322,5 +332,30 @@ TEST(Sa, SnapshotCount)
       int currGap = sa.monitor.snapshots[j].globalMetrics.idx - sa.monitor.snapshots[j - 1].globalMetrics.idx;
       EXPECT_TRUE(std::abs(currGap - gap) < 3.0);
     }
+  }
+}
+
+TEST(Sa, Statistics1)
+{
+  for (int t = 2; t < 20; ++t) {
+    SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium, 0.9, 1e-6, t));
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    auto& snapshot0 = sa.monitor.snapshots[0];
+    EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
+    EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
+    EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+    std::vector<int> toTest{1, 2, 3, 17, 18, 19, 20};
+    for (auto idx : toTest) {
+      auto& snapshot = sa.monitor.snapshots[idx];
+      EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
+      EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
+      EXPECT_NEAR(*snapshot.deltaStats.mean, -1, precision);
+      EXPECT_NEAR(*snapshot.deltaStats.deviation, 0, precision);
+      EXPECT_NEAR(snapshot.localDerivative, -1, precision);
+      EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
+    }
+    nullStatics();
   }
 }
