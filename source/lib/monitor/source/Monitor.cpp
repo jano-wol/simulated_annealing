@@ -10,10 +10,9 @@ Snapshot::Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalM
     : deltaStats(deltas.getData()), globalMetrics(std::move(globalMetrics_)), position(position_->clone())
 {
   if (energies.isEmpty()) {
-    double energy = position_->getEnergy();
     localDerivative = 0;
-    minEnergy = energy;
-    maxEnergy = energy;
+    minEnergy = globalMetrics.bestEnergy;
+    maxEnergy = globalMetrics.bestEnergy;
   } else {
     auto sp = energies.getData();
     auto [minIt, maxIt] = std::minmax_element(sp.begin(), sp.end());
