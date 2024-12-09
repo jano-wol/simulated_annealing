@@ -236,3 +236,26 @@ TEST(Sa, FastAnnealing)
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
   nullStatics();
 }
+
+TEST(Sa, FastAnnealingMonitorLow)
+{
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+  sa.anneal(position);
+  EXPECT_EQ(DummyFastPosition::energyConstructorCounter, 102);
+  EXPECT_EQ(DummyFastPosition::copyConstructorCounter, 0);
+  EXPECT_EQ(DummyFastPosition::copyAssignmentCounter, 0);
+  EXPECT_EQ(DummyFastPosition::moveConstructorCounter, 0);
+  EXPECT_EQ(DummyFastPosition::moveAssignmentCounter, 0);
+  EXPECT_EQ(DummyFastPosition::getEnergyCounter, 1001);
+  EXPECT_EQ(DummyFastPosition::makeMoveCounter, 1000);
+  EXPECT_EQ(DummyFastPosition::cloneCounter, 101);
+  EXPECT_EQ(sa.monitor.globalMetrics.acceptance, 1000);
+  EXPECT_EQ(sa.monitor.globalMetrics.idx, 1000);
+  EXPECT_EQ(sa.monitor.globalMetrics.bestIdx, 1000);
+  EXPECT_EQ(sa.monitor.globalMetrics.upEnergyChanges, 0);
+  EXPECT_EQ(sa.monitor.globalMetrics.bestEnergy, -1000);
+  EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
+  nullStatics();
+}
