@@ -34,10 +34,6 @@ void Monitor::onStart(const core::IPosition::CPtr& startPosition)
 {
   startTime = std::chrono::high_resolution_clock::now();
   globalMetrics.bestEnergy = startPosition->getEnergy();
-  bestCatch(startPosition, 0);
-  if (level > MonitorLevel::Low) {
-    addSnapshot(startPosition);
-  }
 }
 
 void Monitor::onCandidate(const core::IPosition::CPtr& position, double delta, double energy, double progress)
@@ -108,8 +104,9 @@ void Monitor::addSnapshot(const core::IPosition::CPtr& position)
 
 void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double progress)
 {
-  if (snapshots.size() < steps && snapshots.size() < progress * double(steps) &&
-      snapshotsMemory < snapshotsMemoryLimit) {
+  if (((snapshots.size() < steps) && (snapshots.size() <= progress * double(steps)) &&
+       (snapshotsMemory < snapshotsMemoryLimit)) ||
+      (snapshots.size() == 0)) {
     addSnapshot(position);
   }
 }
