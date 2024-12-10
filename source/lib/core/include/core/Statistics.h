@@ -12,23 +12,9 @@ namespace sa::core
 class Statistics
 {
 public:
-  Statistics(std::span<const double> data)
-  {
-    if (data.empty()) {
-      mean = std::nullopt;
-      deviation = std::nullopt;
-      return;
-    }
-    double sum = std::accumulate(data.begin(), data.end(), 0.0);
-    mean = sum / data.size();
+  Statistics(std::span<const double> data);
 
-    double variance = 0.0;
-    for (double value : data) {
-      variance += (value - *mean) * (value - *mean);
-    }
-    variance /= data.size();
-    deviation = std::sqrt(variance);
-  };
+  int size() const;
 
   std::optional<double> mean;
   std::optional<double> deviation;

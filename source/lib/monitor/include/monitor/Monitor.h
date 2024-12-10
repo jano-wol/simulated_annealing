@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <core/CircularBuffer.h>
-#include <core/IMove.h>
 #include <core/IPosition.h>
 #include <core/Statistics.h>
 
@@ -19,6 +18,8 @@ enum class MonitorLevel { Low, Medium, High };
 class GlobalMetrics
 {
 public:
+  int size() const;
+
   double bestEnergy = 0;
   std::size_t bestIdx = 0;
   std::size_t idx = 0;
@@ -35,6 +36,8 @@ public:
   Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_, const core::CircularBuffer& deltas,
            const core::CircularBuffer& energies);
 
+  int size() const;
+
   double localDerivative;
   double minEnergy;
   double maxEnergy;
@@ -47,12 +50,13 @@ class Monitor
 {
 public:
   Monitor(MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
-          std::size_t steps_ = 20)
+          std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL)
       : level(level_),
         bestCatchQ(bestCatchQ_),
         catchPrecision(catchPrecision_),
         localEnv(localEnv_),
         steps(steps_),
+        snapshotsMemoryLimit(snapshotsMemoryLimit_),
         deltas(localEnv),
         energies(localEnv)
   {}
@@ -73,6 +77,8 @@ public:
   std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
   std::size_t localEnv;
   std::size_t steps;
+  std::size_t snapshotsMemoryLimit;
+  std::size_t snapshotsMemory = 0;
 
   // low
   core::IPosition::CPtr bestPosition = nullptr;
@@ -83,9 +89,6 @@ public:
   core::CircularBuffer deltas;
   core::CircularBuffer energies;
   std::vector<Snapshot> snapshots;
-
-  // high
-  std::vector<core::IMove::CPtr> moves;
 };
 
 std::ostream& operator<<(std::ostream& os, const GlobalMetrics& globalMetrics);
