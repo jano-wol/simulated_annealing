@@ -392,6 +392,25 @@ TEST(Sa, Statistics2)
   testSnapshot(sa.monitor.snapshots[2], -97, -5151, -4278, -97.5, dev10);
   testSnapshot(sa.monitor.snapshots[19], -947, -452676, -444153, -947.5, dev10);
   testSnapshot(sa.monitor.snapshots[20], -996, -500500, -491536, -995.5, dev10);
+  nullStatics();
+}
 
+TEST(Sa, Statistics3)
+{
+  DummyFastPosition::mode = 1;
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(1);
+  sa.anneal(position);
+  auto& snapshot0 = sa.monitor.snapshots[0];
+  EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
+  EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
+  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+  EXPECT_NEAR(snapshot0.minEnergy, 1, precision);
+  EXPECT_NEAR(snapshot0.maxEnergy, 1, precision);
+  testSnapshot(sa.monitor.snapshots[1], -25.5, -1274, 1, -26, 14.7196);
+  testSnapshot(sa.monitor.snapshots[2], -51, -5150, 1, -51.5, 29.4434);
+  testSnapshot(sa.monitor.snapshots[19], -476, -452675, 1, -476.5, 274.8186);
+  testSnapshot(sa.monitor.snapshots[20], -501, -500499, 0, -500.5, 288.6750);
   nullStatics();
 }
