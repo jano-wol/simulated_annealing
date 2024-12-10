@@ -491,7 +491,7 @@ TEST(Sa, Statistics4)
   DummyFastPosition::mode = 1;
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
         std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
-  IPosition::CPtr position = std::make_unique<DummyFastPosition>(1);
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
   sa.anneal(position);
   auto& snapshot0 = sa.monitor.snapshots[0];
   EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
