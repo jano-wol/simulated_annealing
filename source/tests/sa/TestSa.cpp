@@ -331,7 +331,7 @@ TEST(Sa, FastAnnealingMonitorMedium)
   nullStatics();
 }
 
-TEST(Sa, SnapshotCount)
+TEST(Sa, SnapshotCount1)
 {
   for (int i = 1; i < 100; ++i) {
     SA sa(std::make_unique<Iteration>(100), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
@@ -346,6 +346,39 @@ TEST(Sa, SnapshotCount)
       int currGap = sa.monitor.snapshots[j].globalMetrics.idx - sa.monitor.snapshots[j - 1].globalMetrics.idx;
       EXPECT_TRUE(std::abs(currGap - gap) < 3.0);
     }
+  }
+}
+
+TEST(Sa, SnapshotCount2)
+{
+  for (int i = 1; i < 10; ++i) {
+    SA sa(std::make_unique<Iteration>(100), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
+    sa.monitor.steps = i;
+    sa.monitor.snapshotsMemoryLimit = 0;
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    EXPECT_EQ(sa.monitor.snapshots.size(), 2);
+    nullStatics();
+  }
+}
+
+TEST(Sa, SnapshotCount3)
+{
+  for (int i = 1; i < 20; ++i) {
+    SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
+    sa.monitor.steps = i;
+    sa.monitor.snapshotsMemoryLimit = 1000;
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    if (i < 9) {
+      EXPECT_EQ(sa.monitor.snapshots.size(), sa.monitor.steps + 1);
+    } else {
+      EXPECT_EQ(sa.monitor.snapshots.size(), 9);
+      EXPECT_EQ(sa.monitor.snapshotsMemory, 1152);
+    }
+    nullStatics();
   }
 }
 
