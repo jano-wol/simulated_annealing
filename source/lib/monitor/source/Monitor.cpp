@@ -42,10 +42,12 @@ void Monitor::onStart(const core::IPosition::CPtr& startPosition)
 
 void Monitor::onCandidate(const core::IPosition::CPtr& position, double delta, double energy, double progress)
 {
-  if (level == MonitorLevel::Medium) {
+  if (level > MonitorLevel::Low) {
     deltas.push(delta);
     energies.push(energy);
-    addSnapshotChecked(position, progress);
+    if (level == MonitorLevel::Medium) {
+      addSnapshotChecked(position, progress);
+    }
     ++stalledAcceptance;
   }
   ++globalMetrics.idx;
@@ -74,9 +76,11 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
 void Monitor::onEnd(const core::IPosition::CPtr& position)
 {
   refreshGlobalMetrics();
-  if (level == MonitorLevel::Medium) {
+  if (level > MonitorLevel::Low) {
     energies.push(position->getEnergy());
-    addSnapshot(position);
+    if (level == MonitorLevel::Medium) {
+      addSnapshot(position);
+    }
   }
 }
 

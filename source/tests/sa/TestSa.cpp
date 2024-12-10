@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <core/IPosition.h>
+#include <core/Random.h>
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -45,6 +46,15 @@ class DummyFastMove2 : public IMove
 {
 public:
   DummyFastMove2() { --d; }
+  double getDelta() const override { return d; }
+  int size() const override { return 0; }
+  static int d;
+};
+
+class DummyFastMove3 : public IMove
+{
+public:
+  DummyFastMove3() { d = Random::randomInt(-5, 5); }
   double getDelta() const override { return d; }
   int size() const override { return 0; }
   static int d;
@@ -146,8 +156,10 @@ public:
   {
     if (mode == 0) {
       return std::make_unique<DummyFastMove>();
-    } else {
+    } else if (mode == 1) {
       return std::make_unique<DummyFastMove2>();
+    } else {
+      return std::make_unique<DummyFastMove3>();
     }
   }
   void makeMove(IMove::CPtr move) override
@@ -198,6 +210,7 @@ void nullStatics()
   DummyFastPosition::cloneCounter = 0;
   DummyFastPosition::mode = 0;
   DummyFastMove2::d = 0;
+  DummyFastMove3::d = 0;
 }
 
 std::size_t DummySlowPosition::energyConstructorCounter = 0;
@@ -220,6 +233,7 @@ std::size_t DummyFastPosition::makeMoveCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
 int DummyFastPosition::mode = 0;
 int DummyFastMove2::d = 0;
+int DummyFastMove3::d = 0;
 
 void testSnapshot(const Snapshot& snapshot, double localDerivative, double minEnergy, double maxEnergy,
                   double deltaMean, double deltaDeviation)
@@ -382,6 +396,30 @@ TEST(Sa, SnapshotCount3)
   }
 }
 
+TEST(Sa, SnapshotCount4)
+{
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+  sa.anneal(position);
+  EXPECT_EQ(sa.monitor.snapshots.size(), sa.monitor.globalMetrics.acceptance + 1);
+  nullStatics();
+}
+
+TEST(Sa, SnapshotCount5)
+{
+  for (int i = 1; i < 100; ++i) {
+    DummyFastPosition::mode = 2;
+    SA sa(std::make_unique<Iteration>(100), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
+    sa.monitor.steps = i;
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    EXPECT_EQ(sa.monitor.snapshots.size(), sa.monitor.globalMetrics.acceptance + 1);
+    nullStatics();
+  }
+}
+
 TEST(Sa, Statistics1)
 {
   for (int t = 2; t < 20; ++t) {
@@ -433,6 +471,26 @@ TEST(Sa, Statistics3)
   DummyFastPosition::mode = 1;
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
         std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium));
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(1);
+  sa.anneal(position);
+  auto& snapshot0 = sa.monitor.snapshots[0];
+  EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
+  EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
+  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+  EXPECT_NEAR(snapshot0.minEnergy, 1, precision);
+  EXPECT_NEAR(snapshot0.maxEnergy, 1, precision);
+  testSnapshot(sa.monitor.snapshots[1], -25.5, -1274, 1, -26, 14.7196);
+  testSnapshot(sa.monitor.snapshots[2], -51, -5150, 1, -51.5, 29.4434);
+  testSnapshot(sa.monitor.snapshots[19], -476, -452675, 1, -476.5, 274.8186);
+  testSnapshot(sa.monitor.snapshots[20], -501, -500499, 0, -500.5, 288.6750);
+  nullStatics();
+}
+
+TEST(Sa, Statistics4)
+{
+  DummyFastPosition::mode = 1;
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
   IPosition::CPtr position = std::make_unique<DummyFastPosition>(1);
   sa.anneal(position);
   auto& snapshot0 = sa.monitor.snapshots[0];
