@@ -44,6 +44,7 @@ class DummyFastMove : public IMove
 class DummyFastMove2 : public IMove
 {
 public:
+  DummyFastMove2() { --d; }
   double getDelta() const override { return d; }
   int size() const override { return 0; }
   static int d;
@@ -219,6 +220,19 @@ std::size_t DummyFastPosition::makeMoveCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
 int DummyFastPosition::mode = 0;
 int DummyFastMove2::d = 0;
+
+void testSnapshot(const Snapshot& snapshot, double localDerivative, double minEnergy, double maxEnergy,
+                  double deltaMean, double deltaDeviation)
+{
+  EXPECT_NEAR(snapshot.localDerivative, localDerivative, precision);
+  EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
+  EXPECT_NEAR(snapshot.minEnergy, minEnergy, precision);
+  EXPECT_NEAR(snapshot.maxEnergy, maxEnergy, precision);
+  EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
+  EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
+  EXPECT_NEAR(*snapshot.deltaStats.mean, deltaMean, 1e-3);
+  EXPECT_NEAR(*snapshot.deltaStats.deviation, deltaDeviation, 1e-3);
+}
 }  // namespace
 
 TEST(Sa, SlowAnnealing)
@@ -358,4 +372,26 @@ TEST(Sa, Statistics1)
     }
     nullStatics();
   }
+}
+
+TEST(Sa, Statistics2)
+{
+  DummyFastPosition::mode = 1;
+  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium, 0.9, 1e-6, 10));
+  IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+  sa.anneal(position);
+  auto& snapshot0 = sa.monitor.snapshots[0];
+  EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
+  EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
+  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+  EXPECT_NEAR(snapshot0.minEnergy, 0, precision);
+  EXPECT_NEAR(snapshot0.maxEnergy, 0, precision);
+  double dev10 = 2.87228;
+  testSnapshot(sa.monitor.snapshots[1], -46, -1275, -861, -46.5, dev10);
+  testSnapshot(sa.monitor.snapshots[2], -97, -5151, -4278, -97.5, dev10);
+  testSnapshot(sa.monitor.snapshots[19], -947, -452676, -444153, -947.5, dev10);
+  testSnapshot(sa.monitor.snapshots[20], -996, -500500, -491536, -995.5, dev10);
+
+  nullStatics();
 }
