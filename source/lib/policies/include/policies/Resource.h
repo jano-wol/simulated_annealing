@@ -25,7 +25,7 @@ public:
 
   double getAll() const override;
   double getLeft() const override;
-  void updateLeft();
+  void updateLeft() override;
   std::string toString() const override;
 
 private:
