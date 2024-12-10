@@ -1,5 +1,6 @@
 #include <gmock/gmock.h>
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 
@@ -419,6 +420,19 @@ TEST(Sa, SnapshotCount5)
     EXPECT_EQ(sa.monitor.snapshots.size(), sa.monitor.globalMetrics.acceptance + 1);
     EXPECT_TRUE(5 < sa.monitor.globalMetrics.acceptance && sa.monitor.globalMetrics.acceptance < i - 5);
     nullStatics();
+  }
+}
+
+TEST(Sa, SnapshotCount6)
+{
+  std::vector<std::size_t> iter{5, 6, 7, 8, 9, 10, 11};
+  for (auto l : iter) {
+    SA sa(std::make_unique<Iteration>(l), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+          std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
+    sa.monitor.snapshotsMemoryLimit = 1000;
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa.anneal(position);
+    EXPECT_EQ(sa.monitor.snapshots.size(), std::min(l + 1, 9UL));
   }
 }
 
