@@ -398,7 +398,6 @@ TEST(Sa, SnapshotCount3)
   }
 }
 
-/*
 TEST(Sa, SnapshotCount4)
 {
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
@@ -409,21 +408,19 @@ TEST(Sa, SnapshotCount4)
   nullStatics();
 }
 
-
 TEST(Sa, SnapshotCount5)
 {
-  for (int i = 1; i < 100; ++i) {
+  for (std::size_t i = 100; i < 200; ++i) {
     DummyFastPosition::mode = 2;
-    SA sa(std::make_unique<Iteration>(100), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+    SA sa(std::make_unique<Iteration>(i), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
-    sa.monitor.steps = i;
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
     EXPECT_EQ(sa.monitor.snapshots.size(), sa.monitor.globalMetrics.acceptance + 1);
+    EXPECT_TRUE(5 < sa.monitor.globalMetrics.acceptance && sa.monitor.globalMetrics.acceptance < i - 5);
     nullStatics();
   }
 }
-*/
 
 TEST(Sa, Statistics1)
 {
@@ -484,24 +481,27 @@ TEST(Sa, Statistics3)
   nullStatics();
 }
 
-/*
-TEST(Sa, Statistics4)
+TEST(Sa, SnapshotAlignment)
 {
-  DummyFastPosition::mode = 1;
-  SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::High));
-  IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
-  sa.anneal(position);
-  auto& snapshot0 = sa.monitor.snapshots[0];
-  EXPECT_FALSE(snapshot0.deltaStats.mean.has_value());
-  EXPECT_FALSE(snapshot0.deltaStats.deviation.has_value());
-  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
-  EXPECT_NEAR(snapshot0.minEnergy, 1, precision);
-  EXPECT_NEAR(snapshot0.maxEnergy, 1, precision);
-  testSnapshot(sa.monitor.snapshots[1], -25.5, -1274, 1, -26, 14.7196);
-  testSnapshot(sa.monitor.snapshots[2], -51, -5150, 1, -51.5, 29.4434);
-  testSnapshot(sa.monitor.snapshots[19], -476, -452675, 1, -476.5, 274.8186);
-  testSnapshot(sa.monitor.snapshots[20], -501, -500499, 0, -500.5, 288.6750);
-  nullStatics();
+  std::vector<std::size_t> loc{10, 20, 33, 100, 101, 1000, 1001};
+  for (auto l : loc) {
+    DummyFastPosition::mode = 1;
+    SA sa1(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+           std::make_unique<KBest>(1), Monitor(MonitorLevel::Medium, 0.9, 1.0e-6, l));
+    SA sa2(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+           std::make_unique<KBest>(1), Monitor(MonitorLevel::High, 0.9, 1.0e-6, l));
+    IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
+    sa1.anneal(position);
+    nullStatics();
+    DummyFastPosition::mode = 1;
+    sa2.anneal(position);
+    for (const auto& s : sa1.monitor.snapshots) {
+      auto idx = s.globalMetrics.idx;
+      const auto& ss = sa2.monitor.snapshots[idx];
+      EXPECT_NEAR(*s.deltaStats.mean, *ss.deltaStats.mean, 1e-3);
+      EXPECT_NEAR(*s.deltaStats.deviation, *ss.deltaStats.deviation, 1e-3);
+      EXPECT_NEAR(s.position->getEnergy(), ss.position->getEnergy(), 1e-3);
+    }
+    nullStatics();
+  }
 }
-*/
