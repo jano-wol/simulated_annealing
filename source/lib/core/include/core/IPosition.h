@@ -1,20 +1,24 @@
 #ifndef SIMULATED_ANNEALING_CORE_IPOSITION_H_
 #define SIMULATED_ANNEALING_CORE_IPOSITION_H_
 
-#include <core/IMove.h>
 #include <memory>
-#include <optional>
+
+#include <core/IMove.h>
 
 namespace sa::core
 {
+class Candidate;
+
 class IPosition
 {
 public:
-  virtual std::shared_ptr<IMove> getMove() const = 0;
+  using CPtr = std::unique_ptr<IPosition>;
   virtual double getEnergy() const = 0;
-  virtual std::optional<double> getEnergyFast(const std::shared_ptr<IMove>& imove, double baseEnergy) const = 0;
-  virtual std::shared_ptr<IPosition> makeMove(const std::shared_ptr<IMove>& imove) const = 0;
-  virtual void makeMoveInplace(const std::shared_ptr<IMove>& imove) = 0;
+  virtual IMove::CPtr generateMove() const = 0;
+  virtual void makeMove(IMove::CPtr move) = 0;
+  virtual int size() const = 0;
+  virtual CPtr clone() const = 0;
+  virtual ~IPosition() = default;
 };
 }  // namespace sa::core
 

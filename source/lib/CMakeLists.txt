@@ -1,2 +1,6 @@
 add_subdirectory(core)
+add_subdirectory(monitor)
+add_subdirectory(policies)
+add_subdirectory(sa)
+add_subdirectory(targets)
 add_subdirectory(tester)
