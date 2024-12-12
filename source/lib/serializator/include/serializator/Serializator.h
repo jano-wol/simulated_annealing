@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <string>
+#include <unordered_map>
 
 #include <core/IPosition.h>
 
