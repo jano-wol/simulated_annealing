@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <core/IPosition.h>
+#include <core/Random.h>
 #include <salesman/Move.h>
 
 namespace sa::targets::salesman
@@ -16,8 +17,8 @@ public:
     energy = calcEnergy();
   }
 
-  SalesmanPosition(double energy_, std::vector<std::pair<double, double>> cities_)
-      : energy(energy_), cities(std::move(cities_))
+  SalesmanPosition(double energy_, std::vector<std::pair<double, double>> cities_, core::Random r_)
+      : energy(energy_), cities(std::move(cities_)), r(std::move(r_))
   {}
 
   double getEnergy() const override;
@@ -31,6 +32,7 @@ public:
   
   double energy;
   std::vector<std::pair<double, double>> cities;
+  core::Random r;
 };
 }  // namespace sa::targets::salesman
 

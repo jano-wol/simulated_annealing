@@ -13,8 +13,8 @@ double SalesmanPosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanPosition::generateMove() const
 {
-  std::size_t idx1 = Random::randomInt(0, cities.size() - 1);
-  std::size_t idx2 = Random::randomInt(0, cities.size() - 1);
+  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
+  std::size_t idx2 = r.randomInt(0, cities.size() - 1);
   if (idx1 == idx2) {
     return std::make_unique<SalesmanMove>(idx1, idx2, 0);
   }
@@ -56,7 +56,7 @@ int SalesmanPosition::size() const
          sizeof(std::pair<double, double>) * cities.capacity();
 }
 
-IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities); }
+IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities, r); }
 
 std::pair<std::size_t, std::size_t> SalesmanPosition::getNeighbourIdxs(std::size_t idx) const
 {

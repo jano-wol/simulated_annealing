@@ -8,13 +8,33 @@ namespace sa::core
 class Random
 {
 public:
-  static int randomInt(int min, int max);
-  static double randomDouble(double min, double max);
-  static void timeInit();
+  Random() : r(seed) {}
+  Random(int s) : r(s) {}
+  Random(const Random& other) : r(other.r) {}
+  Random(Random&& other) noexcept : r(std::move(other.r)) {}
+  Random& operator=(const Random& other)
+  {
+    if (this != &other) {
+      r = other.r;
+    }
+    return *this;
+  }
+  Random& operator=(Random&& other) noexcept
+  {
+    if (this != &other) {
+      r = std::move(other.r);
+    }
+    return *this;
+  }
+
+  int randomInt(int min, int max) const;
+  double randomDouble(double min, double max) const;
+  static void setSeed(int s);
 
 private:
-  static std::mt19937 createThreadLocalGenerator();
-  static std::mt19937& getThreadLocalGenerator();
+  mutable std::mt19937 r;
+
+  static int seed;
 };
 }  // namespace sa::core
 

@@ -13,7 +13,7 @@ bool Metropolis::accept(double /*currEnergy*/, double delta, double temperature)
   if (delta <= 0)
     return true;
   double threshold = std::exp(-delta / normalizator / temperature);
-  double randomResult = Random::randomDouble(0.0, 1.0);
+  double randomResult = r.randomDouble(0.0, 1.0);
   return randomResult < threshold;
 }
 

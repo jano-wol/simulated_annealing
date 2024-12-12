@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include <core/Random.h>
+
 namespace sa::policies
 {
 class IAcceptance
@@ -24,6 +26,7 @@ public:
   std::string toString() const override;
 
   double normalizator;
+  core::Random r;
 };
 
 class Greedy final : public IAcceptance

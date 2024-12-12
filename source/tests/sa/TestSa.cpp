@@ -55,10 +55,11 @@ public:
 class DummyFastMove3 : public IMove
 {
 public:
-  DummyFastMove3() { d = Random::randomInt(-5, 5); }
+  DummyFastMove3() { d = r.randomInt(-5, 5); }
   double getDelta() const override { return d; }
   int size() const override { return 0; }
   static int d;
+  static Random r;
 };
 
 class DummySlowPosition : public IPosition
@@ -212,6 +213,7 @@ void nullStatics()
   DummyFastPosition::mode = 0;
   DummyFastMove2::d = 0;
   DummyFastMove3::d = 0;
+  DummyFastMove3::r = Random();
 }
 
 std::size_t DummySlowPosition::energyConstructorCounter = 0;
@@ -235,6 +237,7 @@ std::size_t DummyFastPosition::cloneCounter = 0;
 int DummyFastPosition::mode = 0;
 int DummyFastMove2::d = 0;
 int DummyFastMove3::d = 0;
+Random DummyFastMove3::r;
 
 void testSnapshot(const Snapshot& snapshot, double localDerivative, double minEnergy, double maxEnergy,
                   double deltaMean, double deltaDeviation)
