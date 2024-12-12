@@ -167,3 +167,17 @@ TEST(Salesman, Annealing)
   ASSERT_LE(sa.currPosition->getEnergy(), startEnergy);
   ASSERT_LE(0, sa.currPosition->getEnergy());
 }
+
+TEST(Salesman, Reproducibility)
+{
+  int n = 100;
+  auto cities = getRandomCities(n);
+  SA sa1(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+  SA sa2(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+  IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
+  sa1.anneal(position);
+  sa2.anneal(position);
+  ASSERT_NEAR(sa1.currPosition->getEnergy(), sa2.currPosition->getEnergy(), 1e-4);
+}
