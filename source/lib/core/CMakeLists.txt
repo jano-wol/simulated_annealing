@@ -7,6 +7,7 @@ set(headers ${include_path}/CircularBuffer.h
             ${include_path}/IPosition.h
             ${include_path}/Io.h
             ${include_path}/Random.h
+            ${include_path}/Rounding.h
             ${include_path}/Statistics.h
             )
 set(sources ${source_path}/CircularBuffer.cpp
@@ -15,6 +16,7 @@ set(sources ${source_path}/CircularBuffer.cpp
             ${source_path}/IPosition.cpp
             ${source_path}/Io.cpp
             ${source_path}/Random.cpp
+            ${source_path}/Rounding.cpp
             ${source_path}/Statistics.cpp
 			)
 add_library(${target} ${sources} ${headers})

@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <core/Io.h>
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -24,6 +25,7 @@ void print(const SA& sa, int idx)
 
 int main(int argc, char** argv)
 {
+  std::cout << Io::workspaceRootPath << "!!!\n";
   std::string mode = 1 < argc ? argv[1] : "";
   auto positions = generateTestCases();
 

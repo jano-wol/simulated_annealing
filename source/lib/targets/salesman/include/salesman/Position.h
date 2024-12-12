@@ -29,6 +29,10 @@ public:
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const;
   double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const;
   double calcEnergy() const;
+
+  static std::string getTypeId();
+  static std::string toString(const core::IPosition::CPtr& position);
+  static core::IPosition::CPtr fromString(const std::string& data);
   
   double energy;
   std::vector<std::pair<double, double>> cities;

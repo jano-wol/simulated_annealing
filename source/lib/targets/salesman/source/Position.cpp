@@ -1,9 +1,12 @@
 #include <salesman/Position.h>
 
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 
 #include <core/IPosition.h>
 #include <core/Random.h>
+#include <core/Rounding.h>
 #include <salesman/Move.h>
 
 using namespace sa::core;
@@ -85,3 +88,32 @@ double SalesmanPosition::calcEnergy() const
   };
   return ret;
 }
+
+std::string SalesmanPosition::toString(const IPosition::CPtr& iPosition)
+{
+  SalesmanPosition* position = dynamic_cast<SalesmanPosition*>(iPosition.get());
+  std::stringstream ss;
+  ss << std::setprecision(Rounding::precision) << std::fixed;
+  ss << getTypeId() << " ";
+  for (const auto& [d1, d2] : position->cities) {
+    ss << d1 << " " << d2;
+  }
+  return ss.str();
+}
+
+IPosition::CPtr SalesmanPosition::fromString(const std::string& data)
+{
+  std::istringstream ss(data);
+  std::string typeId;
+  ss >> typeId;
+
+  std::vector<std::pair<double, double>> cities;
+  double d1, d2;
+  while (ss >> d1 >> d2) {
+    cities.emplace_back(Rounding::roundDouble(d1), Rounding::roundDouble(d2));
+  }
+  auto position = std::make_unique<SalesmanPosition>(std::move(cities));
+  return position;
+}
+
+std::string SalesmanPosition::getTypeId() { return "salesman"; }

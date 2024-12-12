@@ -5,11 +5,15 @@
 
 namespace sa::core
 {
-class IGenerator
+class Io
 {
 public:
-    virtual std::shared_ptr<core::IPosition> generatePosition(int idx) = 0;
-    virtual ~IGenerator() = default;
+  static void savePosition() {}
+  static IPosition::CPtr loadPosition() { return nullptr; }
+  static IPosition::CPtr proposeBest() { return nullptr; }
+
+  static std::string workspaceRootPath;
+  static std::string dataFolderPath;
 };
 }  // namespace sa::core
 

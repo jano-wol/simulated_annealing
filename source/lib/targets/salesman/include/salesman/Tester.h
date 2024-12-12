@@ -3,6 +3,7 @@
 
 #include <random>
 
+#include <core/Rounding.h>
 #include <salesman/Position.h>
 
 namespace sa::targets::salesman
@@ -19,7 +20,8 @@ std::vector<core::IPosition::CPtr> getStartPositions(std::size_t numPositions, s
     for (std::size_t c = 0; c < numCities; ++c) {
       double randomResult1 = dist(mt);
       double randomResult2 = dist(mt);
-      cities.push_back({length * randomResult1, length * randomResult2});
+      cities.push_back({core::Rounding::roundDouble(length * randomResult1),
+                        core::Rounding::roundDouble(length * randomResult2)});
     }
     auto startPosition = std::make_unique<SalesmanPosition>(cities);
     ret.push_back(std::move(startPosition));
