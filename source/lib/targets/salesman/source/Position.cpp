@@ -96,7 +96,7 @@ std::string SalesmanPosition::toString(const IPosition::CPtr& iPosition)
   ss << std::setprecision(Rounding::precision) << std::fixed;
   ss << getTypeId() << " ";
   for (const auto& [d1, d2] : position->cities) {
-    ss << d1 << " " << d2;
+    ss << d1 << " " << d2 << " ";
   }
   return ss.str();
 }

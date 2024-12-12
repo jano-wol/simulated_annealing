@@ -181,3 +181,14 @@ TEST(Salesman, Reproducibility)
   sa2.anneal(position);
   ASSERT_NEAR(sa1.currPosition->getEnergy(), sa2.currPosition->getEnergy(), 1e-4);
 }
+
+TEST(Salesman, Serialization)
+{
+    int n = 100;
+  auto cities = getRandomCities(n);
+  IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
+  auto s1 = SalesmanPosition::toString(position);
+  auto s2 = SalesmanPosition::fromString(s1);
+  auto s3 = SalesmanPosition::toString(s2);
+  EXPECT_EQ(s1, s3);
+}
