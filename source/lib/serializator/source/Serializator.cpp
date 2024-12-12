@@ -11,7 +11,7 @@ using namespace sa::targets::salesman;
 std::string Serializator::getTypeId(const core::IPosition::CPtr& iPosition)
 {
   if (dynamic_cast<SalesmanPosition*>(iPosition.get())) {
-    return SalesmanPosition::typeId;
+    return SalesmanPosition::getTypeId();
   } else {
     return "";
   }
@@ -56,7 +56,7 @@ std::unordered_map<std::string, Serializator::ToString>& Serializator::getToStri
 }
 
 static bool initFactory = [] {
-  Serializator::registerFromStringType(SalesmanPosition::typeId, SalesmanPosition::fromString);
-  Serializator::registerToStringType(SalesmanPosition::typeId, SalesmanPosition::toString);
+  Serializator::registerFromStringType(SalesmanPosition::getTypeId(), SalesmanPosition::fromString);
+  Serializator::registerToStringType(SalesmanPosition::getTypeId(), SalesmanPosition::toString);
   return true;
 }();
