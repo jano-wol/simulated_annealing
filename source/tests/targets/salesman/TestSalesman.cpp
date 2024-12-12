@@ -12,11 +12,13 @@
 #include <sa/SA.h>
 #include <salesman/Position.h>
 #include <salesman/Tester.h>
+#include <serializator/Serializator.h>
 
 using namespace sa::core;
 using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
+using namespace sa::serializator;
 using namespace sa::targets::salesman;
 
 namespace
@@ -187,8 +189,8 @@ TEST(Salesman, Serialization)
     int n = 100;
   auto cities = getRandomCities(n);
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
-  auto s1 = SalesmanPosition::toString(position);
-  auto s2 = SalesmanPosition::fromString(s1);
-  auto s3 = SalesmanPosition::toString(s2);
+  auto s1 = Serializator::toString(position);
+  auto s2 = Serializator::fromString(s1);
+  auto s3 = Serializator::toString(s2);
   EXPECT_EQ(s1, s3);
 }
