@@ -12,6 +12,8 @@ namespace sa::targets::salesman
 class SalesmanPosition : public core::IPosition
 {
 public:
+  static const std::string typeId;
+
   SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_))
   {
     energy = calcEnergy();
@@ -30,10 +32,9 @@ public:
   double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const;
   double calcEnergy() const;
 
-  static std::string getTypeId();
   static std::string toString(const core::IPosition::CPtr& position);
   static core::IPosition::CPtr fromString(const std::string& data);
-  
+
   double energy;
   std::vector<std::pair<double, double>> cities;
   core::Random r;

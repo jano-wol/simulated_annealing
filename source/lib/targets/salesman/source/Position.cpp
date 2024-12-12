@@ -12,6 +12,8 @@
 using namespace sa::core;
 using namespace sa::targets::salesman;
 
+const std::string SalesmanPosition::typeId = "salesman";
+
 double SalesmanPosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanPosition::generateMove() const
@@ -94,7 +96,7 @@ std::string SalesmanPosition::toString(const IPosition::CPtr& iPosition)
   SalesmanPosition* position = dynamic_cast<SalesmanPosition*>(iPosition.get());
   std::stringstream ss;
   ss << std::setprecision(Rounding::precision) << std::fixed;
-  ss << getTypeId() << " ";
+  ss << typeId << " ";
   for (const auto& [d1, d2] : position->cities) {
     ss << d1 << " " << d2 << " ";
   }
@@ -115,5 +117,3 @@ IPosition::CPtr SalesmanPosition::fromString(const std::string& data)
   auto position = std::make_unique<SalesmanPosition>(std::move(cities));
   return position;
 }
-
-std::string SalesmanPosition::getTypeId() { return "salesman"; }
