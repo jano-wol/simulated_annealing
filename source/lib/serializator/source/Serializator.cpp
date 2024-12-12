@@ -1,5 +1,7 @@
 #include <serializator/Serializator.h>
 
+#include <sstream>
+
 #include <salesman/Position.h>
 
 using namespace sa::core;

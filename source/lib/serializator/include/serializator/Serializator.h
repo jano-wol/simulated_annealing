@@ -2,13 +2,9 @@
 #define SIMULATED_ANNEALING_SERIALIZATOR_SERIALIZATOR_H_
 
 #include <functional>
-#include <sstream>
 #include <string>
-#include <vector>
 
-#include <core/CircularBuffer.h>
 #include <core/IPosition.h>
-#include <core/Statistics.h>
 
 namespace sa::serializator
 {
