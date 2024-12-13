@@ -20,7 +20,7 @@ std::string getFileName(int idx)
 
 std::string getFolderName(const IGenerator::CPtr& generator, const IPosition::CPtr& position)
 {
-  return Io::getTargetPath().append(Serializator::getTypeId(position).append(generator->getGeneratorName()));
+  return std::filesystem::path(Io::getTargetPath()) / Serializator::getTypeId(position) / generator->getGeneratorName();
 }
 
 std::string getCorrespondingBest(const std::string& filePath)
@@ -40,13 +40,13 @@ std::string Io::getWorkspaceRootPath()
 
 std::string Io::getDataPath()
 {
-  static std::string dataPath = std::filesystem::path(getWorkspaceRootPath()).append("data");
+  static std::string dataPath = std::filesystem::path(getWorkspaceRootPath()) / "data";
   return dataPath;
 }
 
 std::string Io::getTargetPath()
 {
-  static std::string targetPath = std::filesystem::path(getDataPath()).append("target");
+  static std::string targetPath = std::filesystem::path(getDataPath()) / "target";
   return targetPath;
 }
 
