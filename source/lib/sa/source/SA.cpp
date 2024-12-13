@@ -25,6 +25,8 @@ void SA::anneal(const IPosition::CPtr& startPosition)
   monitor.onEnd(currPosition);
 }
 
+const IPosition::CPtr& SA::getBest() { return monitor.bestPosition ? monitor.bestPosition : currPosition; }
+
 std::string SA::toString() const
 {
   std::stringstream ss;

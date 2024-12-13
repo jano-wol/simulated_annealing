@@ -9,16 +9,18 @@ namespace sa::io
 class Io
 {
 public:
-  static void savePosition(const std::string& path, core::IPosition::CPtr& position);
-  static void savePosition(const core::IGenerator::CPtr& generator, int idx);
-  static core::IPosition::CPtr getPosition(const core::IGenerator::CPtr& generator, int idx);
-  static core::IPosition::CPtr getPosition(const std::string& path);
-  static core::IPosition::CPtr proposeBest() { return nullptr; }
-  static std::string getPath(const core::IGenerator::CPtr& generator, int idx);
-
+  static const int precision = 1e-4;
   static std::string getWorkspaceRootPath();
   static std::string getDataPath();
   static std::string getTargetsPath();
+  static void savePosition(const std::string& path, const core::IPosition::CPtr& position);
+  static void savePosition(const core::IGenerator::CPtr& generator, int idx);
+  static core::IPosition::CPtr getPosition(const core::IGenerator::CPtr& generator, int idx);
+  static core::IPosition::CPtr getPosition(const std::string& path);
+  static void tryImproveBest(const core::IGenerator::CPtr& generator, int idx,
+                             const core::IPosition::CPtr& bestCandidate);
+  static void tryImproveBest(const std::string& positionPath, const core::IPosition::CPtr& bestCandidate);
+  static std::string getPath(const core::IGenerator::CPtr& generator, int idx);
 };
 }  // namespace sa::io
 

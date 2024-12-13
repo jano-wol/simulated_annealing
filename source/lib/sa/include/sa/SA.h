@@ -28,6 +28,7 @@ public:
   {}
 
   void anneal(const core::IPosition::CPtr& startPosition);
+  const core::IPosition::CPtr& getBest();
   std::string toString() const;
 
   core::IPosition::CPtr currPosition;

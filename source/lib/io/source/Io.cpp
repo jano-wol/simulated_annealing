@@ -59,7 +59,7 @@ std::string Io::getTargetsPath()
   return targetsPath;
 }
 
-void Io::savePosition(const std::string& pathStr, core::IPosition::CPtr& position)
+void Io::savePosition(const std::string& pathStr, const IPosition::CPtr& position)
 {
   std::filesystem::path path(pathStr);
   std::filesystem::create_directories(path.parent_path());
@@ -100,4 +100,19 @@ std::string Io::getPath(const IGenerator::CPtr& generator, int idx)
 {
   auto [filePath, position] = getFilePathAndPosition(generator, idx);
   return filePath;
+}
+
+void Io::tryImproveBest(const IGenerator::CPtr& generator, int idx, const IPosition::CPtr& bestCandidate)
+{
+  auto [filePath, position] = getFilePathAndPosition(generator, idx);
+  tryImproveBest(filePath, bestCandidate);
+}
+
+void Io::tryImproveBest(const std::string& positionPath, const core::IPosition::CPtr& bestCandidate)
+{
+  std::string bestPath = getCorrespondingBest(positionPath);
+  auto currBest = Io::getPosition(bestPath);
+  if (currBest == nullptr || bestCandidate->getEnergy() + precision < currBest->getEnergy()) {
+    savePosition(bestPath, bestCandidate);
+  }
 }

@@ -71,6 +71,11 @@ int main(int argc, char** argv)
                std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         sa5.anneal(position);
         print(sa5, idx);
+        Io::tryImproveBest(g, 1, sa1.getBest());
+        Io::tryImproveBest(g, 1, sa2.getBest());
+        Io::tryImproveBest(g, 1, sa3.getBest());
+        Io::tryImproveBest(g, 1, sa4.getBest());
+        Io::tryImproveBest(g, 1, sa5.getBest());
       }
     }
   }
