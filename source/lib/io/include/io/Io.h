@@ -9,7 +9,7 @@ namespace sa::io
 class Io
 {
 public:
-  static const int precision = 1e-4;
+  static constexpr double precision = 1e-4;
   static std::string getWorkspaceRootPath();
   static std::string getDataPath();
   static std::string getTargetsPath();
