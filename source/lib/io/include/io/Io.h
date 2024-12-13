@@ -13,6 +13,7 @@ public:
   static std::string getWorkspaceRootPath();
   static std::string getDataPath();
   static std::string getTargetsPath();
+  static std::string getTargetPath(const std::string& target);
   static void savePosition(const std::string& path, const core::IPosition::CPtr& position);
   static void savePosition(const core::IGenerator::CPtr& generator, int idx);
   static core::IPosition::CPtr getPosition(const core::IGenerator::CPtr& generator, int idx);
@@ -21,6 +22,7 @@ public:
                              const core::IPosition::CPtr& bestCandidate);
   static void tryImproveBest(const std::string& positionPath, const core::IPosition::CPtr& bestCandidate);
   static std::string getPath(const core::IGenerator::CPtr& generator, int idx);
+  static void refreshBest(const std::string& path);
 };
 }  // namespace sa::io
 

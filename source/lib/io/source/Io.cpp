@@ -5,12 +5,16 @@
 #include <sstream>
 
 #include <core/IPosition.h>
+#include <core/Rounding.h>
+#include <io/DirectoryIterator.h>
 #include <serializator/Serializator.h>
 
 using namespace sa::core;
 using namespace sa::io;
 using namespace sa::serializator;
 
+namespace
+{
 std::string getFileName(int idx)
 {
   std::stringstream ss;
@@ -39,6 +43,7 @@ std::string getCorrespondingBest(const std::string& filePath)
   std::filesystem::path newPath = parentPath / "best" / path.filename();
   return newPath.string();
 }
+}  // namespace
 
 std::string Io::getWorkspaceRootPath()
 {
@@ -57,6 +62,12 @@ std::string Io::getTargetsPath()
 {
   static std::string targetsPath = std::filesystem::path(getDataPath()) / "targets";
   return targetsPath;
+}
+
+std::string Io::getTargetPath(const std::string& target)
+{
+  std::string targetPath = std::filesystem::path(getTargetsPath()) / target;
+  return targetPath;
 }
 
 void Io::savePosition(const std::string& pathStr, const IPosition::CPtr& position)
@@ -115,4 +126,18 @@ void Io::tryImproveBest(const std::string& positionPath, const core::IPosition::
   if (currBest == nullptr || bestCandidate->getEnergy() + precision < currBest->getEnergy()) {
     savePosition(bestPath, bestCandidate);
   }
+}
+
+void Io::refreshBest(const std::string& path)
+{
+  std::filesystem::path root(path);
+  DirectoryIterator dirIter(path);
+  std::ofstream file(root / "BestSummary.txt");
+  dirIter.iterate([&file, &root](const std::string& filePath) {
+    std::filesystem::path p(filePath);
+    if (p.parent_path().filename() == "best" && p.extension() == ".txt") {
+      auto position = getPosition(p);
+      file << p.lexically_relative(root).string() << " " << Rounding::roundDouble(position->getEnergy()) << "\n";
+    }
+  });
 }

@@ -78,6 +78,7 @@ int main(int argc, char** argv)
         Io::tryImproveBest(g, 1, sa5.getBest());
       }
     }
+    Io::refreshBest(Io::getTargetPath("salesman"));
   }
   return 0;
 }
