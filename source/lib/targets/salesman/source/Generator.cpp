@@ -11,7 +11,7 @@
 using namespace sa::core;
 using namespace sa::targets::salesman;
 
-IPosition::CPtr SalesmanGenerator::getStartPosition(int idx)
+IPosition::CPtr SalesmanGenerator::getStartPosition(int idx) const
 {
   Random r(idx);
   std::vector<std::pair<double, double>> cities;
@@ -24,7 +24,7 @@ IPosition::CPtr SalesmanGenerator::getStartPosition(int idx)
   return std::make_unique<SalesmanPosition>(cities);
 }
 
-IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx)
+IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx) const
 {
   Random r(idx);
   std::vector<int> chosenSubsquares;
@@ -58,7 +58,7 @@ IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx)
   return std::make_unique<SalesmanPosition>(cities);
 }
 
-IPosition::CPtr SalesmanGenerator::generatePosition(int idx)
+IPosition::CPtr SalesmanGenerator::generatePosition(int idx) const
 {
   if (subSquares) {
     return getStartPosition_5x5(idx);

@@ -1,6 +1,7 @@
 #ifndef SIMULATED_ANNEALING_IO_IO_H_
 #define SIMULATED_ANNEALING_IO_IO_H_
 
+#include <core/IGenerator.h>
 #include <core/IPosition.h>
 
 namespace sa::io
@@ -8,8 +9,8 @@ namespace sa::io
 class Io
 {
 public:
-  static void savePosition() {}
-  static core::IPosition::CPtr loadPosition() { return nullptr; }
+  static void savePosition(const core::IGenerator::CPtr& generator, int idx);
+  static core::IPosition::CPtr loadPosition(const core::IGenerator::CPtr& generator, int idx) { return nullptr; }
   static core::IPosition::CPtr proposeBest() { return nullptr; }
 
   static std::string workspaceRootPath;

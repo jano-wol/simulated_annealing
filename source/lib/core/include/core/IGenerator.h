@@ -8,7 +8,8 @@ namespace sa::core
 class IGenerator
 {
 public:
-  virtual core::IPosition::CPtr generatePosition(int idx) = 0;
+  using CPtr = std::unique_ptr<IGenerator>;
+  virtual core::IPosition::CPtr generatePosition(int idx) const = 0;
   virtual std::string getGeneratorName() const = 0;
   virtual ~IGenerator() = default;
 };

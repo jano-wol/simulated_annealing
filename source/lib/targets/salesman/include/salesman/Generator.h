@@ -12,12 +12,12 @@ public:
       : numCities(numCities_), length(length_), subSquares(subSquares_)
   {}
 
-  core::IPosition::CPtr generatePosition(int idx) override;
+  core::IPosition::CPtr generatePosition(int idx) const override;
   std::string getGeneratorName() const override;
 
 private:
-  core::IPosition::CPtr getStartPosition(int idx);
-  core::IPosition::CPtr getStartPosition_5x5(int idx);
+  core::IPosition::CPtr getStartPosition(int idx) const;
+  core::IPosition::CPtr getStartPosition_5x5(int idx) const;
 
   int numCities;
   int length;
