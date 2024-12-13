@@ -11,7 +11,6 @@
 #include <policies/Resource.h>
 #include <sa/SA.h>
 #include <salesman/Position.h>
-#include <salesman/Tester.h>
 #include <serializator/Serializator.h>
 
 using namespace sa::core;

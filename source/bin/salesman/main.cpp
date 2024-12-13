@@ -1,16 +1,17 @@
 #include <iostream>
 
-#include <core/Io.h>
+#include <io/Io.h>
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
 #include <policies/MoveSelector.h>
 #include <policies/Resource.h>
 #include <sa/SA.h>
+#include <salesman/Generator.h>
 #include <salesman/Position.h>
-#include <salesman/Tester.h>
 
 using namespace sa::core;
+using namespace sa::io;
 using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
@@ -21,6 +22,20 @@ void print(const SA& sa, int idx)
   std::cout << "idx=" << idx << "\n"
             << sa.toString() << "\n"
             << sa.monitor.globalMetrics << "\ncurrEnergy=" << sa.currPosition->getEnergy() << "\n----\n";
+}
+
+std::vector<IPosition::CPtr> generateTestCases()
+{
+  std::vector<IPosition::CPtr> ret;
+  std::vector<int> nc{5, 10, 20, 50, 100, 200, 500, 1000};
+  std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
+  for (int i = 0; i < 8; ++i) {
+    SalesmanGenerator g1(nc[i], l[i], false);
+    SalesmanGenerator g2(nc[i], l[i], true);
+    ret.push_back(g1.generatePosition(0));
+    ret.push_back(g2.generatePosition(0));
+  }
+  return ret;
 }
 
 int main(int argc, char** argv)

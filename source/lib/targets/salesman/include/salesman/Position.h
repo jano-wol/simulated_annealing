@@ -9,7 +9,7 @@
 
 namespace sa::targets::salesman
 {
-class SalesmanPosition : public core::IPosition
+class SalesmanPosition final : public core::IPosition
 {
 public:
   SalesmanPosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_))

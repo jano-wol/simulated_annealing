@@ -5,7 +5,6 @@ set(headers ${include_path}/CircularBuffer.h
             ${include_path}/IGenerator.h            
             ${include_path}/IMove.h
             ${include_path}/IPosition.h
-            ${include_path}/Io.h
             ${include_path}/Random.h
             ${include_path}/Rounding.h
             ${include_path}/Statistics.h
@@ -14,7 +13,6 @@ set(sources ${source_path}/CircularBuffer.cpp
             ${source_path}/IGenerator.cpp    
             ${source_path}/IMove.cpp
             ${source_path}/IPosition.cpp
-            ${source_path}/Io.cpp
             ${source_path}/Random.cpp
             ${source_path}/Rounding.cpp
             ${source_path}/Statistics.cpp
