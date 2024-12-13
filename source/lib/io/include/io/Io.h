@@ -9,12 +9,14 @@ namespace sa::io
 class Io
 {
 public:
+  static void savePosition(const std::string& path, core::IPosition::CPtr& position);
   static void savePosition(const core::IGenerator::CPtr& generator, int idx);
   static core::IPosition::CPtr loadPosition(const core::IGenerator::CPtr& generator, int idx) { return nullptr; }
   static core::IPosition::CPtr proposeBest() { return nullptr; }
 
-  static std::string workspaceRootPath;
-  static std::string dataFolderPath;
+  static std::string getWorkspaceRootPath();
+  static std::string getDataPath();
+  static std::string getTargetPath();
 };
 }  // namespace sa::io
 

@@ -6,5 +6,5 @@ set(headers ${include_path}/Io.h
 set(sources ${source_path}/Io.cpp
 			)
 add_library(${target} ${sources} ${headers})
-target_link_libraries(${target} PUBLIC core)
+target_link_libraries(${target} PUBLIC core serializator)
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
