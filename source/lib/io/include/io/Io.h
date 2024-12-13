@@ -16,7 +16,7 @@ public:
 
   static std::string getWorkspaceRootPath();
   static std::string getDataPath();
-  static std::string getTargetPath();
+  static std::string getTargetsPath();
 };
 }  // namespace sa::io
 

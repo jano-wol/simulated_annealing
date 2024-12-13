@@ -20,7 +20,8 @@ std::string getFileName(int idx)
 
 std::string getFolderName(const IGenerator::CPtr& generator, const IPosition::CPtr& position)
 {
-  return std::filesystem::path(Io::getTargetPath()) / Serializator::getTypeId(position) / generator->getGeneratorName();
+  return std::filesystem::path(Io::getTargetsPath()) / Serializator::getTypeId(position) /
+         generator->getGeneratorName();
 }
 
 std::string getCorrespondingBest(const std::string& filePath)
@@ -44,10 +45,10 @@ std::string Io::getDataPath()
   return dataPath;
 }
 
-std::string Io::getTargetPath()
+std::string Io::getTargetsPath()
 {
-  static std::string targetPath = std::filesystem::path(getDataPath()) / "target";
-  return targetPath;
+  static std::string targetsPath = std::filesystem::path(getDataPath()) / "targets";
+  return targetsPath;
 }
 
 void Io::savePosition(const std::string& pathStr, core::IPosition::CPtr& position)
@@ -62,11 +63,11 @@ void Io::savePosition(const core::IGenerator::CPtr& generator, int idx)
 {
   auto position = generator->generatePosition(idx);
   std::filesystem::path folder(getFolderName(generator, position));
-  std::filesystem::path filePath = folder.append(getFileName(idx));
+  std::filesystem::path filePath = folder / getFileName(idx);
   if (std::filesystem::exists(filePath)) {
     return;
   }
-  savePosition(filePath, position); 
+  savePosition(filePath, position);
   std::filesystem::path bestPath(getCorrespondingBest(filePath));
   savePosition(bestPath, position);
 }

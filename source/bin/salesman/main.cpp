@@ -29,14 +29,15 @@ std::vector<IPosition::CPtr> generateTestCases(const std::string& mode)
   std::vector<IPosition::CPtr> ret;
   std::vector<int> nc{5, 10, 20, 50, 100, 200, 500, 1000};
   std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
+  int idx = 1;
   for (int i = 0; i < 8; ++i) {
     IGenerator::CPtr g1 = std::make_unique<SalesmanGenerator>(nc[i], l[i], false);
     IGenerator::CPtr g2 = std::make_unique<SalesmanGenerator>(nc[i], l[i], true);
-    ret.push_back(g1->generatePosition(0));
-    ret.push_back(g2->generatePosition(0));
+    ret.push_back(g1->generatePosition(idx));
+    ret.push_back(g2->generatePosition(idx));
     if (mode == "save") {
-      Io::savePosition(g1, 0);
-      Io::savePosition(g2, 0);
+      Io::savePosition(g1, idx);
+      Io::savePosition(g2, idx);
     }
   }
   return ret;
