@@ -24,6 +24,14 @@ std::string getFolderName(const IGenerator::CPtr& generator, const IPosition::CP
          generator->getGeneratorName();
 }
 
+std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator::CPtr& generator, int idx)
+{
+  auto position = generator->generatePosition(idx);
+  std::filesystem::path folder(getFolderName(generator, position));
+  std::filesystem::path filePath = folder / getFileName(idx);
+  return {filePath, std::move(position)};
+}
+
 std::string getCorrespondingBest(const std::string& filePath)
 {
   std::filesystem::path path(filePath);
@@ -61,13 +69,35 @@ void Io::savePosition(const std::string& pathStr, core::IPosition::CPtr& positio
 
 void Io::savePosition(const core::IGenerator::CPtr& generator, int idx)
 {
-  auto position = generator->generatePosition(idx);
-  std::filesystem::path folder(getFolderName(generator, position));
-  std::filesystem::path filePath = folder / getFileName(idx);
+  auto [filePath, position] = getFilePathAndPosition(generator, idx);
   if (std::filesystem::exists(filePath)) {
     return;
   }
   savePosition(filePath, position);
-  std::filesystem::path bestPath(getCorrespondingBest(filePath));
-  savePosition(bestPath, position);
+}
+
+IPosition::CPtr Io::getPosition(const IGenerator::CPtr& generator, int idx)
+{
+  auto [filePath, position] = getFilePathAndPosition(generator, idx);
+  if (std::filesystem::exists(filePath)) {
+    return getPosition(filePath);
+  }
+  return position;
+}
+
+IPosition::CPtr Io::getPosition(const std::string& path)
+{
+  if (!std::filesystem::exists(path)) {
+    return nullptr;
+  }
+  std::ifstream file(path);
+  std::string line;
+  std::getline(file, line);
+  return Serializator::fromString(line);
+}
+
+std::string Io::getPath(const IGenerator::CPtr& generator, int idx)
+{
+  auto [filePath, position] = getFilePathAndPosition(generator, idx);
+  return filePath;
 }

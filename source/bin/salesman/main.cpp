@@ -33,8 +33,8 @@ std::vector<IPosition::CPtr> generateTestCases(const std::string& mode)
   for (int i = 0; i < 8; ++i) {
     IGenerator::CPtr g1 = std::make_unique<SalesmanGenerator>(nc[i], l[i], false);
     IGenerator::CPtr g2 = std::make_unique<SalesmanGenerator>(nc[i], l[i], true);
-    ret.push_back(g1->generatePosition(idx));
-    ret.push_back(g2->generatePosition(idx));
+    ret.push_back(Io::getPosition(g1, idx));
+    ret.push_back(Io::getPosition(g2, idx));
     if (mode == "save") {
       Io::savePosition(g1, idx);
       Io::savePosition(g2, idx);

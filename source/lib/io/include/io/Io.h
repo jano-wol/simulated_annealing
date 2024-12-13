@@ -11,8 +11,10 @@ class Io
 public:
   static void savePosition(const std::string& path, core::IPosition::CPtr& position);
   static void savePosition(const core::IGenerator::CPtr& generator, int idx);
-  static core::IPosition::CPtr loadPosition(const core::IGenerator::CPtr& generator, int idx) { return nullptr; }
+  static core::IPosition::CPtr getPosition(const core::IGenerator::CPtr& generator, int idx);
+  static core::IPosition::CPtr getPosition(const std::string& path);
   static core::IPosition::CPtr proposeBest() { return nullptr; }
+  static std::string getPath(const core::IGenerator::CPtr& generator, int idx);
 
   static std::string getWorkspaceRootPath();
   static std::string getDataPath();
