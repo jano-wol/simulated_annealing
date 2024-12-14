@@ -4,6 +4,8 @@
 
 using namespace sa::policies;
 
+void Iteration::onStart() {}
+
 double Iteration::getAll() const { return all; }
 
 double Iteration::getLeft() const { return left; }
@@ -21,6 +23,8 @@ std::string Iteration::toString() const
   ss << "Iteration[" << std::size_t(all) << "]";
   return ss.str();
 }
+
+void Time::onStart() { startTime = std::chrono::high_resolution_clock::now(); }
 
 double Time::getAll() const { return all.count(); }
 

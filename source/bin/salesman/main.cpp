@@ -46,29 +46,29 @@ int main(int argc, char** argv)
     std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
     for (std::size_t idx = 0; idx < 8; ++idx) {
       for (int b = 0; b < 2; ++b) {
+        IGenerator::CPtr g = std::make_unique<SalesmanGenerator>(nc[idx], l[idx], b);
+        auto position = Io::getPosition(g, 1);
+        if (mode == "save") {
+          Io::savePosition(g, 1);
+        }
         SA sa1(std::make_unique<Iteration>(5000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
                std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         SA sa2(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
                std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         SA sa3(std::make_unique<Iteration>(10000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
                std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
-        IGenerator::CPtr g = std::make_unique<SalesmanGenerator>(nc[idx], l[idx], b);
-        auto position = Io::getPosition(g, 1);
-        if (mode == "save") {
-          Io::savePosition(g, 1);
-        }
+        SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+        SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
+               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         sa1.anneal(position);
         print(sa1, idx);
         sa2.anneal(position);
         print(sa2, idx);
         sa3.anneal(position);
         print(sa3, idx);
-        SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         sa4.anneal(position);
         print(sa4, idx);
-        SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
         sa5.anneal(position);
         print(sa5, idx);
         Io::tryImproveBest(g, 1, sa1.getBest());

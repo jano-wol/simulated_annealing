@@ -7,6 +7,7 @@ using namespace sa::sa;
 
 void SA::anneal(const IPosition::CPtr& startPosition)
 {
+  resourcePolicy->onStart();
   monitor.onStart(startPosition);
   currPosition = startPosition->clone();
   while (resourcePolicy->getLeft() > 0) {
