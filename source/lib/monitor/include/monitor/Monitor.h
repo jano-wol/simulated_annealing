@@ -49,6 +49,7 @@ public:
 class Monitor
 {
 public:
+  using CPtr = std::unique_ptr<Monitor>;
   Monitor(MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
           std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL)
       : level(level_),
@@ -70,6 +71,7 @@ public:
   void addSnapshotChecked(const core::IPosition::CPtr& position, double progress);
   void refreshGlobalMetrics();
   std::string toString() const;
+  CPtr clone() const;
 
   MonitorLevel level;
   double bestCatchQ;

@@ -16,11 +16,11 @@ namespace sa::sa
 class SA
 {
 public:
+  using CPtr = std::unique_ptr<SA>;
   SA(policies::IResource::CPtr resourcePolicy_, policies::IAcceptance::CPtr acceptancePolicy_,
      policies::ICooling::CPtr coolingPolicy_, policies::IMoveSelector::CPtr moveSelectorPolicy_,
-     monitor::Monitor monitor_)
-      : currPosition(nullptr),
-        resourcePolicy(std::move(resourcePolicy_)),
+     monitor::Monitor::CPtr monitor_)
+      : resourcePolicy(std::move(resourcePolicy_)),
         acceptancePolicy(std::move(acceptancePolicy_)),
         coolingPolicy(std::move(coolingPolicy_)),
         moveSelectorPolicy(std::move(moveSelectorPolicy_)),
@@ -31,12 +31,12 @@ public:
   const core::IPosition::CPtr& getBest();
   std::string toString() const;
 
-  core::IPosition::CPtr currPosition;
   policies::IResource::CPtr resourcePolicy;
   policies::IAcceptance::CPtr acceptancePolicy;
   policies::ICooling::CPtr coolingPolicy;
   policies::IMoveSelector::CPtr moveSelectorPolicy;
-  monitor::Monitor monitor;
+  monitor::Monitor::CPtr monitor;
+  core::IPosition::CPtr currPosition;
 };
 }  // namespace sa::sa
 

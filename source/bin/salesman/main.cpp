@@ -21,7 +21,7 @@ void print(const SA& sa, int idx)
 {
   std::cout << "idx=" << idx << "\n"
             << sa.toString() << "\n"
-            << sa.monitor.globalMetrics << "\ncurrEnergy=" << sa.currPosition->getEnergy() << "\n----\n";
+            << sa.monitor->globalMetrics << "\ncurrEnergy=" << sa.currPosition->getEnergy() << "\n----\n";
 }
 
 int main(int argc, char** argv)
@@ -31,14 +31,14 @@ int main(int argc, char** argv)
     IGenerator::CPtr g = std::make_unique<SalesmanGenerator>(1000, 100, true);
     auto pos = Io::getPosition(g, 1);
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-          std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+          std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
     sa.anneal(pos);
     print(sa, 1);
   } else if (mode == "mem_check") {
     IGenerator::CPtr g = std::make_unique<SalesmanGenerator>(1000, 100, true);
     auto pos = Io::getPosition(g, 1);
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-          std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+          std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
     sa.anneal(pos);
     print(sa, 1);
   } else {
@@ -52,15 +52,15 @@ int main(int argc, char** argv)
           Io::savePosition(g, 1);
         }
         SA sa1(std::make_unique<Iteration>(5000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+               std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
         SA sa2(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+               std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
         SA sa3(std::make_unique<Iteration>(10000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+               std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
         SA sa4(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+               std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
         SA sa5(std::make_unique<Time>(5), std::make_unique<Metropolis>(), std::make_unique<Quadratic>(),
-               std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+               std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
         sa1.anneal(position);
         print(sa1, idx);
         sa2.anneal(position);

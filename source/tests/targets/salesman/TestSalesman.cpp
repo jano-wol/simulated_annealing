@@ -161,7 +161,7 @@ TEST(Salesman, Annealing)
   int n = 20;
   auto cities = getRandomCities(n);
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+        std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);
@@ -174,9 +174,9 @@ TEST(Salesman, Reproducibility)
   int n = 100;
   auto cities = getRandomCities(n);
   SA sa1(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+         std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
   SA sa2(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+         std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   sa1.anneal(position);
   sa2.anneal(position);
@@ -185,7 +185,7 @@ TEST(Salesman, Reproducibility)
 
 TEST(Salesman, Serialization)
 {
-    int n = 100;
+  int n = 100;
   auto cities = getRandomCities(n);
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   auto s1 = Serializator::toString(position);
