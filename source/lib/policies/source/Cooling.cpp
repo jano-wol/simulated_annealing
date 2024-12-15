@@ -17,6 +17,8 @@ std::string Linear::toString() const
   return ss.str();
 }
 
+ICooling::CPtr Linear::clone() const { return std::make_unique<Linear>(t0); }
+
 double Exponential::getTemperature(double progress) const { return t0 * std::exp(c * progress); }
 
 std::string Exponential::toString() const
@@ -29,6 +31,8 @@ std::string Exponential::toString() const
   ss << "]";
   return ss.str();
 }
+
+ICooling::CPtr Exponential::clone() const { return std::make_unique<Exponential>(t0); }
 
 double Logarithmic::getTemperature(double progress) const { return t0 / (1 + c * std::log(1.0 + progress)); }
 
@@ -43,6 +47,8 @@ std::string Logarithmic::toString() const
   return ss.str();
 }
 
+ICooling::CPtr Logarithmic::clone() const { return std::make_unique<Logarithmic>(t0); }
+
 double Quadratic::getTemperature(double progress) const { return t0 * (1.0 - progress * progress); }
 
 std::string Quadratic::toString() const
@@ -55,6 +61,8 @@ std::string Quadratic::toString() const
   return ss.str();
 }
 
+ICooling::CPtr Quadratic::clone() const { return std::make_unique<Quadratic>(t0); }
+
 double Cosine::getTemperature(double progress) const { return t0 * (1.0 + std::cos(M_PI * progress)) / 2.0; }
 
 std::string Cosine::toString() const
@@ -66,3 +74,5 @@ std::string Cosine::toString() const
   }
   return ss.str();
 }
+
+ICooling::CPtr Cosine::clone() const { return std::make_unique<Cosine>(t0); }

@@ -16,6 +16,7 @@ public:
   virtual double getLeft() const = 0;
   virtual void updateLeft() = 0;
   virtual std::string toString() const = 0;
+  virtual CPtr clone() const = 0;
   virtual ~IResource() = default;
 };
 
@@ -29,6 +30,7 @@ public:
   double getLeft() const override;
   void updateLeft() override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double all;
@@ -45,6 +47,7 @@ public:
   double getLeft() const override;
   void updateLeft() override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   std::chrono::duration<double> all;

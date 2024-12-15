@@ -12,6 +12,7 @@ public:
   using CPtr = std::unique_ptr<ICooling>;
   virtual double getTemperature(double progress) const = 0;
   virtual std::string toString() const = 0;
+  virtual CPtr clone() const = 0;
   virtual ~ICooling() = default;
 };
 
@@ -22,6 +23,7 @@ public:
 
   double getTemperature(double progress) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double t0;
@@ -34,6 +36,7 @@ public:
 
   double getTemperature(double progress) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double c;
@@ -47,6 +50,7 @@ public:
 
   double getTemperature(double progress) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double c;
@@ -60,6 +64,7 @@ public:
 
   double getTemperature(double progress) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double t0;
@@ -72,6 +77,7 @@ public:
 
   double getTemperature(double progress) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   double t0;

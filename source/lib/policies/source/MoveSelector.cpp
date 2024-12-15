@@ -26,3 +26,5 @@ std::string KBest::toString() const
   }
   return ss.str();
 }
+
+IMoveSelector::CPtr KBest::clone() const { return std::make_unique<KBest>(k); }

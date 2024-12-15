@@ -14,6 +14,7 @@ public:
   using CPtr = std::unique_ptr<IAcceptance>;
   virtual bool accept(double currEnergy, double delta, double temperature) const = 0;
   virtual std::string toString() const = 0;
+  virtual CPtr clone() const = 0;
   virtual ~IAcceptance() = default;
 };
 
@@ -24,6 +25,7 @@ public:
 
   bool accept(double /*currEnergy*/, double delta, double temperature) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
   double normalizator;
   core::Random r;
@@ -36,6 +38,7 @@ public:
 
   bool accept(double /*currEnergy*/, double delta, double /*temperature*/) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 };
 }  // namespace sa::policies
 
