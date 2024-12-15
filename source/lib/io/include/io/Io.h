@@ -11,6 +11,10 @@ class Io
 public:
   static constexpr double precision = 1e-4;
   static std::string getWorkspaceRootPath();
+  static std::string getSourcePath();
+  static std::string getExtPath();
+  static std::string getFontsPath();
+  static std::string getFontPath();
   static std::string getDataPath();
   static std::string getTargetsPath();
   static std::string getTargetPath(const std::string& target);

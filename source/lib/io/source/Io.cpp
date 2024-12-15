@@ -52,6 +52,31 @@ std::string Io::getWorkspaceRootPath()
   return workspaceRootPath;
 }
 
+std::string Io::getSourcePath()
+{
+  static std::string sourcePath = std::filesystem::path(getWorkspaceRootPath()) / "source";
+  return sourcePath;
+}
+
+std::string Io::getExtPath()
+{
+  static std::string extPath = std::filesystem::path(getSourcePath()) / "ext";
+  return extPath;
+}
+
+std::string Io::getFontsPath()
+{
+  static std::string fontsPath = std::filesystem::path(getExtPath()) / "imgui" / "imgui" / "fonts";
+  return fontsPath;
+}
+
+std::string Io::getFontPath()
+{
+  static std::string fontsPath = std::filesystem::path(getFontsPath()) / "Cousine-Regular.ttf";
+  return fontsPath;
+}
+
+
 std::string Io::getDataPath()
 {
   static std::string dataPath = std::filesystem::path(getWorkspaceRootPath()) / "data";
