@@ -30,4 +30,5 @@ add_library(${target} ${headers} ${sources})
 # Disable external library warnings
 set_property(TARGET imgui PROPERTY COMPILE_OPTIONS)
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/imgui")
 target_link_libraries(${target} glfw GL)

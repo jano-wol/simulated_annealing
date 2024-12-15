@@ -15,6 +15,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <implot/implot.h>
 
 #include <io/Io.h>
 
@@ -65,6 +66,7 @@ int main(int /*argc*/, char** argv)
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
+  ImPlot::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
   (void)io;
   // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -128,6 +130,8 @@ int main(int /*argc*/, char** argv)
     // learn more about Dear ImGui!).
     if (show_demo_window)
       ImGui::ShowDemoWindow(&show_demo_window);
+    ImPlot::ShowDemoWindow();
+
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     {
@@ -165,6 +169,7 @@ int main(int /*argc*/, char** argv)
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
+  ImPlot::DestroyContext();
   ImGui::DestroyContext();
 
   glfwDestroyWindow(window);

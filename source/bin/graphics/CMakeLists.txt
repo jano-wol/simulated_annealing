@@ -4,5 +4,5 @@ set(sources ${source_path}/main.cpp
             )		
 set(headers )	  
 add_executable(${target} ${headers} ${sources})
-target_link_libraries(${target} PUBLIC core imgui io sa serializator)
+target_link_libraries(${target} PUBLIC core imgui implot io sa serializator)
 
