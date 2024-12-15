@@ -1,9 +1,12 @@
 #include <salesman/Position.h>
 
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 
 #include <core/IPosition.h>
 #include <core/Random.h>
+#include <core/Rounding.h>
 #include <salesman/Move.h>
 
 using namespace sa::core;
@@ -13,8 +16,8 @@ double SalesmanPosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanPosition::generateMove() const
 {
-  std::size_t idx1 = Random::randomInt(0, cities.size() - 1);
-  std::size_t idx2 = Random::randomInt(0, cities.size() - 1);
+  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
+  std::size_t idx2 = r.randomInt(0, cities.size() - 1);
   if (idx1 == idx2) {
     return std::make_unique<SalesmanMove>(idx1, idx2, 0);
   }
@@ -56,7 +59,7 @@ int SalesmanPosition::size() const
          sizeof(std::pair<double, double>) * cities.capacity();
 }
 
-IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities); }
+IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities, r); }
 
 std::pair<std::size_t, std::size_t> SalesmanPosition::getNeighbourIdxs(std::size_t idx) const
 {
@@ -85,3 +88,32 @@ double SalesmanPosition::calcEnergy() const
   };
   return ret;
 }
+
+std::string SalesmanPosition::toString(const IPosition::CPtr& iPosition)
+{
+  SalesmanPosition* position = dynamic_cast<SalesmanPosition*>(iPosition.get());
+  std::stringstream ss;
+  ss << std::setprecision(Rounding::precision) << std::fixed;
+  ss << getTypeId() << " ";
+  for (const auto& [d1, d2] : position->cities) {
+    ss << d1 << " " << d2 << " ";
+  }
+  return ss.str();
+}
+
+IPosition::CPtr SalesmanPosition::fromString(const std::string& data)
+{
+  std::istringstream ss(data);
+  std::string typeId;
+  ss >> typeId;
+
+  std::vector<std::pair<double, double>> cities;
+  double d1, d2;
+  while (ss >> d1 >> d2) {
+    cities.emplace_back(Rounding::roundDouble(d1), Rounding::roundDouble(d2));
+  }
+  auto position = std::make_unique<SalesmanPosition>(std::move(cities));
+  return position;
+}
+
+std::string SalesmanPosition::getTypeId() { return "salesman"; }

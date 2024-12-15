@@ -1,6 +1,7 @@
 add_subdirectory(core)
+add_subdirectory(io)
 add_subdirectory(monitor)
 add_subdirectory(policies)
 add_subdirectory(sa)
+add_subdirectory(serializator)
 add_subdirectory(targets)
-add_subdirectory(tester)

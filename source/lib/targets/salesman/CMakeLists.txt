@@ -1,11 +1,12 @@
 set(target salesman)
 set(include_path "${CMAKE_CURRENT_SOURCE_DIR}/include/${target}")
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
-set(headers ${include_path}/Move.h
+set(headers ${include_path}/Generator.h
+            ${include_path}/Move.h
             ${include_path}/Position.h
-            ${include_path}/Tester.h
             )
-set(sources ${source_path}/Move.cpp
+set(sources ${source_path}/Generator.cpp
+            ${source_path}/Move.cpp
             ${source_path}/Position.cpp
 			)           
 add_library(${target} ${sources} ${headers})

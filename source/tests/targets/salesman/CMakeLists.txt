@@ -10,7 +10,8 @@ target_link_libraries(${target}
 	PUBLIC
 	monitor
 	sa	
-	salesman	
+	salesman
+	serializator
 	PRIVATE
 	gmock-dev
 	GTest::gtest_main

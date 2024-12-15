@@ -13,6 +13,7 @@ public:
   using CPtr = std::unique_ptr<IMoveSelector>;
   virtual core::IMove::CPtr selectMove(const core::IPosition::CPtr& position) const = 0;
   virtual std::string toString() const = 0;
+  virtual CPtr clone() const = 0;
   virtual ~IMoveSelector() = default;
 };
 
@@ -23,6 +24,7 @@ public:
 
   core::IMove::CPtr selectMove(const core::IPosition::CPtr& position) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
 private:
   int k;

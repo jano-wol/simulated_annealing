@@ -7,7 +7,7 @@
 
 namespace sa::targets::salesman
 {
-class SalesmanMove : public core::IMove
+class SalesmanMove final : public core::IMove
 {
 public:
   SalesmanMove(std::size_t cityIdx1_, std::size_t cityIdx2_, double delta_)

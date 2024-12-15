@@ -4,6 +4,8 @@
 
 using namespace sa::policies;
 
+void Iteration::onStart() {}
+
 double Iteration::getAll() const { return all; }
 
 double Iteration::getLeft() const { return left; }
@@ -21,6 +23,10 @@ std::string Iteration::toString() const
   ss << "Iteration[" << std::size_t(all) << "]";
   return ss.str();
 }
+
+IResource::CPtr Iteration::clone() const { return std::make_unique<Iteration>(all); }
+
+void Time::onStart() { startTime = std::chrono::high_resolution_clock::now(); }
 
 double Time::getAll() const { return all.count(); }
 
@@ -46,3 +52,5 @@ std::string Time::toString() const
   ss << "Time[" << std::size_t(all.count()) << "s,quant=" << quant << "]";
   return ss.str();
 }
+
+IResource::CPtr Time::clone() const { return std::make_unique<Time>(all.count(), quant); }

@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include <core/Random.h>
+
 namespace sa::policies
 {
 class IAcceptance
@@ -12,6 +14,7 @@ public:
   using CPtr = std::unique_ptr<IAcceptance>;
   virtual bool accept(double currEnergy, double delta, double temperature) const = 0;
   virtual std::string toString() const = 0;
+  virtual CPtr clone() const = 0;
   virtual ~IAcceptance() = default;
 };
 
@@ -22,8 +25,10 @@ public:
 
   bool accept(double /*currEnergy*/, double delta, double temperature) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 
   double normalizator;
+  core::Random r;
 };
 
 class Greedy final : public IAcceptance
@@ -33,6 +38,7 @@ public:
 
   bool accept(double /*currEnergy*/, double delta, double /*temperature*/) const override;
   std::string toString() const override;
+  CPtr clone() const override;
 };
 }  // namespace sa::policies
 

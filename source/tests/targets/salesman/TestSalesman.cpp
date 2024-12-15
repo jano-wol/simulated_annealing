@@ -11,12 +11,13 @@
 #include <policies/Resource.h>
 #include <sa/SA.h>
 #include <salesman/Position.h>
-#include <salesman/Tester.h>
+#include <serializator/Serializator.h>
 
 using namespace sa::core;
 using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
+using namespace sa::serializator;
 using namespace sa::targets::salesman;
 
 namespace
@@ -37,10 +38,11 @@ bool isEqual(const std::pair<double, double>& p1, const std::pair<double, double
 
 std::vector<std::pair<double, double>> getRandomCities(int n)
 {
+  Random r;
   std::vector<std::pair<double, double>> ret;
   for (int i = 0; i < n; ++i) {
-    double x = sa::core::Random::randomDouble(0, 1);
-    double y = sa::core::Random::randomDouble(0, 1);
+    double x = r.randomDouble(0, 1);
+    double y = r.randomDouble(0, 1);
     ret.push_back({x * 10.0, y * 10.0});
   }
 
@@ -159,10 +161,35 @@ TEST(Salesman, Annealing)
   int n = 20;
   auto cities = getRandomCities(n);
   SA sa(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-        std::make_unique<KBest>(1), Monitor(MonitorLevel::Low));
+        std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
   IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
   double startEnergy = position->getEnergy();
   sa.anneal(position);
   ASSERT_LE(sa.currPosition->getEnergy(), startEnergy);
   ASSERT_LE(0, sa.currPosition->getEnergy());
+}
+
+TEST(Salesman, Reproducibility)
+{
+  int n = 100;
+  auto cities = getRandomCities(n);
+  SA sa1(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+         std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
+  SA sa2(std::make_unique<Iteration>(10000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+         std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
+  IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
+  sa1.anneal(position);
+  sa2.anneal(position);
+  ASSERT_NEAR(sa1.currPosition->getEnergy(), sa2.currPosition->getEnergy(), 1e-4);
+}
+
+TEST(Salesman, Serialization)
+{
+  int n = 100;
+  auto cities = getRandomCities(n);
+  IPosition::CPtr position = std::make_unique<SalesmanPosition>(cities);
+  auto s1 = Serializator::toString(position);
+  auto s2 = Serializator::fromString(s1);
+  auto s3 = Serializator::toString(s2);
+  EXPECT_EQ(s1, s3);
 }

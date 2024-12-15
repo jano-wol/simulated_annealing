@@ -125,10 +125,13 @@ std::string Monitor::toString() const
 
 std::ostream& sa::monitor::operator<<(std::ostream& os, const GlobalMetrics& gm)
 {
-  os << "GlobalMetrics["
-     << "bestEnergy=" << gm.bestEnergy << ",bestIdx=" << gm.bestIdx << ",allIt=" << gm.idx
+  os << "GlobalMetrics[" << "bestEnergy=" << gm.bestEnergy << ",bestIdx=" << gm.bestIdx << ",allIt=" << gm.idx
      << ",acceptedIt=" << gm.acceptance << ",upEnergyChanges=" << gm.upEnergyChanges << ",bestClone=" << gm.bestCatch
-     << ",duration=" << gm.duration << "s,speed=" << int(gm.speed) << "/s"
-     << "]";
+     << ",duration=" << gm.duration << "s,speed=" << int(gm.speed) << "/s" << "]";
   return os;
+}
+
+Monitor::CPtr Monitor::clone() const
+{
+  return std::make_unique<Monitor>(level, bestCatchQ, catchPrecision, localEnv, steps, snapshotsMemoryLimit);
 }

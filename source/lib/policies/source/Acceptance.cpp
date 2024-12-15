@@ -13,7 +13,7 @@ bool Metropolis::accept(double /*currEnergy*/, double delta, double temperature)
   if (delta <= 0)
     return true;
   double threshold = std::exp(-delta / normalizator / temperature);
-  double randomResult = Random::randomDouble(0.0, 1.0);
+  double randomResult = r.randomDouble(0.0, 1.0);
   return randomResult < threshold;
 }
 
@@ -27,6 +27,10 @@ std::string Metropolis::toString() const
   return ss.str();
 }
 
+IAcceptance::CPtr Metropolis::clone() const { return std::make_unique<Metropolis>(normalizator); }
+
 bool Greedy::accept(double /*currEnergy*/, double delta, double /*temperature*/) const { return delta <= 0; }
 
 std::string Greedy::toString() const { return "Greedy"; }
+
+IAcceptance::CPtr Greedy::clone() const { return std::make_unique<Greedy>(); }
