@@ -516,16 +516,18 @@ TEST(Sa, SnapshotAlignment)
     SA sa2(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
            std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1.0e-6, l));
     SAFactory factory(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-                      std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1.0e-6, l));
+                      std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1.0e-6, l));
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa1.anneal(position);
     nullStatics();
     DummyFastPosition::mode = 1;
     sa2.anneal(position);
     nullStatics();
+    DummyFastPosition::mode = 1;
     auto sa3 = factory.create();
     sa3->anneal(position);
     nullStatics();
+    DummyFastPosition::mode = 1;
     auto sa4 = factory.create();
     sa4->anneal(position);
     nullStatics();
