@@ -11,6 +11,7 @@
 #include <policies/Cooling.h>
 #include <policies/Resource.h>
 #include <sa/SA.h>
+#include <sa/SAFactory.h>
 
 using namespace sa::core;
 using namespace sa::monitor;
@@ -250,6 +251,13 @@ void testSnapshot(const Snapshot& snapshot, double localDerivative, double minEn
   EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
   EXPECT_NEAR(*snapshot.deltaStats.mean, deltaMean, 1e-3);
   EXPECT_NEAR(*snapshot.deltaStats.deviation, deltaDeviation, 1e-3);
+}
+
+void testSnapshotAlignment(const Snapshot& s, const Snapshot& ss)
+{
+  EXPECT_NEAR(*s.deltaStats.mean, *ss.deltaStats.mean, 1e-3);
+  EXPECT_NEAR(*s.deltaStats.deviation, *ss.deltaStats.deviation, 1e-3);
+  EXPECT_NEAR(s.position->getEnergy(), ss.position->getEnergy(), 1e-3);
 }
 }  // namespace
 
@@ -507,17 +515,28 @@ TEST(Sa, SnapshotAlignment)
            std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1.0e-6, l));
     SA sa2(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
            std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1.0e-6, l));
+    SAFactory factory(std::make_unique<Iteration>(1000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
+                      std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1.0e-6, l));
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa1.anneal(position);
     nullStatics();
     DummyFastPosition::mode = 1;
     sa2.anneal(position);
+    nullStatics();
+    auto sa3 = factory.create();
+    sa3->anneal(position);
+    nullStatics();
+    auto sa4 = factory.create();
+    sa4->anneal(position);
+    nullStatics();
     for (const auto& s : sa1.monitor->snapshots) {
       auto idx = s.globalMetrics.idx;
-      const auto& ss = sa2.monitor->snapshots[idx];
-      EXPECT_NEAR(*s.deltaStats.mean, *ss.deltaStats.mean, 1e-3);
-      EXPECT_NEAR(*s.deltaStats.deviation, *ss.deltaStats.deviation, 1e-3);
-      EXPECT_NEAR(s.position->getEnergy(), ss.position->getEnergy(), 1e-3);
+      const auto& ss2 = sa2.monitor->snapshots[idx];
+      const auto& ss3 = sa3->monitor->snapshots[idx];
+      const auto& ss4 = sa4->monitor->snapshots[idx];
+      testSnapshotAlignment(s, ss2);
+      testSnapshotAlignment(s, ss3);
+      testSnapshotAlignment(s, ss4);
     }
     nullStatics();
   }
