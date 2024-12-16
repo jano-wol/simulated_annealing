@@ -74,54 +74,50 @@ bool file_browser_modal::render(const bool isVisible, std::string& outPath)
   }
 
   bool isOpen = true;
+  float minWidth = ImGui::GetWindowWidth() * (2.0 / 3.0);
+  float maxWidth = ImGui::GetWindowWidth();
+  float maxHeight = ImGui::GetWindowHeight() * 0.8f;  // Limit popup height to 80% of the screen
+
+  ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, -1),        // Minimum width
+                                      ImVec2(maxWidth, maxHeight)  // Maximum width and height
+  );
+  ImGui::SetNextWindowPos({0, 0});
+
   if (ImGui::BeginPopupModal(m_title, &isOpen,
-                             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar |
-                                 ImGuiWindowFlags_AlwaysAutoResize)) {
+                             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar)) {
+    // ListBox for selecting files/directories
     if (ImGui::ListBox("##", &m_selection, vector_file_items_getter, &m_filesInScope, m_filesInScope.size(), 10)) {
-      // Update current path to the selected list item.
       m_currentPath = m_filesInScope[m_selection].path;
       m_currentPathIsDir = std::filesystem::is_directory(m_currentPath);
 
-      // If the selection is a directory, repopulate the list with the contents of that directory.
       if (m_currentPathIsDir) {
         get_files_in_path(m_currentPath, m_filesInScope);
       }
     }
-
-    // Auto resize text wrap to popup width.
-    ImGui::PushItemWidth(-1);
-    ImGui::TextWrapped("%s", m_currentPath.string().data());
-    ImGui::PopItemWidth();
-
     ImGui::Spacing();
-    //ImGui::SameLine(ImGui::GetWindowWidth() - 60);
-
-    // Make the "Select" button look / act disabled if the current selection is a directory.
+    // "Select" button logic
     if (m_currentPathIsDir) {
       static const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
-
       ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
       ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
       ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
-
       ImGui::Button("Select");
-
-      ImGui::PopStyleColor();
-      ImGui::PopStyleColor();
-      ImGui::PopStyleColor();
-
+      ImGui::PopStyleColor(3);
     } else {
       if (ImGui::Button("Select")) {
         ImGui::CloseCurrentPopup();
-
         outPath = m_currentPath.string();
         result = true;
       }
     }
+    ImGui::Spacing();
+    ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
+    ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::TextWrapped("Current Path: %s", m_currentPath.string().c_str());
+    ImGui::EndChild();
 
     ImGui::EndPopup();
   }
-
   return result;
 }
 
