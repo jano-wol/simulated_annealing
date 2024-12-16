@@ -6,7 +6,7 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-void LoopStart()
+void loopStart()
 {
   glfwPollEvents();
   ImGui_ImplOpenGL3_NewFrame();
