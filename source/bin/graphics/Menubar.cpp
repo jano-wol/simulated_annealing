@@ -1,9 +1,6 @@
-#include "menubar.h"
+#include "Menubar.h"
 
 #include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <limits>
 
 #include <imgui/imgui.h>
 

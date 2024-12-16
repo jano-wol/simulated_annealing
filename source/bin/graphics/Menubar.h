@@ -34,7 +34,6 @@ public:
 
 void menuBarFile();
 
-
 };  // namespace imgui_menubar
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_MENUBAR_H_
