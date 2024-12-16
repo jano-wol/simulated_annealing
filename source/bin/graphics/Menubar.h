@@ -32,7 +32,7 @@ public:
   bool render(const bool isVisible, std::string& outPath);
 };
 
-void menuBarFile();
+std::string menuBarFile();
 
 };  // namespace imgui_menubar
 

@@ -127,7 +127,7 @@ void normalize(std::string& path)
   }
 }
 
-void imgui_menubar::menuBarFile()
+std::string imgui_menubar::menuBarFile()
 {
   int isImportClicked = false;
   if (ImGui::BeginMenuBar()) {
@@ -142,8 +142,9 @@ void imgui_menubar::menuBarFile()
 
   static file_browser_modal fileBrowser("Open");
 
-  std::string path;
+  std::string path = "";
   if (fileBrowser.render(isImportClicked, path)) {
     normalize(path);
   }
+  return path;
 }

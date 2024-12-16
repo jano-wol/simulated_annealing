@@ -4,11 +4,15 @@
 #include "Menubar.h"
 #include "Render.h"
 #include "Scale.h"
+#include "UIState.h"
+
+using namespace sa::io;
 
 int main()
 {
   GLFWwindow* window = GLFWInit("SA");
   scale();
+  UIState state;
   while (!glfwWindowShouldClose(window)) {
     LoopStart();
     {
@@ -21,7 +25,11 @@ int main()
       window_flags |= ImGuiWindowFlags_NoResize;
       bool cloasble = true;
       ImGui::Begin("graphics", &cloasble, window_flags);
-      imgui_menubar::menuBarFile();
+      auto path = imgui_menubar::menuBarFile();
+      if (!path.empty() && !state.isParsing) {
+        state.startParsing(path);
+      }
+      state.updateParsing();
       ImGui::End();
     }
     render(window);
