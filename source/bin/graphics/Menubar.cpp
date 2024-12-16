@@ -3,8 +3,10 @@
 #include <algorithm>
 
 #include <imgui/imgui.h>
+#include <io/Io.h>
 
 using namespace imgui_menubar;
+using namespace sa::io;
 
 static void get_files_in_path(const std::filesystem::path& path, std::vector<file>& files)
 {
@@ -41,19 +43,14 @@ static bool vector_file_items_getter(void* data, int idx, const char** out_text)
   return true;
 }
 
-file_browser_modal::file_browser_modal(const char* title)
-    : m_title(title),
-      m_oldVisibility(false),
-      m_selection(0),
-      m_currentPath(std::filesystem::current_path()),
-      m_currentPathIsDir(true)
+file_browser_modal::file_browser_modal(const char* title, std::filesystem::path m_currentPath_)
+    : m_title(title), m_oldVisibility(false), m_selection(0), m_currentPath(m_currentPath_), m_currentPathIsDir(true)
 {}
 
 // Will return true if file selected.
 bool file_browser_modal::render(const bool isVisible, std::string& outPath)
 {
   bool result = false;
-
   if (m_oldVisibility != isVisible) {
     m_oldVisibility = isVisible;
     // Visiblity has changed.
@@ -62,7 +59,7 @@ bool file_browser_modal::render(const bool isVisible, std::string& outPath)
       // Only run when the visibility state changes to visible.
 
       // Reset the path to the initial path.
-      m_currentPath = std::filesystem::current_path().string();
+      m_currentPath = Io::getTargetsPath();
       m_currentPathIsDir = true;
 
       // Update paths based on current path
@@ -140,7 +137,7 @@ std::string imgui_menubar::menuBarFile()
     ImGui::EndMenuBar();
   }
 
-  static file_browser_modal fileBrowser("Open");
+  static file_browser_modal fileBrowser("Open", Io::getTargetsPath());
 
   std::string path = "";
   if (fileBrowser.render(isImportClicked, path)) {

@@ -26,7 +26,7 @@ int main()
       bool cloasble = true;
       ImGui::Begin("graphics", &cloasble, window_flags);
       auto path = imgui_menubar::menuBarFile();
-      if (!path.empty() && !state.isParsing) {
+      if (!path.empty() && state.readyToCompute()) {
         state.startParsing(path);
       }
       state.updateParsing();

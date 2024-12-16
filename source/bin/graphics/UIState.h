@@ -20,6 +20,7 @@ public:
   std::unique_ptr<sa::core::IPosition> loadingPosition;
   std::future<std::unique_ptr<sa::core::IPosition>> parsingFuture;
 
+  bool readyToCompute() const;
   void startParsing(const std::string& path);
   void updateParsing();
 };

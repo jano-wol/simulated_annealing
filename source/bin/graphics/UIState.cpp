@@ -5,10 +5,12 @@
 using namespace sa::core;
 using namespace sa::io;
 
+bool UIState::readyToCompute() const { return !isParsing; }
+
 void UIState::startParsing(const std::string& path)
 {
   isParsing = true;
-  parsingFuture = std::async(std::launch::async, [&path]() { return Io::getPosition(path); });
+  parsingFuture = std::async(std::launch::async, [path]() { return Io::getPosition(path); });
 }
 
 void UIState::updateParsing()

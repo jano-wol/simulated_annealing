@@ -27,7 +27,7 @@ class file_browser_modal final
   std::vector<file> m_filesInScope;
 
 public:
-  file_browser_modal(const char* title);
+  file_browser_modal(const char* title, std::filesystem::path m_currentPath_);
 
   bool render(const bool isVisible, std::string& outPath);
 };
