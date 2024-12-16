@@ -76,13 +76,9 @@ bool file_browser_modal::render(const bool isVisible, std::string& outPath)
   bool isOpen = true;
   float minWidth = ImGui::GetWindowWidth() * (2.0 / 3.0);
   float maxWidth = ImGui::GetWindowWidth();
-  float maxHeight = ImGui::GetWindowHeight() * 0.8f;  // Limit popup height to 80% of the screen
-
-  ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, -1),        // Minimum width
-                                      ImVec2(maxWidth, maxHeight)  // Maximum width and height
-  );
+  float maxHeight = ImGui::GetWindowHeight() * 0.8f;
+  ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, -1), ImVec2(maxWidth, maxHeight));
   ImGui::SetNextWindowPos({0, 0});
-
   if (ImGui::BeginPopupModal(m_title, &isOpen,
                              ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar)) {
     // ListBox for selecting files/directories
