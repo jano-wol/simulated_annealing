@@ -110,6 +110,7 @@ bool file_browser_modal::render(const bool isVisible, std::string& outPath)
     ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
     ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::TextWrapped("Current Path: %s", m_currentPath.string().c_str());
+    ImGui::SetScrollHereY(1.0f);
     ImGui::EndChild();
 
     ImGui::EndPopup();
