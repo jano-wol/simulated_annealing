@@ -137,9 +137,6 @@ void normalize(std::string& path)
 void imgui_menubar::menuBarFile()
 {
   int isImportClicked = false;
-  static int numberOfConfigurations = 0;
-  static int length = 0;
-  static bool reloadNeeded = false;
   if (ImGui::BeginMenuBar()) {
     if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("Open")) {
