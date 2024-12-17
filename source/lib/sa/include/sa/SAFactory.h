@@ -8,6 +8,7 @@ namespace sa::sa
 class SAFactory
 {
 public:
+  using CPtr = std::unique_ptr<SAFactory>;
   SAFactory(policies::IResource::CPtr resourcePolicy_, policies::IAcceptance::CPtr acceptancePolicy_,
             policies::ICooling::CPtr coolingPolicy_, policies::IMoveSelector::CPtr moveSelectorPolicy_,
             monitor::Monitor::CPtr monitor_)

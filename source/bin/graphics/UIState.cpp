@@ -4,6 +4,7 @@
 
 using namespace sa::core;
 using namespace sa::io;
+using namespace sa::sa;
 
 bool UIState::readyToCompute() const { return !isParsing; }
 
@@ -23,5 +24,13 @@ void UIState::updateParsing()
       }
       isParsing = false;
     }
+  }
+}
+
+void UIState::updateSAFactory()
+{
+  if (!saFactory || (loadingSAFactoryParams != currentSAFactoryParams)) {
+    saFactory = loadingSAFactoryParams.getFactory();
+    currentSAFactoryParams = loadingSAFactoryParams;
   }
 }
