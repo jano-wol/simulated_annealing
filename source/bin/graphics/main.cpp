@@ -109,7 +109,6 @@ int main()
       ImGui::Text("MemoryLimit(Gb):");
       ImGui::SameLine();
       ImGui::InputScalar("##MemoryLimit1Input", ImGuiDataType_U32, &state.loadingSAFactoryParams.memoryLimitInGb);
-      ImGui::SameLine();
     }
     if (state.loadingSAFactoryParams.currentMonitorIndex == 2) {
       ImGui::SameLine();
@@ -130,10 +129,10 @@ int main()
       ImGui::Text("MemoryLimit(Gb):");
       ImGui::SameLine();
       ImGui::InputScalar("##MemoryLimit2Input", ImGuiDataType_U32, &state.loadingSAFactoryParams.memoryLimitInGb);
-      ImGui::SameLine();
     }
     ImGui::PopItemWidth();
     state.updateSAFactory();
+    ImGui::Text(state.sa->toString().c_str());
     windowEnd();
     render(window);
   }

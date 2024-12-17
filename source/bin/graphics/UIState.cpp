@@ -31,6 +31,7 @@ void UIState::updateSAFactory()
 {
   if (!saFactory || (loadingSAFactoryParams != currentSAFactoryParams)) {
     saFactory = loadingSAFactoryParams.getFactory();
+    sa = saFactory->create();
     currentSAFactoryParams = loadingSAFactoryParams;
   }
 }

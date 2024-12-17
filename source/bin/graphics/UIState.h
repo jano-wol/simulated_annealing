@@ -26,10 +26,11 @@ public:
   SAFactoryParams currentSAFactoryParams;
   SAFactoryParams loadingSAFactoryParams;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
+  sa::sa::SA::CPtr sa = nullptr;
 
   std::vector<const char*> resourceNames{"Time", "Iteration"};
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
-  std::vector<const char*> coolingNames{"Linear", "Exponential", "Logarithmic", "Quadratic", "Exponential", "Cosine"};
+  std::vector<const char*> coolingNames{"Linear", "Exponential", "Logarithmic", "Quadratic", "Cosine"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Low", "Medium", "High"};
 
