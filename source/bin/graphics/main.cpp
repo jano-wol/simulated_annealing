@@ -51,6 +51,18 @@ int main()
       if (ImGui::InputDouble("##NormalizatorInput", &state.normalizator, 0.0, 0.0, "%.2f")) {
       }
     }
+
+    ImGui::Text("Cooling Policy:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
+    ImGui::Combo("##CoolingPolicy", &state.currentAcceptanceIndex, state.acceptanceNames.data(),
+                 state.acceptanceNames.size());
+    ImGui::SameLine();
+    ImGui::Text("T0:");
+    ImGui::SameLine();
+    if (ImGui::InputDouble("##T0Input", &state.t0, 0.0, 0.0, "%.2f")) {
+    }
+
     ImGui::PopItemWidth();
 
     windowEnd();

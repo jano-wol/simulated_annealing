@@ -29,6 +29,10 @@ public:
   double normalizator = 5.0;
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
 
+  int currentCoolingIndex = 0;
+  double t0 = 1.0;
+  std::vector<const char*> coolingNames{"Linear", "Exponential", "Logarithmic", "Quadratic", "Exponential", "Cosine"};
+
   bool readyToCompute() const;
   void startParsing(const std::string& path);
   void updateParsing();
