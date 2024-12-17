@@ -54,6 +54,13 @@ int main()
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
     ImGui::Combo("##CoolingPolicy", &state.loadingSAFactoryParams.currentCoolingIndex, state.coolingNames.data(),
                  state.coolingNames.size());
+    if (state.loadingSAFactoryParams.currentCoolingIndex == 3 ||
+        state.loadingSAFactoryParams.currentCoolingIndex == 4) {
+      ImGui::SameLine();
+      ImGui::Text("C:");
+      ImGui::SameLine();
+      ImGui::InputDouble("##CInput", &state.loadingSAFactoryParams.c, 0.0, 0.0, "%.2f");
+    }
     ImGui::SameLine();
     ImGui::Text("T0:");
     ImGui::SameLine();

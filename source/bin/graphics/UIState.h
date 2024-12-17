@@ -30,7 +30,7 @@ public:
 
   std::vector<const char*> resourceNames{"Time", "Iteration"};
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
-  std::vector<const char*> coolingNames{"Linear", "Exponential", "Logarithmic", "Quadratic", "Cosine"};
+  std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Low", "Medium", "High"};
 

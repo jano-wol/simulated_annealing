@@ -25,6 +25,7 @@ public:
       normalizator = other.normalizator;
 
       currentCoolingIndex = other.currentCoolingIndex;
+      c = other.c;
       t0 = other.t0;
 
       currentMoveSelectorIndex = other.currentMoveSelectorIndex;
@@ -50,6 +51,7 @@ public:
   double normalizator = 5.0;
 
   int currentCoolingIndex = 0;
+  double c = 1.0;
   double t0 = 1.0;
 
   int currentMoveSelectorIndex = 0;
@@ -66,7 +68,7 @@ public:
     return currentResourceIndex == other.currentResourceIndex &&
            almostEqual(durationInSeconds, other.durationInSeconds) && iteration == other.iteration &&
            currentAcceptanceIndex == other.currentAcceptanceIndex && almostEqual(normalizator, other.normalizator) &&
-           currentCoolingIndex == other.currentCoolingIndex && almostEqual(t0, other.t0) &&
+           currentCoolingIndex == other.currentCoolingIndex && almostEqual(c, other.c) && almostEqual(t0, other.t0) &&
            currentMoveSelectorIndex == other.currentMoveSelectorIndex && k == other.k &&
            currentMonitorIndex == other.currentMonitorIndex && almostEqual(bestCatchQ, other.bestCatchQ) &&
            localEnvLength == other.localEnvLength && steps == other.steps && memoryLimitInGb == other.memoryLimitInGb;
@@ -91,16 +93,16 @@ public:
       return std::make_unique<sa::policies::Linear>(t0);
     }
     if (currentCoolingIndex == 1) {
-      return std::make_unique<sa::policies::Exponential>(t0);
-    }
-    if (currentCoolingIndex == 2) {
-      return std::make_unique<sa::policies::Logarithmic>(t0);
-    }
-    if (currentCoolingIndex == 3) {
       return std::make_unique<sa::policies::Quadratic>(t0);
     }
-    if (currentCoolingIndex == 4) {
+    if (currentCoolingIndex == 2) {
       return std::make_unique<sa::policies::Cosine>(t0);
+    }
+    if (currentCoolingIndex == 3) {
+      return std::make_unique<sa::policies::Exponential>(c, t0);
+    }
+    if (currentCoolingIndex == 4) {
+      return std::make_unique<sa::policies::Logarithmic>(c, t0);
     }
     return nullptr;
   }
