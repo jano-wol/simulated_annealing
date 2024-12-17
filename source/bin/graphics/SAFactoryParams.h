@@ -74,11 +74,71 @@ public:
 
   bool operator!=(const SAFactoryParams& other) const { return !(*this == other); }
 
-  sa::policies::IAcceptance::CPtr getAcceptance() { ; }
-  sa::policies::ICooling::CPtr getCooling() { ; }
-  sa::policies::IMoveSelector::CPtr getMoveSelector() { ; }
-  sa::policies::IResource::CPtr getResource() { ; }
-  sa::monitor::Monitor::CPtr getMonitor() { ; }
+  sa::policies::IAcceptance::CPtr getAcceptance()
+  {
+    if (currentAcceptanceIndex == 0) {
+      return std::make_unique<sa::policies::Metropolis>(normalizator);
+    }
+    if (currentAcceptanceIndex == 1) {
+      return std::make_unique<sa::policies::Greedy>();
+    }
+    return nullptr;
+  }
+
+  sa::policies::ICooling::CPtr getCooling()
+  {
+    if (currentCoolingIndex == 0) {
+      return std::make_unique<sa::policies::Linear>(t0);
+    }
+    if (currentCoolingIndex == 1) {
+      return std::make_unique<sa::policies::Exponential>(t0);
+    }
+    if (currentCoolingIndex == 2) {
+      return std::make_unique<sa::policies::Logarithmic>(t0);
+    }
+    if (currentCoolingIndex == 3) {
+      return std::make_unique<sa::policies::Quadratic>(t0);
+    }
+    if (currentCoolingIndex == 4) {
+      return std::make_unique<sa::policies::Cosine>(t0);
+    }
+    return nullptr;
+  }
+
+  sa::policies::IMoveSelector::CPtr getMoveSelector()
+  {
+    if (currentMoveSelectorIndex == 0) {
+      return std::make_unique<sa::policies::KBest>(k);
+    }
+    return nullptr;
+  }
+
+  sa::policies::IResource::CPtr getResource()
+  {
+    if (currentResourceIndex == 0) {
+      return std::make_unique<sa::policies::Time>(durationInSeconds);
+    }
+    if (currentResourceIndex == 1) {
+      return std::make_unique<sa::policies::Iteration>(iteration);
+    }
+    return nullptr;
+  }
+
+  sa::monitor::Monitor::CPtr getMonitor()
+  {
+    if (currentMonitorIndex == 0) {
+      return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Low, bestCatchQ);
+    }
+    if (currentMonitorIndex == 1) {
+      return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, bestCatchQ, 1e-6, localEnvLength,
+                                                    steps, memoryLimitInGb * 1000000000UL);
+    }
+    if (currentMonitorIndex == 2) {
+      return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, bestCatchQ, 1e-6, localEnvLength,
+                                                    20, memoryLimitInGb * 1000000000UL);
+    }
+    return nullptr;
+  }
 
   sa::sa::SAFactory::CPtr getFactory()
   {
