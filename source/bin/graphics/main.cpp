@@ -44,8 +44,8 @@ int main()
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
     ImGui::Combo("##AcceptancePolicy", &state.currentAcceptanceIndex, state.acceptanceNames.data(),
                  state.acceptanceNames.size());
-    ImGui::SameLine();
     if (state.currentAcceptanceIndex == 0) {
+      ImGui::SameLine();
       ImGui::Text("Normalizator:");
       ImGui::SameLine();
       if (ImGui::InputDouble("##NormalizatorInput", &state.normalizator, 0.0, 0.0, "%.2f")) {
@@ -55,12 +55,22 @@ int main()
     ImGui::Text("Cooling Policy:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##CoolingPolicy", &state.currentAcceptanceIndex, state.acceptanceNames.data(),
-                 state.acceptanceNames.size());
+    ImGui::Combo("##CoolingPolicy", &state.currentCoolingIndex, state.coolingNames.data(), state.coolingNames.size());
     ImGui::SameLine();
     ImGui::Text("T0:");
     ImGui::SameLine();
     if (ImGui::InputDouble("##T0Input", &state.t0, 0.0, 0.0, "%.2f")) {
+    }
+
+    ImGui::Text("Move Selector Policy:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
+    ImGui::Combo("##MoveSelectorPolicy", &state.currentMoveSelectorIndex, state.moveSelectorNames.data(),
+                 state.moveSelectorNames.size());
+    ImGui::SameLine();
+    ImGui::Text("K:");
+    ImGui::SameLine();
+    if (ImGui::InputScalar("##KInput", ImGuiDataType_U32, &state.k)) {
     }
 
     ImGui::PopItemWidth();

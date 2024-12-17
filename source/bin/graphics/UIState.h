@@ -33,6 +33,11 @@ public:
   double t0 = 1.0;
   std::vector<const char*> coolingNames{"Linear", "Exponential", "Logarithmic", "Quadratic", "Exponential", "Cosine"};
 
+  int currentMoveSelectorIndex = 0;
+  int k = 1;
+  std::vector<const char*> moveSelectorNames{"KBest"};
+
+
   bool readyToCompute() const;
   void startParsing(const std::string& path);
   void updateParsing();
