@@ -29,14 +29,12 @@ int main()
     if (state.currentResourceIndex == 0) {
       ImGui::Text("Duration(s):");
       ImGui::SameLine();
-      if (ImGui::InputDouble("##DurationInSecondsInput", &state.durationInSeconds, 0.0, 0.0, "%.2f")) {
-      }
+      ImGui::InputDouble("##DurationInSecondsInput", &state.durationInSeconds, 0.0, 0.0, "%.2f");
     }
     if (state.currentResourceIndex == 1) {
       ImGui::Text("Iteration:");
       ImGui::SameLine();
-      if (ImGui::InputScalar("##IterationInput", ImGuiDataType_U64, &state.iteration)) {
-      }
+      ImGui::InputScalar("##IterationInput", ImGuiDataType_U64, &state.iteration);
     }
 
     ImGui::Text("Acceptance Policy:");
@@ -48,8 +46,7 @@ int main()
       ImGui::SameLine();
       ImGui::Text("Normalizator:");
       ImGui::SameLine();
-      if (ImGui::InputDouble("##NormalizatorInput", &state.normalizator, 0.0, 0.0, "%.2f")) {
-      }
+      ImGui::InputDouble("##NormalizatorInput", &state.normalizator, 0.0, 0.0, "%.2f");
     }
 
     ImGui::Text("Cooling Policy:");
@@ -59,8 +56,7 @@ int main()
     ImGui::SameLine();
     ImGui::Text("T0:");
     ImGui::SameLine();
-    if (ImGui::InputDouble("##T0Input", &state.t0, 0.0, 0.0, "%.2f")) {
-    }
+    ImGui::InputDouble("##T0Input", &state.t0, 0.0, 0.0, "%.2f");
 
     ImGui::Text("Move Selector Policy:");
     ImGui::SameLine();
@@ -70,8 +66,70 @@ int main()
     ImGui::SameLine();
     ImGui::Text("K:");
     ImGui::SameLine();
-    if (ImGui::InputScalar("##KInput", ImGuiDataType_U32, &state.k)) {
+    ImGui::InputScalar("##KInput", ImGuiDataType_U32, &state.k);
+
+    ImGui::Text("Monitor:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
+    ImGui::Combo("##MonitorLevel", &state.currentMonitorIndex, state.monitorNames.data(), state.monitorNames.size());
+    if (state.currentMonitorIndex == 0) {
+      ImGui::SameLine();
+      ImGui::Text("BestCatchQ:");
+      ImGui::SameLine();
+      ImGui::InputDouble("##BestQ0Input", &state.bestCatchQ, 0.0, 0.0, "%.2f");
+      if (state.bestCatchQ < 0.0) {
+        state.bestCatchQ = 0.0;
+      }
+      if (state.bestCatchQ > 1.0) {
+        state.bestCatchQ = 1.0;
+      }
     }
+    if (state.currentMonitorIndex == 1) {
+      ImGui::SameLine();
+      ImGui::Text("Snapshots:");
+      ImGui::SameLine();
+      ImGui::InputScalar("##Snapshots1Input", ImGuiDataType_U32, &state.steps);
+      ImGui::SameLine();
+      ImGui::Text("LocalEnvLength:");
+      ImGui::SameLine();
+      ImGui::InputScalar("##localEnvLength1Input", ImGuiDataType_U32, &state.localEnvLength);
+      ImGui::SameLine();
+      ImGui::Text("BestCatchQ:");
+      ImGui::SameLine();
+      ImGui::InputDouble("##BestQ1Input", &state.bestCatchQ, 0.0, 0.0, "%.2f");
+      if (state.bestCatchQ < 0.0) {
+        state.bestCatchQ = 0.0;
+      }
+      if (state.bestCatchQ > 1.0) {
+        state.bestCatchQ = 1.0;
+      }
+      ImGui::SameLine();
+      ImGui::Text("MemoryLimit(Gb):");
+      ImGui::SameLine();
+      ImGui::InputScalar("##MemoryLimit1Input", ImGuiDataType_U32, &state.memoryLimitInGb);
+      ImGui::SameLine();
+    }
+    if (state.currentMonitorIndex == 2) {
+      ImGui::SameLine();
+      ImGui::Text("LocalEnvLength:");
+      ImGui::SameLine();
+      ImGui::InputScalar("##localEnvLength2Input", ImGuiDataType_U32, &state.localEnvLength);
+      ImGui::SameLine();
+      ImGui::Text("BestCatchQ:");
+      ImGui::SameLine();
+      ImGui::InputDouble("##BestQ2Input", &state.bestCatchQ, 0.0, 0.0, "%.2f");
+      if (state.bestCatchQ < 0.0) {
+        state.bestCatchQ = 0.0;
+      }
+      if (state.bestCatchQ > 1.0) {
+        state.bestCatchQ = 1.0;
+      }
+      ImGui::SameLine();
+      ImGui::Text("MemoryLimit(Gb):");
+      ImGui::SameLine();
+      ImGui::InputScalar("##MemoryLimit2Input", ImGuiDataType_U32, &state.memoryLimitInGb);
+      ImGui::SameLine();
+    }    
 
     ImGui::PopItemWidth();
 

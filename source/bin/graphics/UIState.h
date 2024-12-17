@@ -37,6 +37,12 @@ public:
   int k = 1;
   std::vector<const char*> moveSelectorNames{"KBest"};
 
+  int currentMonitorIndex = 1;
+  double bestCatchQ = 0.9;
+  int localEnvLength = 1000;
+  int steps = 20;
+  int memoryLimitInGb = 2;
+  std::vector<const char*> monitorNames{"Low", "Medium", "High"};
 
   bool readyToCompute() const;
   void startParsing(const std::string& path);
