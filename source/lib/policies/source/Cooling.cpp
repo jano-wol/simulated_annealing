@@ -32,7 +32,7 @@ std::string Exponential::toString() const
   return ss.str();
 }
 
-ICooling::CPtr Exponential::clone() const { return std::make_unique<Exponential>(t0); }
+ICooling::CPtr Exponential::clone() const { return std::make_unique<Exponential>(c, t0); }
 
 double Logarithmic::getTemperature(double progress) const { return t0 / (1 + c * std::log(1.0 + progress)); }
 
@@ -47,7 +47,7 @@ std::string Logarithmic::toString() const
   return ss.str();
 }
 
-ICooling::CPtr Logarithmic::clone() const { return std::make_unique<Logarithmic>(t0); }
+ICooling::CPtr Logarithmic::clone() const { return std::make_unique<Logarithmic>(c, t0); }
 
 double Quadratic::getTemperature(double progress) const { return t0 * (1.0 - progress * progress); }
 
