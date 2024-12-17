@@ -19,6 +19,40 @@ int main()
     loopStart();
     windowBegin();
     menu(state);
+    // Dropdown selection
+    ImGui::Text("Resource Policy:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
+    ImGui::Combo("##ResourcePolicy", &state.currentResourceIndex, state.resourceNames.data(),
+                 state.resourceNames.size());
+    ImGui::SameLine();
+    if (state.currentResourceIndex == 0) {
+      ImGui::Text("Duration(s):");
+      ImGui::SameLine();
+      if (ImGui::InputDouble("##DurationInSecondsInput", &state.durationInSeconds, 0.0, 0.0, "%.2f")) {
+      }
+    }
+    if (state.currentResourceIndex == 1) {
+      ImGui::Text("Iteration:");
+      ImGui::SameLine();
+      if (ImGui::InputScalar("##IterationInput", ImGuiDataType_U64, &state.iteration)) {
+      }
+    }
+
+    ImGui::Text("Acceptance Policy:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
+    ImGui::Combo("##AcceptancePolicy", &state.currentAcceptanceIndex, state.acceptanceNames.data(),
+                 state.acceptanceNames.size());
+    ImGui::SameLine();
+    if (state.currentAcceptanceIndex == 0) {
+      ImGui::Text("Normalizator:");
+      ImGui::SameLine();
+      if (ImGui::InputDouble("##NormalizatorInput", &state.normalizator, 0.0, 0.0, "%.2f")) {
+      }
+    }
+    ImGui::PopItemWidth();
+
     windowEnd();
     render(window);
   }
