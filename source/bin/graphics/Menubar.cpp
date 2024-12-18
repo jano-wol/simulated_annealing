@@ -107,11 +107,3 @@ void FileBrowser::render()
   }
 }
 
-void normalize(std::string& path)
-{
-  for (size_t i = 0; i < path.size(); i++) {
-    if (path[i] == '\\') {
-      path[i] = '/';
-    }
-  }
-}
