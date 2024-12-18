@@ -4,7 +4,7 @@
 #include "Menubar.h"
 #include "UIState.h"
 
-void menu(UIState& state)
+void menuUpdate(UIState& state)
 {
   auto path = imgui_menubar::menuBarFile();
   if (!path.empty() && state.readyToCompute()) {
