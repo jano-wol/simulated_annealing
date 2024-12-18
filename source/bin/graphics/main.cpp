@@ -23,15 +23,15 @@ int main()
     ImGui::Text("Resource Policy:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##ResourcePolicy", &state.loadingSAFactoryParams.currentResourceIndex, state.resourceNames.data(),
+    ImGui::Combo("##ResourcePolicy", &state.loadingSAFactoryParams.resourceIndex, state.resourceNames.data(),
                  state.resourceNames.size());
     ImGui::SameLine();
-    if (state.loadingSAFactoryParams.currentResourceIndex == 0) {
+    if (state.loadingSAFactoryParams.resourceIndex == 0) {
       ImGui::Text("Duration(s):");
       ImGui::SameLine();
       ImGui::InputDouble("##DurationInSecondsInput", &state.loadingSAFactoryParams.durationInSeconds, 0.0, 0.0, "%.2f");
     }
-    if (state.loadingSAFactoryParams.currentResourceIndex == 1) {
+    if (state.loadingSAFactoryParams.resourceIndex == 1) {
       ImGui::Text("Iteration:");
       ImGui::SameLine();
       ImGui::InputScalar("##IterationInput", ImGuiDataType_U64, &state.loadingSAFactoryParams.iteration);
@@ -40,9 +40,9 @@ int main()
     ImGui::Text("Acceptance Policy:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##AcceptancePolicy", &state.loadingSAFactoryParams.currentAcceptanceIndex,
-                 state.acceptanceNames.data(), state.acceptanceNames.size());
-    if (state.loadingSAFactoryParams.currentAcceptanceIndex == 0) {
+    ImGui::Combo("##AcceptancePolicy", &state.loadingSAFactoryParams.acceptanceIndex, state.acceptanceNames.data(),
+                 state.acceptanceNames.size());
+    if (state.loadingSAFactoryParams.acceptanceIndex == 0) {
       ImGui::SameLine();
       ImGui::Text("Normalizator:");
       ImGui::SameLine();
@@ -52,10 +52,9 @@ int main()
     ImGui::Text("Cooling Policy:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##CoolingPolicy", &state.loadingSAFactoryParams.currentCoolingIndex, state.coolingNames.data(),
+    ImGui::Combo("##CoolingPolicy", &state.loadingSAFactoryParams.coolingIndex, state.coolingNames.data(),
                  state.coolingNames.size());
-    if (state.loadingSAFactoryParams.currentCoolingIndex == 3 ||
-        state.loadingSAFactoryParams.currentCoolingIndex == 4) {
+    if (state.loadingSAFactoryParams.coolingIndex == 3 || state.loadingSAFactoryParams.coolingIndex == 4) {
       ImGui::SameLine();
       ImGui::Text("C:");
       ImGui::SameLine();
@@ -69,7 +68,7 @@ int main()
     ImGui::Text("Move Selector Policy:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##MoveSelectorPolicy", &state.loadingSAFactoryParams.currentMoveSelectorIndex,
+    ImGui::Combo("##MoveSelectorPolicy", &state.loadingSAFactoryParams.moveSelectorIndex,
                  state.moveSelectorNames.data(), state.moveSelectorNames.size());
     ImGui::SameLine();
     ImGui::Text("K:");
@@ -79,9 +78,9 @@ int main()
     ImGui::Text("Monitor:");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-    ImGui::Combo("##MonitorLevel", &state.loadingSAFactoryParams.currentMonitorIndex, state.monitorNames.data(),
+    ImGui::Combo("##MonitorLevel", &state.loadingSAFactoryParams.monitorIndex, state.monitorNames.data(),
                  state.monitorNames.size());
-    if (state.loadingSAFactoryParams.currentMonitorIndex == 0) {
+    if (state.loadingSAFactoryParams.monitorIndex == 0) {
       ImGui::SameLine();
       ImGui::Text("BestCatchQ:");
       ImGui::SameLine();
@@ -93,7 +92,7 @@ int main()
         state.loadingSAFactoryParams.bestCatchQ = 1.0;
       }
     }
-    if (state.loadingSAFactoryParams.currentMonitorIndex == 1) {
+    if (state.loadingSAFactoryParams.monitorIndex == 1) {
       ImGui::SameLine();
       ImGui::Text("Snapshots:");
       ImGui::SameLine();
@@ -117,7 +116,7 @@ int main()
       ImGui::SameLine();
       ImGui::InputScalar("##MemoryLimit1Input", ImGuiDataType_U32, &state.loadingSAFactoryParams.memoryLimitInGb);
     }
-    if (state.loadingSAFactoryParams.currentMonitorIndex == 2) {
+    if (state.loadingSAFactoryParams.monitorIndex == 2) {
       ImGui::SameLine();
       ImGui::Text("LocalEnvLength:");
       ImGui::SameLine();

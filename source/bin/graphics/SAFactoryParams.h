@@ -17,21 +17,21 @@ public:
   SAFactoryParams& operator=(const SAFactoryParams& other)
   {
     if (this != &other) {
-      currentResourceIndex = other.currentResourceIndex;
+      resourceIndex = other.resourceIndex;
       durationInSeconds = other.durationInSeconds;
       iteration = other.iteration;
 
-      currentAcceptanceIndex = other.currentAcceptanceIndex;
+      acceptanceIndex = other.acceptanceIndex;
       normalizator = other.normalizator;
 
-      currentCoolingIndex = other.currentCoolingIndex;
+      coolingIndex = other.coolingIndex;
       c = other.c;
       t0 = other.t0;
 
-      currentMoveSelectorIndex = other.currentMoveSelectorIndex;
+      moveSelectorIndex = other.moveSelectorIndex;
       k = other.k;
 
-      currentMonitorIndex = other.currentMonitorIndex;
+      monitorIndex = other.monitorIndex;
       bestCatchQ = other.bestCatchQ;
       localEnvLength = other.localEnvLength;
       steps = other.steps;
@@ -43,21 +43,21 @@ public:
   static constexpr double epsilon = 1e-6;
   static bool almostEqual(double a, double b, double tolerance = epsilon) { return std::abs(a - b) <= tolerance; }
 
-  int currentResourceIndex = 0;
+  int resourceIndex = 0;
   double durationInSeconds = 5.0;
   std::size_t iteration = 1000000;
 
-  int currentAcceptanceIndex = 0;
+  int acceptanceIndex = 0;
   double normalizator = 5.0;
 
-  int currentCoolingIndex = 0;
+  int coolingIndex = 0;
   double c = 1.0;
   double t0 = 1.0;
 
-  int currentMoveSelectorIndex = 0;
+  int moveSelectorIndex = 0;
   int k = 1;
 
-  int currentMonitorIndex = 1;
+  int monitorIndex = 1;
   double bestCatchQ = 0.9;
   int localEnvLength = 1000;
   int steps = 20;
@@ -65,12 +65,11 @@ public:
 
   bool operator==(const SAFactoryParams& other) const
   {
-    return currentResourceIndex == other.currentResourceIndex &&
-           almostEqual(durationInSeconds, other.durationInSeconds) && iteration == other.iteration &&
-           currentAcceptanceIndex == other.currentAcceptanceIndex && almostEqual(normalizator, other.normalizator) &&
-           currentCoolingIndex == other.currentCoolingIndex && almostEqual(c, other.c) && almostEqual(t0, other.t0) &&
-           currentMoveSelectorIndex == other.currentMoveSelectorIndex && k == other.k &&
-           currentMonitorIndex == other.currentMonitorIndex && almostEqual(bestCatchQ, other.bestCatchQ) &&
+    return resourceIndex == other.resourceIndex && almostEqual(durationInSeconds, other.durationInSeconds) &&
+           iteration == other.iteration && acceptanceIndex == other.acceptanceIndex &&
+           almostEqual(normalizator, other.normalizator) && coolingIndex == other.coolingIndex &&
+           almostEqual(c, other.c) && almostEqual(t0, other.t0) && moveSelectorIndex == other.moveSelectorIndex &&
+           k == other.k && monitorIndex == other.monitorIndex && almostEqual(bestCatchQ, other.bestCatchQ) &&
            localEnvLength == other.localEnvLength && steps == other.steps && memoryLimitInGb == other.memoryLimitInGb;
   }
 
@@ -78,10 +77,10 @@ public:
 
   sa::policies::IAcceptance::CPtr getAcceptance()
   {
-    if (currentAcceptanceIndex == 0) {
+    if (acceptanceIndex == 0) {
       return std::make_unique<sa::policies::Metropolis>(normalizator);
     }
-    if (currentAcceptanceIndex == 1) {
+    if (acceptanceIndex == 1) {
       return std::make_unique<sa::policies::Greedy>();
     }
     return nullptr;
@@ -89,19 +88,19 @@ public:
 
   sa::policies::ICooling::CPtr getCooling()
   {
-    if (currentCoolingIndex == 0) {
+    if (coolingIndex == 0) {
       return std::make_unique<sa::policies::Linear>(t0);
     }
-    if (currentCoolingIndex == 1) {
+    if (coolingIndex == 1) {
       return std::make_unique<sa::policies::Quadratic>(t0);
     }
-    if (currentCoolingIndex == 2) {
+    if (coolingIndex == 2) {
       return std::make_unique<sa::policies::Cosine>(t0);
     }
-    if (currentCoolingIndex == 3) {
+    if (coolingIndex == 3) {
       return std::make_unique<sa::policies::Exponential>(c, t0);
     }
-    if (currentCoolingIndex == 4) {
+    if (coolingIndex == 4) {
       return std::make_unique<sa::policies::Logarithmic>(c, t0);
     }
     return nullptr;
@@ -109,7 +108,7 @@ public:
 
   sa::policies::IMoveSelector::CPtr getMoveSelector()
   {
-    if (currentMoveSelectorIndex == 0) {
+    if (moveSelectorIndex == 0) {
       return std::make_unique<sa::policies::KBest>(k);
     }
     return nullptr;
@@ -117,10 +116,10 @@ public:
 
   sa::policies::IResource::CPtr getResource()
   {
-    if (currentResourceIndex == 0) {
+    if (resourceIndex == 0) {
       return std::make_unique<sa::policies::Time>(durationInSeconds);
     }
-    if (currentResourceIndex == 1) {
+    if (resourceIndex == 1) {
       return std::make_unique<sa::policies::Iteration>(iteration);
     }
     return nullptr;
@@ -128,14 +127,14 @@ public:
 
   sa::monitor::Monitor::CPtr getMonitor()
   {
-    if (currentMonitorIndex == 0) {
+    if (monitorIndex == 0) {
       return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Low, bestCatchQ);
     }
-    if (currentMonitorIndex == 1) {
+    if (monitorIndex == 1) {
       return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, bestCatchQ, 1e-6, localEnvLength,
                                                     steps, memoryLimitInGb * 1000000000UL);
     }
-    if (currentMonitorIndex == 2) {
+    if (monitorIndex == 2) {
       return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, bestCatchQ, 1e-6, localEnvLength,
                                                     20, memoryLimitInGb * 1000000000UL);
     }
