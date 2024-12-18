@@ -1,6 +1,8 @@
 #ifndef SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_H_
 #define SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_H_
 
+#include <imgui/imgui.h>
+
 #include "UIState.h"
 
 void readDoubleNonNeg(std::string text, std::string id, double* val)
