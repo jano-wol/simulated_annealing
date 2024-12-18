@@ -96,9 +96,9 @@ void FileBrowser::render()
     ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
     ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
     if (!nextPath.empty()) {
-      ImGui::TextWrapped("Current Path: %s", nextPath.string().c_str());
+      ImGui::TextWrapped("Path: %s", nextPath.string().c_str());
     } else {
-      ImGui::TextWrapped("Current Path: %s", currentDirPath.string().c_str());
+      ImGui::TextWrapped("Path: %s", currentDirPath.string().c_str());
     }
     ImGui::SetScrollHereY(1.0f);
     ImGui::EndChild();
