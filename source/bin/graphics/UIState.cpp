@@ -18,7 +18,7 @@ void UIState::updateParsing()
 {
   if (isParsing) {
     if (parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      loadingPosition = parsingFuture.get();  // Retrieve the parsed position
+      loadingPosition = parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
       }

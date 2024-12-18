@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <imgui/imgui.h>
+
 struct File
 {
   std::string alias;
@@ -18,12 +20,15 @@ public:
 
   std::string title;
   std::filesystem::path currentDirPath;
+  std::filesystem::path nextPath;
   bool visible;
   bool loadedVisible;
   int selection;
   std::vector<File> filesInScope;
   std::filesystem::path currPath;
   std::filesystem::path loadedPath;
+
+  const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
 
   void render();
 };

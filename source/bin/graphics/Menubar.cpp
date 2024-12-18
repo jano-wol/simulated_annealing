@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include <imgui/imgui.h>
 #include <io/Io.h>
 
 using namespace sa::io;
@@ -45,6 +44,7 @@ static bool vector_file_items_getter(void* data, int idx, const char** out_text)
 FileBrowser::FileBrowser(std::string title_, std::filesystem::path currentDirPath_)
     : title(std::move(title_)),
       currentDirPath(std::move(currentDirPath_)),
+      nextPath(),
       visible(false),
       loadedVisible(false),
       selection(0)
@@ -68,35 +68,38 @@ void FileBrowser::render()
   ImGui::SetNextWindowPos({0, 0});
   if (ImGui::BeginPopupModal(title.c_str(), &isOpen,
                              ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar)) {
-    std::filesystem::path nextPath;
-    bool nextPathIsDir;
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
       nextPath = filesInScope[selection].path;
-      nextPathIsDir = std::filesystem::is_directory(nextPath);
-      if (nextPathIsDir) {
-        get_files_in_path(nextPath, filesInScope);
-      }
     }
     ImGui::Spacing();
-    if (nextPathIsDir) {
-      static const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
-      ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
-      ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
-      ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
-      ImGui::Button("Select");
-      ImGui::PopStyleColor(3);
-      currentDirPath = nextPath;
-    } else {
+
+    if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
       if (ImGui::Button("Select")) {
         ImGui::CloseCurrentPopup();
         loadedPath = nextPath;
         visible = false;
       }
+    } else {
+      if (!nextPath.empty()) {
+        get_files_in_path(nextPath, filesInScope);
+        currentDirPath = nextPath;
+        nextPath.clear();
+      }
+      ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+      ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+      ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+      ImGui::Button("Select");
+      ImGui::PopStyleColor(3);
     }
+
     ImGui::Spacing();
     ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
     ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
-    ImGui::TextWrapped("Current Path: %s", currentDirPath.string().c_str());
+    if (!nextPath.empty()) {
+      ImGui::TextWrapped("Current Path: %s", nextPath.string().c_str());
+    } else {
+      ImGui::TextWrapped("Current Path: %s", currentDirPath.string().c_str());
+    }
     ImGui::SetScrollHereY(1.0f);
     ImGui::EndChild();
 
