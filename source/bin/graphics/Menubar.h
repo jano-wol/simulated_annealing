@@ -5,35 +5,29 @@
 #include <string>
 #include <vector>
 
-namespace imgui_menubar
-{
-struct file
+struct File
 {
   std::string alias;
   std::filesystem::path path;
 };
 
-class file_browser_modal final
+class FileBrowser
 {
-  const char* m_title;
-
-  bool m_oldVisibility;
-
-  int m_selection;
-
-  std::filesystem::path m_currentPath;
-  bool m_currentPathIsDir;
-
-  std::vector<file> m_filesInScope;
-
 public:
-  file_browser_modal(const char* title, std::filesystem::path m_currentPath_);
+  FileBrowser(std::string title_, std::filesystem::path m_currentDirPath_);
 
-  bool render(const bool isVisible, std::string& outPath);
+  std::string title;
+  std::filesystem::path currentDirPath;
+  bool visible;
+  bool loadedVisible;
+  int selection;
+  std::vector<File> filesInScope;
+  std::filesystem::path currPath;
+  std::filesystem::path loadedPath;
+
+  void render();
 };
 
 std::string menuBarFile();
-
-};  // namespace imgui_menubar
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_MENUBAR_H_

@@ -9,18 +9,26 @@
 #include <vector>
 
 #include <core/IPosition.h>
+#include <io/Io.h>
 #include <sa/SAFactory.h>
 
+#include "Menubar.h"
 #include "SAFactoryParams.h"
 
 class UIState
 {
 public:
-  UIState() : isParsing(false), currentPosition(nullptr), loadingPosition(nullptr) {}
+  UIState()
+      : isParsing(false),
+        currentPosition(nullptr),
+        loadingPosition(nullptr),
+        fileBrowser("Open", sa::io::Io::getTargetsPath())
+  {}
 
   std::atomic<bool> isParsing;
   std::unique_ptr<sa::core::IPosition> currentPosition;
   std::unique_ptr<sa::core::IPosition> loadingPosition;
+  FileBrowser fileBrowser;
   std::future<std::unique_ptr<sa::core::IPosition>> parsingFuture;
 
   SAFactoryParams currentSAFactoryParams;
