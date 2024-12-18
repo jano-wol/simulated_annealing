@@ -139,7 +139,6 @@ int main()
     }
     ImGui::PopItemWidth();
     state.updateSAFactory();
-    ImGui::Text(state.sa->toString().c_str());
     windowEnd();
     render(window);
   }
