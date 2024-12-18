@@ -40,13 +40,18 @@ void readU64(std::string text, std::string id, std::size_t* val)
   ImGui::InputScalar(id.c_str(), ImGuiDataType_U64, val);
 }
 
+void combo(std::string text, std::string id, int* index, const std::vector<const char*>& v)
+{
+  ImGui::TextUnformatted(text.c_str());
+  ImGui::SameLine();
+  ImGui::Combo(id.c_str(), index, v.data(), v.size());
+}
+
 void saFactoryUpdate(UIState& state)
 {
   ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
-  ImGui::Text("Resource Policy:");
-  ImGui::SameLine();
-  ImGui::Combo("##ResourcePolicy", &state.loadingSAFactoryParams.resourceIndex, state.resourceNames.data(),
-               state.resourceNames.size());
+
+  combo("Resource Policy:", "##ResourcePolicy", &state.loadingSAFactoryParams.resourceIndex, state.resourceNames);
   ImGui::SameLine();
   if (state.loadingSAFactoryParams.resourceIndex == 0) {
     readDoubleNonNeg("Duration(s):", "##DurationInSecondsInput", &state.loadingSAFactoryParams.durationInSeconds);
@@ -55,19 +60,14 @@ void saFactoryUpdate(UIState& state)
     readU64("Iteration:", "##IterationInput", &state.loadingSAFactoryParams.iteration);
   }
 
-  ImGui::Text("Acceptance Policy:");
-  ImGui::SameLine();
-  ImGui::Combo("##AcceptancePolicy", &state.loadingSAFactoryParams.acceptanceIndex, state.acceptanceNames.data(),
-               state.acceptanceNames.size());
+  combo("Acceptance Policy:", "##AcceptancePolicy", &state.loadingSAFactoryParams.acceptanceIndex,
+        state.acceptanceNames);
   if (state.loadingSAFactoryParams.acceptanceIndex == 0) {
     ImGui::SameLine();
     readDoubleNonNeg("Normalizator:", "##NormalizatorInput", &state.loadingSAFactoryParams.normalizator);
   }
 
-  ImGui::Text("Cooling Policy:");
-  ImGui::SameLine();
-  ImGui::Combo("##CoolingPolicy", &state.loadingSAFactoryParams.coolingIndex, state.coolingNames.data(),
-               state.coolingNames.size());
+  combo("Cooling Policy:", "##CoolingPolicy", &state.loadingSAFactoryParams.coolingIndex, state.coolingNames);
   if (state.loadingSAFactoryParams.coolingIndex == 3 || state.loadingSAFactoryParams.coolingIndex == 4) {
     ImGui::SameLine();
     readDoubleNonNeg("C:", "##CInput", &state.loadingSAFactoryParams.c);
@@ -75,17 +75,12 @@ void saFactoryUpdate(UIState& state)
   ImGui::SameLine();
   readDoubleNonNeg("T0:", "##T0Input", &state.loadingSAFactoryParams.t0);
 
-  ImGui::Text("Move Selector Policy:");
-  ImGui::SameLine();
-  ImGui::Combo("##MoveSelectorPolicy", &state.loadingSAFactoryParams.moveSelectorIndex, state.moveSelectorNames.data(),
-               state.moveSelectorNames.size());
+  combo("Move Selector Policy:", "##MoveSelectorPolicy", &state.loadingSAFactoryParams.moveSelectorIndex,
+        state.moveSelectorNames);
   ImGui::SameLine();
   readU32("K:", "##KInput", &state.loadingSAFactoryParams.k);
 
-  ImGui::Text("Monitor:");
-  ImGui::SameLine();
-  ImGui::Combo("##MonitorLevel", &state.loadingSAFactoryParams.monitorIndex, state.monitorNames.data(),
-               state.monitorNames.size());
+  combo("Monitor:", "##MonitorLevel", &state.loadingSAFactoryParams.monitorIndex, state.monitorNames);
   if (state.loadingSAFactoryParams.monitorIndex == 0) {
     ImGui::SameLine();
     readDouble01("BestCatchQ:", "##BestQ0Input", &state.loadingSAFactoryParams.bestCatchQ);
