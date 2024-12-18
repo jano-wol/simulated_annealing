@@ -42,9 +42,9 @@ void readU64(std::string text, std::string id, std::size_t* val)
 
 void saFactoryUpdate(UIState& state)
 {
+  ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
   ImGui::Text("Resource Policy:");
   ImGui::SameLine();
-  ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
   ImGui::Combo("##ResourcePolicy", &state.loadingSAFactoryParams.resourceIndex, state.resourceNames.data(),
                state.resourceNames.size());
   ImGui::SameLine();
