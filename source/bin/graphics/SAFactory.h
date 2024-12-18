@@ -5,17 +5,17 @@
 
 #include "UIState.h"
 
-void readDoubleNonNeg(std::string text, std::string id, double* val)
+void readDoubleNonNeg(const char* text, const char* id, double* val)
 {
-  ImGui::TextUnformatted(text.c_str());
+  ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::InputDouble(id.c_str(), val, 0.0, 0.0, "%.2f");
+  ImGui::InputDouble(id, val, 0.0, 0.0, "%.2f");
   if (*val < 0) {
     *val = 0;
   }
 }
 
-void readDouble01(std::string text, std::string id, double* val)
+void readDouble01(const char* text, const char* id, double* val)
 {
   readDoubleNonNeg(text, id, val);
   if (*val > 1) {
@@ -23,28 +23,28 @@ void readDouble01(std::string text, std::string id, double* val)
   }
 }
 
-void readU32(std::string text, std::string id, int* val)
+void readU32(const char* text, const char* id, int* val)
 {
-  ImGui::TextUnformatted(text.c_str());
+  ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::InputScalar(id.c_str(), ImGuiDataType_U32, val);
+  ImGui::InputScalar(id, ImGuiDataType_U32, val);
   if (*val < 0) {
     *val = 0;
   }
 }
 
-void readU64(std::string text, std::string id, std::size_t* val)
+void readU64(const char* text, const char* id, std::size_t* val)
 {
-  ImGui::TextUnformatted(text.c_str());
+  ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::InputScalar(id.c_str(), ImGuiDataType_U64, val);
+  ImGui::InputScalar(id, ImGuiDataType_U64, val);
 }
 
-void combo(std::string text, std::string id, int* index, const std::vector<const char*>& v)
+void combo(const char* text, const char* id, int* index, const std::vector<const char*>& v)
 {
-  ImGui::TextUnformatted(text.c_str());
+  ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::Combo(id.c_str(), index, v.data(), v.size());
+  ImGui::Combo(id, index, v.data(), v.size());
 }
 
 void saFactoryUpdate(UIState& state)
