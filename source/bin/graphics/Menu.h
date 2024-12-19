@@ -11,10 +11,12 @@ void menuUpdate(UIState& state)
     if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("Open")) {
         state.fileBrowser.loadedVisible = true;
+        state.fileBrowser.title = "Open";
         state.fileBrowser.mode = 1;
       }
       if (ImGui::MenuItem("Save")) {
         state.fileBrowser.loadedVisible = true;
+        state.fileBrowser.title = "Save";
         state.fileBrowser.mode = 2;
       }
       ImGui::EndMenu();
