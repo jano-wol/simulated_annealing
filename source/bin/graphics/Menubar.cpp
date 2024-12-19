@@ -92,6 +92,7 @@ void FileBrowser::renderSave()
   ImGui::Spacing();
   ImGui::Text("File name:");
   ImGui::SameLine();
+  ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * (1.0 / 3.0));
   ImGui::InputText("##InputSaveFileName", saveFileName, IM_ARRAYSIZE(saveFileName));
   std::filesystem::path savePath = currentDirPath / saveFileName;
 
