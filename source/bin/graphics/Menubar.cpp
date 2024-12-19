@@ -78,12 +78,6 @@ void FileBrowser::renderSave()
   ImGui::Spacing();
   ImGui::Text("File name:");
   ImGui::SameLine();
-  if (nextPath.empty()) {
-    saveFileName[0] = '\0';
-  } else {
-    strncpy(saveFileName, nextPath.filename().c_str(), sizeof(saveFileName) - 1);
-    saveFileName[sizeof(saveFileName) - 1] = '\0';
-  }
   ImGui::InputText("##InputSaveFileName", saveFileName, IM_ARRAYSIZE(saveFileName));
   std::filesystem::path savePath = currentDirPath / saveFileName;
 
@@ -127,10 +121,12 @@ void FileBrowser::render()
                              ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar)) {
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
       nextPath = filesInScope[selection].path;
+      strncpy(saveFileName, nextPath.filename().string().c_str(), IM_ARRAYSIZE(saveFileName));
     }
     if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
       get_files_in_path(nextPath, filesInScope);
       currentDirPath = nextPath;
+      saveFileName[0] = '\0';
       nextPath.clear();
     }
     if (mode == 1) {
