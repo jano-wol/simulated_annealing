@@ -23,6 +23,9 @@ IPosition::CPtr Serializator::fromString(const std::string& data)
   std::string typeId;
   ss >> typeId;
   auto it = getFromStringMap().find(typeId);
+  if (it == getFromStringMap().end()) {
+    return nullptr;
+  }
   return it->second(data);
 }
 
@@ -30,6 +33,9 @@ std::string Serializator::toString(const core::IPosition::CPtr& iPosition)
 {
   std::string typeId = getTypeId(iPosition);
   auto it = getToStringMap().find(typeId);
+  if (it == getToStringMap().end()) {
+    return "";
+  }
   return it->second(iPosition);
 }
 
