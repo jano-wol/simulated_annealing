@@ -2,7 +2,6 @@
 #define SIMULATED_ANNEALING_GRAPHICS_UI_STATE_H_
 
 #include <atomic>
-#include <future>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -12,7 +11,7 @@
 #include <io/Io.h>
 #include <sa/SAFactory.h>
 
-#include "Menubar.h"
+#include "FileBrowser.h"
 #include "SAFactoryParams.h"
 
 class UIState
@@ -20,18 +19,20 @@ class UIState
 public:
   UIState()
       : isParsing(false),
+        isSaving(false),
         currentPosition(nullptr),
         loadingPosition(nullptr),
         fileBrowser("Open", sa::io::Io::getTargetsPath())
   {}
 
-  std::atomic<bool> isParsing;
-  std::atomic<bool> isSaving;
+  bool isParsing;
+  bool isSaving;
   std::unique_ptr<sa::core::IPosition> currentPosition;
   std::unique_ptr<sa::core::IPosition> loadingPosition;
   FileBrowser fileBrowser;
-  std::future<std::unique_ptr<sa::core::IPosition>> parsingFuture;
-  std::future<void> savingFuture;
+
+  void updateParsing();
+  void updateSaving();
 
   SAFactoryParams currentSAFactoryParams;
   SAFactoryParams loadingSAFactoryParams;
@@ -44,11 +45,9 @@ public:
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Low", "Medium", "High"};
 
-  bool readyToCompute() const;
-  void startParsing(const std::string& path);
-  void startSaving(const std::string& path);
-  void updateParsing();
-  void updateSaving();
+  std::mutex mtx;
+
+  void menu();
   void updateSAFactory();
 };
 

@@ -6,25 +6,11 @@ using namespace sa::core;
 using namespace sa::io;
 using namespace sa::sa;
 
-bool UIState::readyToCompute() const { return !isParsing; }
-
-void UIState::startParsing(const std::string& path)
-{
-  isParsing = true;
-  parsingFuture = std::async(std::launch::async, [path]() { return Io::getPosition(path); });
-}
-
-void UIState::startSaving(const std::string& path)
-{
-  isSaving = true;
-  savingFuture = std::async(std::launch::async, [path, this]() { return Io::savePosition(path, currentPosition); });
-}
-
 void UIState::updateParsing()
 {
   if (isParsing) {
-    if (parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      loadingPosition = parsingFuture.get();
+    if (fileBrowser.parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      loadingPosition = fileBrowser.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
       }
@@ -36,7 +22,7 @@ void UIState::updateParsing()
 void UIState::updateSaving()
 {
   if (isSaving) {
-    if (savingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+    if (fileBrowser.savingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSaving = false;
     }
   }
@@ -48,4 +34,29 @@ void UIState::updateSAFactory()
     saFactory = loadingSAFactoryParams.getFactory();
     currentSAFactoryParams = loadingSAFactoryParams;
   }
+}
+
+void UIState::menu()
+{
+  fileBrowser.menuUpdate();
+
+  if (fileBrowser.loadedPath != fileBrowser.currPath) {
+    if (mtx.try_lock()) {
+      if (fileBrowser.mode == 1) {
+        isParsing = true;
+        fileBrowser.startParsing();
+        fileBrowser.currPath = fileBrowser.loadedPath;
+      }
+      if (fileBrowser.mode == 2) {
+        isSaving = true;
+        fileBrowser.startSaving(currentPosition);
+        fileBrowser.currPath = fileBrowser.loadedPath;
+      }
+    } else {
+      fileBrowser.loadedPath = fileBrowser.currPath;
+      // std::cout << "Warning: decrementCounter() could not acquire the lock! Mutex is busy." << std::endl;
+    }
+  }
+  updateParsing();
+  updateSaving();
 }

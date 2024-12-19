@@ -1,12 +1,13 @@
-#include "Menubar.h"
+#include "FileBrowser.h"
 
 #include <algorithm>
 
 #include <io/Io.h>
 
+using namespace sa::core;
 using namespace sa::io;
 
-static void get_files_in_path(const std::filesystem::path& path, std::vector<File>& files)
+static void get_files_in_path(const std::filesystem::path& path, std::vector<FileBrowser::File>& files)
 {
   files.clear();
 
@@ -33,7 +34,7 @@ static int clamp_size_t_to_int(const size_t data)
 
 static bool vector_file_items_getter(void* data, int idx, const char** out_text)
 {
-  const std::vector<File>* v = reinterpret_cast<std::vector<File>*>(data);
+  const std::vector<FileBrowser::File>* v = reinterpret_cast<std::vector<FileBrowser::File>*>(data);
   const int elementCount = clamp_size_t_to_int(v->size());
   if (idx < 0 || idx >= elementCount)
     return false;
@@ -148,4 +149,37 @@ void FileBrowser::render()
 
     ImGui::EndPopup();
   }
+}
+
+void FileBrowser::menuUpdate()
+{
+  loadedVisible = false;
+  if (ImGui::BeginMenuBar()) {
+    if (ImGui::BeginMenu("File")) {
+      if (ImGui::MenuItem("Open")) {
+        loadedVisible = true;
+        title = "Open";
+        mode = 1;
+      }
+      if (ImGui::MenuItem("Save")) {
+        loadedVisible = true;
+        title = "Save";
+        mode = 2;
+      }
+      ImGui::EndMenu();
+    }
+    ImGui::EndMenuBar();
+  }
+  render();
+}
+
+void FileBrowser::startParsing()
+{
+  parsingFuture = std::async(std::launch::async, [this]() { return Io::getPosition(loadedPath); });
+}
+
+void FileBrowser::startSaving(const IPosition::CPtr& currPosition)
+{
+  savingFuture =
+      std::async(std::launch::async, [this, &currPosition]() { return Io::savePosition(loadedPath, currPosition); });
 }
