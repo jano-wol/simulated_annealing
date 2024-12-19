@@ -45,10 +45,67 @@ FileBrowser::FileBrowser(std::string title_, std::filesystem::path currentDirPat
     : title(std::move(title_)),
       currentDirPath(std::move(currentDirPath_)),
       nextPath(),
+      mode(0),
       visible(false),
       loadedVisible(false),
       selection(0)
-{}
+{
+  saveFileName[0] = '\0';
+}
+
+void FileBrowser::renderOpen()
+{
+  ImGui::Spacing();
+  if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
+    if (ImGui::Button("Select")) {
+      ImGui::CloseCurrentPopup();
+      loadedPath = nextPath;
+      visible = false;
+    }
+  } else {
+    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+    ImGui::Button("Select");
+    ImGui::PopStyleColor(3);
+  }
+  ImGui::Spacing();
+  displayPath = nextPath.empty() ? currentDirPath : nextPath;
+}
+
+void FileBrowser::renderSave()
+{
+  ImGui::Spacing();
+  ImGui::Text("File name:");
+  ImGui::SameLine();
+  if (nextPath.empty()) {
+    saveFileName[0] = '\0';
+  } else {
+    strncpy(saveFileName, nextPath.filename().c_str(), sizeof(saveFileName) - 1);
+    saveFileName[sizeof(saveFileName) - 1] = '\0';
+  }
+  ImGui::InputText("##InputSaveFileName", saveFileName, IM_ARRAYSIZE(saveFileName));
+  std::filesystem::path savePath = currentDirPath / saveFileName;
+
+  ImGui::Spacing();
+
+  if (!std::filesystem::is_directory(savePath)) {
+    if (ImGui::Button("Save")) {
+      ImGui::CloseCurrentPopup();
+      loadedPath = savePath;
+      visible = false;
+      saveFileName[0] = '\0';
+    }
+  } else {
+    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+    ImGui::Button("Save");
+    ImGui::PopStyleColor(3);
+  }
+  ImGui::Spacing();
+  displayPath = savePath;
+}
 
 void FileBrowser::render()
 {
@@ -71,39 +128,25 @@ void FileBrowser::render()
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
       nextPath = filesInScope[selection].path;
     }
-    ImGui::Spacing();
-
-    if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
-      if (ImGui::Button("Select")) {
-        ImGui::CloseCurrentPopup();
-        loadedPath = nextPath;
-        visible = false;
-      }
-    } else {
-      if (!nextPath.empty()) {
-        get_files_in_path(nextPath, filesInScope);
-        currentDirPath = nextPath;
-        nextPath.clear();
-      }
-      ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
-      ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
-      ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
-      ImGui::Button("Select");
-      ImGui::PopStyleColor(3);
+    if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
+      get_files_in_path(nextPath, filesInScope);
+      currentDirPath = nextPath;
+      nextPath.clear();
+    }
+    if (mode == 1) {
+      renderOpen();
+    }
+    if (mode == 2) {
+      renderSave();
     }
 
-    ImGui::Spacing();
     ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
     ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
-    if (!nextPath.empty()) {
-      ImGui::TextWrapped("Path: %s", nextPath.string().c_str());
-    } else {
-      ImGui::TextWrapped("Path: %s", currentDirPath.string().c_str());
-    }
+    ImGui::TextWrapped("Path: %s", displayPath.string().c_str());
+
     ImGui::SetScrollHereY(1.0f);
     ImGui::EndChild();
 
     ImGui::EndPopup();
   }
 }
-
