@@ -48,7 +48,7 @@ public:
   std::size_t iteration = 1000000;
 
   int acceptanceIndex = 0;
-  double normalizator = 5.0;
+  double normalizator = 1.0;
 
   int coolingIndex = 0;
   double c = 1.0;
