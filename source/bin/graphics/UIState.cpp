@@ -52,6 +52,7 @@ void UIState::menu()
         fileBrowser.startSaving(currentPosition);
         fileBrowser.currPath = fileBrowser.loadedPath;
       }
+      mtx.unlock();
     } else {
       fileBrowser.loadedPath = fileBrowser.currPath;
       // std::cout << "Warning: decrementCounter() could not acquire the lock! Mutex is busy." << std::endl;
