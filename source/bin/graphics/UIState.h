@@ -26,10 +26,12 @@ public:
   {}
 
   std::atomic<bool> isParsing;
+  std::atomic<bool> isSaving;
   std::unique_ptr<sa::core::IPosition> currentPosition;
   std::unique_ptr<sa::core::IPosition> loadingPosition;
   FileBrowser fileBrowser;
   std::future<std::unique_ptr<sa::core::IPosition>> parsingFuture;
+  std::future<void> savingFuture;
 
   SAFactoryParams currentSAFactoryParams;
   SAFactoryParams loadingSAFactoryParams;
@@ -44,7 +46,9 @@ public:
 
   bool readyToCompute() const;
   void startParsing(const std::string& path);
+  void startSaving(const std::string& path);
   void updateParsing();
+  void updateSaving();
   void updateSAFactory();
 };
 

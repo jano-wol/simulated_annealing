@@ -14,6 +14,12 @@ void UIState::startParsing(const std::string& path)
   parsingFuture = std::async(std::launch::async, [path]() { return Io::getPosition(path); });
 }
 
+void UIState::startSaving(const std::string& path)
+{
+  isSaving = true;
+  savingFuture = std::async(std::launch::async, [path, this]() { return Io::savePosition(path, currentPosition); });
+}
+
 void UIState::updateParsing()
 {
   if (isParsing) {
@@ -23,6 +29,15 @@ void UIState::updateParsing()
         currentPosition = std::move(loadingPosition);
       }
       isParsing = false;
+    }
+  }
+}
+
+void UIState::updateSaving()
+{
+  if (isSaving) {
+    if (savingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      isSaving = false;
     }
   }
 }

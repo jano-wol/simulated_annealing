@@ -26,10 +26,17 @@ void menuUpdate(UIState& state)
 
   state.fileBrowser.render();
   if (state.fileBrowser.loadedPath != state.fileBrowser.currPath) {
-    state.startParsing(state.fileBrowser.loadedPath);
-    state.fileBrowser.currPath = state.fileBrowser.loadedPath;
+    if (state.fileBrowser.mode == 1) {
+      state.startParsing(state.fileBrowser.loadedPath);
+      state.fileBrowser.currPath = state.fileBrowser.loadedPath;
+    }
+    if (state.fileBrowser.mode == 2) {
+      state.startSaving(state.fileBrowser.loadedPath);
+      state.fileBrowser.currPath = state.fileBrowser.loadedPath;
+    }
   }
   state.updateParsing();
+  state.updateSaving();
 }
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_MENU_H_
