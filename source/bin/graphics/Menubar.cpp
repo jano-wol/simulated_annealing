@@ -53,23 +53,37 @@ FileBrowser::FileBrowser(std::string title_, std::filesystem::path currentDirPat
   saveFileName[0] = '\0';
 }
 
-void FileBrowser::renderOpen()
+void FileBrowser::renderActiveButton(const std::filesystem::path& outPath)
 {
   ImGui::Spacing();
-  if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
-    if (ImGui::Button("Select")) {
-      ImGui::CloseCurrentPopup();
-      loadedPath = nextPath;
-      visible = false;
-    }
-  } else {
-    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
-    ImGui::Button("Select");
-    ImGui::PopStyleColor(3);
+  if (ImGui::Button(buttonNames[mode].c_str())) {
+    ImGui::CloseCurrentPopup();
+    loadedPath = outPath;
+    visible = false;
+    nextPath.clear();
+    saveFileName[0] = '\0';
   }
   ImGui::Spacing();
+}
+
+void FileBrowser::renderDisabledButton()
+{
+  ImGui::Spacing();
+  ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+  ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+  ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+  ImGui::Button(buttonNames[mode].c_str());
+  ImGui::PopStyleColor(3);
+  ImGui::Spacing();
+}
+
+void FileBrowser::renderOpen()
+{
+  if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
+    renderActiveButton(nextPath);
+  } else {
+    renderDisabledButton();
+  }
   displayPath = nextPath.empty() ? currentDirPath : nextPath;
 }
 
@@ -81,23 +95,11 @@ void FileBrowser::renderSave()
   ImGui::InputText("##InputSaveFileName", saveFileName, IM_ARRAYSIZE(saveFileName));
   std::filesystem::path savePath = currentDirPath / saveFileName;
 
-  ImGui::Spacing();
-
   if (!std::filesystem::is_directory(savePath)) {
-    if (ImGui::Button("Save")) {
-      ImGui::CloseCurrentPopup();
-      loadedPath = savePath;
-      visible = false;
-      saveFileName[0] = '\0';
-    }
+    renderActiveButton(savePath);
   } else {
-    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
-    ImGui::Button("Save");
-    ImGui::PopStyleColor(3);
+    renderDisabledButton();
   }
-  ImGui::Spacing();
   displayPath = savePath;
 }
 

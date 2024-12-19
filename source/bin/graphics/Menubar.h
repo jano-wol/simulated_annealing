@@ -32,8 +32,11 @@ public:
   char saveFileName[128];
 
   const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
+  const std::vector<std::string> buttonNames = {"", "Select", "Save"};
 
   void render();
+  void renderActiveButton(const std::filesystem::path& outPath);
+  void renderDisabledButton();
   void renderOpen();
   void renderSave();
 };
