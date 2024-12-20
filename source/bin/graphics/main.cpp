@@ -1,7 +1,7 @@
 #include "GLFWInit.h"
 #include "GLFWStop.h"
 #include "LoopStart.h"
-#include "FileBrowser.h"
+#include "MenuUI.h"
 #include "Render.h"
 #include "SAFactory.h"
 #include "Scale.h"
@@ -19,7 +19,7 @@ int main()
   while (!glfwWindowShouldClose(window)) {
     loopStart();
     windowBegin();
-    state.menu();
+    state.handleMenu();
     saFactoryUpdate(state);
     windowEnd();
     render(window);

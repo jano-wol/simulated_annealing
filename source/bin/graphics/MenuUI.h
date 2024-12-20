@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_FILE_BROWSER_H_
-#define SIMULATED_ANNEALING_GRAPHICS_FILE_BROWSER_H_
+#ifndef SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_
+#define SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_
 
 #include <filesystem>
 #include <future>
@@ -9,10 +9,10 @@
 
 #include <core/IPosition.h>
 
-class FileBrowser
+class MenuUI
 {
 public:
-  FileBrowser(std::string title_, std::filesystem::path m_currentDirPath_);
+  MenuUI(std::string title_, std::filesystem::path m_currentDirPath_);
 
   struct File
   {
@@ -47,4 +47,4 @@ public:
   const std::vector<std::string> buttonNames = {"", "Select", "Save"};
 };
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_FILE_BROWSER_H_
+#endif  // SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_

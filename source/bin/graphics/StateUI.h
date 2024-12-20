@@ -11,7 +11,7 @@
 #include <io/Io.h>
 #include <sa/SAFactory.h>
 
-#include "FileBrowser.h"
+#include "MenuUI.h"
 #include "SAFactoryParams.h"
 
 class StateUI
@@ -22,14 +22,14 @@ public:
         isSaving(false),
         currentPosition(nullptr),
         loadingPosition(nullptr),
-        fileBrowser("Open", sa::io::Io::getTargetsPath())
+        menuUI("Open", sa::io::Io::getTargetsPath())
   {}
 
   bool isParsing;
   bool isSaving;
   std::unique_ptr<sa::core::IPosition> currentPosition;
   std::unique_ptr<sa::core::IPosition> loadingPosition;
-  FileBrowser fileBrowser;
+  MenuUI menuUI;
 
   void updateParsing();
   void updateSaving();
@@ -47,7 +47,7 @@ public:
 
   std::mutex mtx;
 
-  void menu();
+  void handleMenu();
   void updateSAFactory();
 };
 

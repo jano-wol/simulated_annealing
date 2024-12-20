@@ -1,4 +1,4 @@
-#include "FileBrowser.h"
+#include "MenuUI.h"
 
 #include <algorithm>
 
@@ -7,7 +7,7 @@
 using namespace sa::core;
 using namespace sa::io;
 
-static void get_files_in_path(const std::filesystem::path& path, std::vector<FileBrowser::File>& files)
+static void get_files_in_path(const std::filesystem::path& path, std::vector<MenuUI::File>& files)
 {
   files.clear();
 
@@ -34,7 +34,7 @@ static int clamp_size_t_to_int(const size_t data)
 
 static bool vector_file_items_getter(void* data, int idx, const char** out_text)
 {
-  const std::vector<FileBrowser::File>* v = reinterpret_cast<std::vector<FileBrowser::File>*>(data);
+  const std::vector<MenuUI::File>* v = reinterpret_cast<std::vector<MenuUI::File>*>(data);
   const int elementCount = clamp_size_t_to_int(v->size());
   if (idx < 0 || idx >= elementCount)
     return false;
@@ -42,7 +42,7 @@ static bool vector_file_items_getter(void* data, int idx, const char** out_text)
   return true;
 }
 
-FileBrowser::FileBrowser(std::string title_, std::filesystem::path currentDirPath_)
+MenuUI::MenuUI(std::string title_, std::filesystem::path currentDirPath_)
     : title(std::move(title_)),
       currentDirPath(std::move(currentDirPath_)),
       nextPath(),
@@ -54,7 +54,7 @@ FileBrowser::FileBrowser(std::string title_, std::filesystem::path currentDirPat
   saveFileName[0] = '\0';
 }
 
-void FileBrowser::renderActiveButton(const std::filesystem::path& outPath)
+void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
 {
   ImGui::Spacing();
   if (ImGui::Button(buttonNames[mode].c_str())) {
@@ -67,7 +67,7 @@ void FileBrowser::renderActiveButton(const std::filesystem::path& outPath)
   ImGui::Spacing();
 }
 
-void FileBrowser::renderDisabledButton()
+void MenuUI::renderDisabledButton()
 {
   ImGui::Spacing();
   ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
@@ -78,7 +78,7 @@ void FileBrowser::renderDisabledButton()
   ImGui::Spacing();
 }
 
-void FileBrowser::renderOpen()
+void MenuUI::renderOpen()
 {
   if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
     renderActiveButton(nextPath);
@@ -88,7 +88,7 @@ void FileBrowser::renderOpen()
   displayPath = nextPath.empty() ? currentDirPath : nextPath;
 }
 
-void FileBrowser::renderSave()
+void MenuUI::renderSave()
 {
   ImGui::Spacing();
   ImGui::Text("File name:");
@@ -105,7 +105,7 @@ void FileBrowser::renderSave()
   displayPath = savePath;
 }
 
-void FileBrowser::render()
+void MenuUI::render()
 {
   if (visible != loadedVisible) {
     visible = loadedVisible;
@@ -151,7 +151,7 @@ void FileBrowser::render()
   }
 }
 
-void FileBrowser::menuUpdate()
+void MenuUI::menuUpdate()
 {
   loadedVisible = false;
   if (ImGui::BeginMenuBar()) {
@@ -173,12 +173,12 @@ void FileBrowser::menuUpdate()
   render();
 }
 
-void FileBrowser::startParsing()
+void MenuUI::startParsing()
 {
   parsingFuture = std::async(std::launch::async, [this]() { return Io::getPosition(loadedPath); });
 }
 
-void FileBrowser::startSaving(const IPosition::CPtr& currPosition)
+void MenuUI::startSaving(const IPosition::CPtr& currPosition)
 {
   savingFuture =
       std::async(std::launch::async, [this, &currPosition]() { return Io::savePosition(loadedPath, currPosition); });
