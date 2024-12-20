@@ -3,7 +3,7 @@
 #include "LoopStart.h"
 #include "MenuUI.h"
 #include "Render.h"
-#include "SAFactory.h"
+#include "SAFactoryUI.h"
 #include "Scale.h"
 #include "StateUI.h"
 #include "WindowBegin.h"
@@ -20,7 +20,7 @@ int main()
     loopStart();
     windowBegin();
     state.handleMenu();
-    saFactoryUpdate(state);
+    state.handleSAFactory();
     windowEnd();
     render(window);
   }

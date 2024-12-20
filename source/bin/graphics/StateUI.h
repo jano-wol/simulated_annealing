@@ -12,7 +12,7 @@
 #include <sa/SAFactory.h>
 
 #include "MenuUI.h"
-#include "SAFactoryParams.h"
+#include "SAFactoryUI.h"
 
 class StateUI
 {
@@ -30,25 +30,17 @@ public:
   std::unique_ptr<sa::core::IPosition> currentPosition;
   std::unique_ptr<sa::core::IPosition> loadingPosition;
   MenuUI menuUI;
+  SAFactoryUI saFactoryUI;
 
   void updateParsing();
   void updateSaving();
 
-  SAFactoryParams currentSAFactoryParams;
-  SAFactoryParams loadingSAFactoryParams;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
   sa::sa::SA::CPtr sa = nullptr;
-
-  std::vector<const char*> resourceNames{"Time", "Iteration"};
-  std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
-  std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
-  std::vector<const char*> moveSelectorNames{"KBest"};
-  std::vector<const char*> monitorNames{"Low", "Medium", "High"};
-
   std::mutex mtx;
 
   void handleMenu();
-  void updateSAFactory();
+  void handleSAFactory();
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_STATE_UI_H_

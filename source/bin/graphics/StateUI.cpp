@@ -28,14 +28,6 @@ void StateUI::updateSaving()
   }
 }
 
-void StateUI::updateSAFactory()
-{
-  if (!saFactory || (loadingSAFactoryParams != currentSAFactoryParams)) {
-    saFactory = loadingSAFactoryParams.getFactory();
-    currentSAFactoryParams = loadingSAFactoryParams;
-  }
-}
-
 void StateUI::handleMenu()
 {
   menuUI.menuUpdate();
@@ -60,4 +52,13 @@ void StateUI::handleMenu()
   }
   updateParsing();
   updateSaving();
+}
+
+void StateUI::handleSAFactory()
+{
+  saFactoryUI.saFactoryUpdate();
+  if (!saFactory || (saFactoryUI.loadingSAFactoryParams != saFactoryUI.currentSAFactoryParams)) {
+    saFactory = saFactoryUI.loadingSAFactoryParams.getFactory();
+    saFactoryUI.currentSAFactoryParams = saFactoryUI.loadingSAFactoryParams;
+  }
 }
