@@ -49,7 +49,7 @@ MenuUI::MenuUI()
       mode(0),
       visible(false),
       loadedVisible(false),
-      selection(0)
+      selection(-1)
 {
   saveFileName[0] = '\0';
 }
@@ -63,6 +63,7 @@ void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
     visible = false;
     nextPath.clear();
     saveFileName[0] = '\0';
+    selection = -1;
   }
   ImGui::Spacing();
 }
@@ -131,6 +132,7 @@ void MenuUI::render()
       get_files_in_path(nextPath, filesInScope);
       currentDirPath = nextPath;
       saveFileName[0] = '\0';
+      selection = -1;
       nextPath.clear();
     }
     if (mode == 1) {
