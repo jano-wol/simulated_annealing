@@ -15,7 +15,7 @@ public:
   void infoUpdate();
 
   bool okPushed = false;
-  std::string infoMessage;
+  std::string message;
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_INFO_UI_H_
