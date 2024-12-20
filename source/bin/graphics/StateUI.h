@@ -10,6 +10,7 @@
 #include <core/IPosition.h>
 #include <sa/SAFactory.h>
 
+#include "InfoUI.h"
 #include "MenuUI.h"
 #include "SAFactoryUI.h"
 
@@ -26,8 +27,7 @@ public:
   bool isParsing = false;
   bool isSaving = false;
   bool isInformating = false;
-  std::string infoMessage;
-
+  InfoUI infoUI;
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
   sa::sa::SA::CPtr sa = nullptr;

@@ -19,6 +19,7 @@ int main()
   while (!glfwWindowShouldClose(window)) {
     loopStart();
     windowBegin();
+    state.handleInfo();
     state.handleMenu();
     state.handleSAFactory();
     windowEnd();

@@ -40,7 +40,17 @@ void StateUI::updateInformating(const std::string& message)
 {
   if (isInformating == false) {
     isInformating = true;
-    infoMessage = message;
+    infoUI.infoMessage = message;
+  }
+}
+
+void StateUI::handleInfo()
+{
+  if (isInformating) {
+    infoUI.infoUpdate();
+  }
+  if (infoUI.okPushed) {
+    isInformating = false;
   }
 }
 
