@@ -10,7 +10,7 @@ void StateUI::updateParsing()
 {
   if (isParsing) {
     if (menuUI.parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      loadingPosition = menuUI.parsingFuture.get();
+      auto loadingPosition = menuUI.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
       }

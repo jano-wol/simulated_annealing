@@ -21,26 +21,22 @@ public:
       : isParsing(false),
         isSaving(false),
         currentPosition(nullptr),
-        loadingPosition(nullptr),
         menuUI("Open", sa::io::Io::getTargetsPath())
   {}
+
+  void handleMenu();
+  void handleSAFactory();
+  void updateParsing();
+  void updateSaving();
 
   bool isParsing;
   bool isSaving;
   std::unique_ptr<sa::core::IPosition> currentPosition;
-  std::unique_ptr<sa::core::IPosition> loadingPosition;
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
-
-  void updateParsing();
-  void updateSaving();
-
   sa::sa::SAFactory::CPtr saFactory = nullptr;
   sa::sa::SA::CPtr sa = nullptr;
   std::mutex mtx;
-
-  void handleMenu();
-  void handleSAFactory();
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_STATE_UI_H_
