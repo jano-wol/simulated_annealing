@@ -42,9 +42,9 @@ static bool vector_file_items_getter(void* data, int idx, const char** out_text)
   return true;
 }
 
-MenuUI::MenuUI(std::string title_, std::filesystem::path currentDirPath_)
-    : title(std::move(title_)),
-      currentDirPath(std::move(currentDirPath_)),
+MenuUI::MenuUI()
+    : title("Open"),
+      currentDirPath(Io::getTargetsPath()),
       nextPath(),
       mode(0),
       visible(false),

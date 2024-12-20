@@ -12,7 +12,7 @@
 class MenuUI
 {
 public:
-  MenuUI(std::string title_, std::filesystem::path m_currentDirPath_);
+  MenuUI();
 
   struct File
   {

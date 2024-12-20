@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <core/IPosition.h>
-#include <io/Io.h>
 #include <sa/SAFactory.h>
 
 #include "MenuUI.h"
@@ -17,25 +16,18 @@
 class StateUI
 {
 public:
-  StateUI()
-      : isParsing(false),
-        isSaving(false),
-        currentPosition(nullptr),
-        menuUI("Open", sa::io::Io::getTargetsPath())
-  {}
-
   void handleMenu();
   void handleSAFactory();
   void updateParsing();
   void updateSaving();
 
-  bool isParsing;
-  bool isSaving;
-  std::unique_ptr<sa::core::IPosition> currentPosition;
+  bool isParsing = false;
+  bool isSaving = false;
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
-  sa::sa::SAFactory::CPtr saFactory = nullptr;
   sa::sa::SA::CPtr sa = nullptr;
+  sa::sa::SAFactory::CPtr saFactory = nullptr;
+  std::unique_ptr<sa::core::IPosition> currentPosition = nullptr;
   std::mutex mtx;
 };
 
