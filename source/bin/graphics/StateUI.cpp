@@ -1,5 +1,7 @@
 #include "StateUI.h"
 
+#include <sstream>
+
 #include <io/Io.h>
 
 using namespace sa::core;
@@ -13,6 +15,8 @@ void StateUI::updateParsing()
       auto loadingPosition = menuUI.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
+      } else {
+        updateInformating("Parsing failed.");
       }
       isParsing = false;
     }
@@ -23,8 +27,20 @@ void StateUI::updateSaving()
 {
   if (isSaving) {
     if (menuUI.savingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      auto success = menuUI.savingFuture.get();
+      if (!success) {
+        updateInformating("Saving failed.");
+      }
       isSaving = false;
     }
+  }
+}
+
+void StateUI::updateInformating(const std::string& message)
+{
+  if (isInformating == false) {
+    isInformating = true;
+    infoMessage = message;
   }
 }
 
@@ -47,7 +63,9 @@ void StateUI::handleMenu()
       mtx.unlock();
     } else {
       menuUI.loadedPath = menuUI.currentPath;
-      // std::cout << "Warning: decrementCounter() could not acquire the lock! Mutex is busy." << std::endl;
+      std::stringstream ss;
+      ss << "Computation is busy." << menuUI.title << " request ignored.";
+      updateInformating(ss.str());
     }
   }
   updateParsing();

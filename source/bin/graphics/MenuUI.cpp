@@ -189,6 +189,12 @@ void MenuUI::startParsing()
 
 void MenuUI::startSaving(const IPosition::CPtr& currPosition)
 {
-  savingFuture =
-      std::async(std::launch::async, [this, &currPosition]() { return Io::savePosition(loadedPath, currPosition); });
+  savingFuture = std::async(std::launch::async, [this, &currPosition]() {
+    Io::savePosition(loadedPath, currPosition);
+    if (std::filesystem::exists(loadedPath) && std::filesystem::is_regular_file(loadedPath) &&
+        (std::filesystem::file_size(loadedPath) != 0)) {
+      return true;
+    }
+    return false;
+  });
 }

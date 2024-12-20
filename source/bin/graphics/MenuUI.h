@@ -42,7 +42,7 @@ public:
   std::filesystem::path displayPath;
   char saveFileName[128];
   std::future<std::unique_ptr<sa::core::IPosition>> parsingFuture;
-  std::future<void> savingFuture;
+  std::future<bool> savingFuture;
   const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
   const std::vector<std::string> buttonNames = {"", "Select", "Save"};
 };

@@ -16,13 +16,18 @@
 class StateUI
 {
 public:
+  void handleInfo();
   void handleMenu();
   void handleSAFactory();
   void updateParsing();
   void updateSaving();
+  void updateInformating(const std::string& message);
 
   bool isParsing = false;
   bool isSaving = false;
+  bool isInformating = false;
+  std::string infoMessage;
+
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
   sa::sa::SA::CPtr sa = nullptr;
