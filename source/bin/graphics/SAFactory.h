@@ -3,7 +3,7 @@
 
 #include <imgui/imgui.h>
 
-#include "UIState.h"
+#include "StateUI.h"
 
 void readDoubleNonNeg(const char* text, const char* id, double* val)
 {
@@ -47,7 +47,7 @@ void combo(const char* text, const char* id, int* index, const std::vector<const
   ImGui::Combo(id, index, v.data(), v.size());
 }
 
-void saFactoryUpdate(UIState& state)
+void saFactoryUpdate(StateUI& state)
 {
   ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
 

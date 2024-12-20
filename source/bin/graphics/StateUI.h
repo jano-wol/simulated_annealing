@@ -14,10 +14,10 @@
 #include "FileBrowser.h"
 #include "SAFactoryParams.h"
 
-class UIState
+class StateUI
 {
 public:
-  UIState()
+  StateUI()
       : isParsing(false),
         isSaving(false),
         currentPosition(nullptr),

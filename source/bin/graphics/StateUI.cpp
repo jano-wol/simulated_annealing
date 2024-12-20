@@ -1,4 +1,4 @@
-#include "UIState.h"
+#include "StateUI.h"
 
 #include <io/Io.h>
 
@@ -6,7 +6,7 @@ using namespace sa::core;
 using namespace sa::io;
 using namespace sa::sa;
 
-void UIState::updateParsing()
+void StateUI::updateParsing()
 {
   if (isParsing) {
     if (fileBrowser.parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
@@ -19,7 +19,7 @@ void UIState::updateParsing()
   }
 }
 
-void UIState::updateSaving()
+void StateUI::updateSaving()
 {
   if (isSaving) {
     if (fileBrowser.savingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
@@ -28,7 +28,7 @@ void UIState::updateSaving()
   }
 }
 
-void UIState::updateSAFactory()
+void StateUI::updateSAFactory()
 {
   if (!saFactory || (loadingSAFactoryParams != currentSAFactoryParams)) {
     saFactory = loadingSAFactoryParams.getFactory();
@@ -36,7 +36,7 @@ void UIState::updateSAFactory()
   }
 }
 
-void UIState::menu()
+void StateUI::menu()
 {
   fileBrowser.menuUpdate();
 

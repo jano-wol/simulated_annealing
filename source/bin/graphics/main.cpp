@@ -5,7 +5,7 @@
 #include "Render.h"
 #include "SAFactory.h"
 #include "Scale.h"
-#include "UIState.h"
+#include "StateUI.h"
 #include "WindowBegin.h"
 #include "WindowEnd.h"
 
@@ -15,7 +15,7 @@ int main()
 {
   GLFWwindow* window = GLFWInit("SA");
   scale();
-  UIState state;
+  StateUI state;
   while (!glfwWindowShouldClose(window)) {
     loopStart();
     windowBegin();
