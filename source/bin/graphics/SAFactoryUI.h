@@ -54,8 +54,8 @@ public:
   std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Low", "Medium", "High"};
-  Params currentSAFactoryParams;
-  Params loadingSAFactoryParams;
+  Params currentParams;
+  Params loadedParams;
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_

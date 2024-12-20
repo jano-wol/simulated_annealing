@@ -32,21 +32,21 @@ void StateUI::handleMenu()
 {
   menuUI.menuUpdate();
 
-  if (menuUI.loadedPath != menuUI.currPath) {
+  if (menuUI.loadedPath != menuUI.currentPath) {
     if (mtx.try_lock()) {
       if (menuUI.mode == 1) {
         isParsing = true;
         menuUI.startParsing();
-        menuUI.currPath = menuUI.loadedPath;
+        menuUI.currentPath = menuUI.loadedPath;
       }
       if (menuUI.mode == 2) {
         isSaving = true;
         menuUI.startSaving(currentPosition);
-        menuUI.currPath = menuUI.loadedPath;
+        menuUI.currentPath = menuUI.loadedPath;
       }
       mtx.unlock();
     } else {
-      menuUI.loadedPath = menuUI.currPath;
+      menuUI.loadedPath = menuUI.currentPath;
       // std::cout << "Warning: decrementCounter() could not acquire the lock! Mutex is busy." << std::endl;
     }
   }
@@ -57,8 +57,8 @@ void StateUI::handleMenu()
 void StateUI::handleSAFactory()
 {
   saFactoryUI.saFactoryUpdate();
-  if (!saFactory || (saFactoryUI.loadingSAFactoryParams != saFactoryUI.currentSAFactoryParams)) {
-    saFactory = saFactoryUI.loadingSAFactoryParams.getFactory();
-    saFactoryUI.currentSAFactoryParams = saFactoryUI.loadingSAFactoryParams;
+  if (!saFactory || (saFactoryUI.loadedParams != saFactoryUI.currentParams)) {
+    saFactory = saFactoryUI.loadedParams.getFactory();
+    saFactoryUI.currentParams = saFactoryUI.loadedParams;
   }
 }

@@ -160,55 +160,55 @@ void SAFactoryUI::saFactoryUpdate()
 {
   ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);
 
-  combo("Resource Policy:", "##ResourcePolicy", &loadingSAFactoryParams.resourceIndex, resourceNames);
+  combo("Resource Policy:", "##ResourcePolicy", &loadedParams.resourceIndex, resourceNames);
   ImGui::SameLine();
-  if (loadingSAFactoryParams.resourceIndex == 0) {
-    readDoubleNonNeg("Duration(s):", "##DurationInSecondsInput", &loadingSAFactoryParams.durationInSeconds);
+  if (loadedParams.resourceIndex == 0) {
+    readDoubleNonNeg("Duration(s):", "##DurationInSecondsInput", &loadedParams.durationInSeconds);
   }
-  if (loadingSAFactoryParams.resourceIndex == 1) {
-    readU64("Iteration:", "##IterationInput", &loadingSAFactoryParams.iteration);
-  }
-
-  combo("Acceptance Policy:", "##AcceptancePolicy", &loadingSAFactoryParams.acceptanceIndex, acceptanceNames);
-  if (loadingSAFactoryParams.acceptanceIndex == 0) {
-    ImGui::SameLine();
-    readDoubleNonNeg("Normalizator:", "##NormalizatorInput", &loadingSAFactoryParams.normalizator);
+  if (loadedParams.resourceIndex == 1) {
+    readU64("Iteration:", "##IterationInput", &loadedParams.iteration);
   }
 
-  combo("Cooling Policy:", "##CoolingPolicy", &loadingSAFactoryParams.coolingIndex, coolingNames);
-  if (loadingSAFactoryParams.coolingIndex == 3 || loadingSAFactoryParams.coolingIndex == 4) {
+  combo("Acceptance Policy:", "##AcceptancePolicy", &loadedParams.acceptanceIndex, acceptanceNames);
+  if (loadedParams.acceptanceIndex == 0) {
     ImGui::SameLine();
-    readDoubleNonNeg("C:", "##CInput", &loadingSAFactoryParams.c);
+    readDoubleNonNeg("Normalizator:", "##NormalizatorInput", &loadedParams.normalizator);
+  }
+
+  combo("Cooling Policy:", "##CoolingPolicy", &loadedParams.coolingIndex, coolingNames);
+  if (loadedParams.coolingIndex == 3 || loadedParams.coolingIndex == 4) {
+    ImGui::SameLine();
+    readDoubleNonNeg("C:", "##CInput", &loadedParams.c);
   }
   ImGui::SameLine();
-  readDoubleNonNeg("T0:", "##T0Input", &loadingSAFactoryParams.t0);
+  readDoubleNonNeg("T0:", "##T0Input", &loadedParams.t0);
 
-  combo("Move Selector Policy:", "##MoveSelectorPolicy", &loadingSAFactoryParams.moveSelectorIndex, moveSelectorNames);
+  combo("Move Selector Policy:", "##MoveSelectorPolicy", &loadedParams.moveSelectorIndex, moveSelectorNames);
   ImGui::SameLine();
-  readU32("K:", "##KInput", &loadingSAFactoryParams.k);
+  readU32("K:", "##KInput", &loadedParams.k);
 
-  combo("Monitor:", "##MonitorLevel", &loadingSAFactoryParams.monitorIndex, monitorNames);
-  if (loadingSAFactoryParams.monitorIndex == 0) {
+  combo("Monitor:", "##MonitorLevel", &loadedParams.monitorIndex, monitorNames);
+  if (loadedParams.monitorIndex == 0) {
     ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ0Input", &loadingSAFactoryParams.bestCatchQ);
+    readDouble01("BestCatchQ:", "##BestQ0Input", &loadedParams.bestCatchQ);
   }
-  if (loadingSAFactoryParams.monitorIndex == 1) {
+  if (loadedParams.monitorIndex == 1) {
     ImGui::SameLine();
-    readU32("Snapshots:", "##Snapshots1Input", &loadingSAFactoryParams.steps);
+    readU32("Snapshots:", "##Snapshots1Input", &loadedParams.steps);
     ImGui::SameLine();
-    readU32("LocalEnvLength:", "##localEnvLength1Input", &loadingSAFactoryParams.localEnvLength);
+    readU32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ1Input", &loadingSAFactoryParams.bestCatchQ);
+    readDouble01("BestCatchQ:", "##BestQ1Input", &loadedParams.bestCatchQ);
     ImGui::SameLine();
-    readU32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadingSAFactoryParams.memoryLimitInGb);
+    readU32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
-  if (loadingSAFactoryParams.monitorIndex == 2) {
+  if (loadedParams.monitorIndex == 2) {
     ImGui::SameLine();
-    readU32("LocalEnvLength:", "##localEnvLength2Input", &loadingSAFactoryParams.localEnvLength);
+    readU32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ2Input", &loadingSAFactoryParams.bestCatchQ);
+    readDouble01("BestCatchQ:", "##BestQ2Input", &loadedParams.bestCatchQ);
     ImGui::SameLine();
-    readU32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadingSAFactoryParams.memoryLimitInGb);
+    readU32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
   ImGui::PopItemWidth();
 }
