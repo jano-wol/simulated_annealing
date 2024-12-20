@@ -56,8 +56,15 @@ MenuUI::MenuUI()
 
 void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
 {
+  bool activateButton = false;
   ImGui::Spacing();
   if (ImGui::Button(buttonNames[mode].c_str())) {
+    activateButton = true;
+  }
+  if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+    activateButton = true;
+  }
+  if (activateButton) {
     ImGui::CloseCurrentPopup();
     loadedPath = outPath;
     visible = false;
