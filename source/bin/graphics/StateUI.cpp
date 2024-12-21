@@ -74,7 +74,7 @@ void StateUI::handleMenu()
     } else {
       menuUI.loadedPath = menuUI.currentPath;
       std::stringstream ss;
-      ss << "Computation is busy." << menuUI.title << " request ignored.";
+      ss << "Computation is busy. " << menuUI.title << " request ignored.";
       updateInformating(ss.str());
     }
   }
