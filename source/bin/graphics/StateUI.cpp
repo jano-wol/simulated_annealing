@@ -19,6 +19,7 @@ void StateUI::updateParsing()
         updateInformating("Parsing failed.");
       }
       isParsing = false;
+      mtx.unlock();
     }
   }
 }
@@ -32,6 +33,7 @@ void StateUI::updateSaving()
         updateInformating("Saving failed.");
       }
       isSaving = false;
+      mtx.unlock();
     }
   }
 }
@@ -49,6 +51,7 @@ void StateUI::updateSimulating()
   if (isSimulating) {
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSimulating = false;
+      mtx.unlock();
     }
   }
 }
@@ -79,7 +82,6 @@ void StateUI::handleMenu()
         menuUI.startSaving(currentPosition);
         menuUI.currentPath = menuUI.loadedPath;
       }
-      mtx.unlock();
     } else {
       menuUI.loadedPath = menuUI.currentPath;
       std::stringstream ss;
@@ -110,7 +112,6 @@ void StateUI::handleSACall()
         isSimulating = true;
         saCallUI.startSimulating(currentPosition, sa);
         saCallUI.saCalled = false;
-        mtx.unlock();
       } else {
         saCallUI.saCalled = false;
         updateInformating("Computation is busy. Simulation request ignored.");
