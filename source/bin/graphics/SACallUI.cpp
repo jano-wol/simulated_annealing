@@ -2,9 +2,10 @@
 
 #include <imgui/imgui.h>
 
-void updateProgressBar(double progress)
+void updateProgressBar(double progress, float width)
 {
   ImGui::SameLine();
+  ImGui::SetNextItemWidth(width);
   ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
   ImVec2 p = ImGui::GetItemRectMin();
   ImVec2 size = ImGui::GetItemRectSize();
@@ -39,7 +40,7 @@ void SACallUI::saCallUpdate(bool isSimulating)
       ImVec2(buttonMin.x + (buttonWidth - textSize.x) * 0.5f, buttonMin.y + (buttonHeight - textSize.y) * 0.5f);
   drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), title.c_str());
   if (isSimulating) {
-    updateProgressBar(progress.load());
+    updateProgressBar(progress.load(), buttonWidth * 2);
   }
   if (ImGui::IsItemClicked()) {
     saCalled = true;
