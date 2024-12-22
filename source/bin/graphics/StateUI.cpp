@@ -104,7 +104,7 @@ void StateUI::handleSAFactory()
 
 void StateUI::handleSACall()
 {
-  saCallUI.saCallUpdate();
+  saCallUI.saCallUpdate(isSimulating);
   if (saCallUI.saCalled) {
     if (currentPosition) {
       if (mtx.try_lock()) {

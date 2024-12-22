@@ -9,7 +9,7 @@
 class SACallUI
 {
 public:
-  void saCallUpdate();
+  void saCallUpdate(bool isSimulating);
   void startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa);
 
   bool saCalled = false;
