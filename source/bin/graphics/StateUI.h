@@ -22,6 +22,7 @@ public:
   void handleSAFactory();
   void handleResults();
   void handleGraphics();
+  void handleSACall();
   void handleSA();
   void updateParsing();
   void updateSaving();

@@ -91,12 +91,15 @@ void StateUI::handleSAFactory()
   }
 }
 
+void StateUI::handleSACall() {}
+
 void StateUI::handleResults() {}
 
 void StateUI::handleGraphics() {}
 
 void StateUI::handleSA()
 {
+  handleSACall();
   ImVec2 window_size = ImGui::GetContentRegionAvail();
   float left_width = window_size.x * 0.3f;
   float right_width = window_size.x - left_width;
