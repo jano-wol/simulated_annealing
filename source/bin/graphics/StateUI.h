@@ -20,6 +20,9 @@ public:
   void handleInfo();
   void handleMenu();
   void handleSAFactory();
+  void handleResults();
+  void handleGraphics();
+  void handleSA();
   void updateParsing();
   void updateSaving();
   void updateInformating(const std::string& message);

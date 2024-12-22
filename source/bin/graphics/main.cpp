@@ -22,6 +22,7 @@ int main()
     state.handleInfo();
     state.handleMenu();
     state.handleSAFactory();
+    state.handleSA();
     windowEnd();
     render(window);
   }

@@ -90,3 +90,21 @@ void StateUI::handleSAFactory()
     saFactoryUI.currentParams = saFactoryUI.loadedParams;
   }
 }
+
+void StateUI::handleResults() {}
+
+void StateUI::handleGraphics() {}
+
+void StateUI::handleSA()
+{
+  ImVec2 window_size = ImGui::GetContentRegionAvail();
+  float left_width = window_size.x * 0.3f;
+  float right_width = window_size.x - left_width;
+  ImGui::BeginChild("Left Panel", ImVec2(left_width, 0), true);
+  handleResults();
+  ImGui::EndChild();
+  ImGui::SameLine();
+  ImGui::BeginChild("Right Panel", ImVec2(right_width, 0), true);
+  handleGraphics();
+  ImGui::EndChild();
+}
