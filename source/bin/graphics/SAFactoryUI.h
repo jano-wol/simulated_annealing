@@ -1,6 +1,8 @@
 #ifndef SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_
 #define SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_
 
+#include <atomic>
+
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
 #include <policies/Cooling.h>
@@ -43,8 +45,8 @@ public:
     sa::policies::ICooling::CPtr getCooling();
     sa::policies::IMoveSelector::CPtr getMoveSelector();
     sa::policies::IResource::CPtr getResource();
-    sa::monitor::Monitor::CPtr getMonitor();
-    sa::sa::SAFactory::CPtr getFactory();
+    sa::monitor::Monitor::CPtr getMonitor(std::atomic<double>& progress);
+    sa::sa::SAFactory::CPtr getFactory(std::atomic<double>& progress);
   };
 
   void saFactoryUpdate();

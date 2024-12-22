@@ -134,5 +134,6 @@ std::ostream& sa::monitor::operator<<(std::ostream& os, const GlobalMetrics& gm)
 
 Monitor::CPtr Monitor::clone() const
 {
-  return std::make_unique<Monitor>(level, bestCatchQ, catchPrecision, localEnv, steps, snapshotsMemoryLimit);
+  return std::make_unique<Monitor>(level, bestCatchQ, catchPrecision, localEnv, steps, snapshotsMemoryLimit,
+                                   progressCallback);
 }

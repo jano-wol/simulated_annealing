@@ -97,7 +97,7 @@ void StateUI::handleSAFactory()
 {
   saFactoryUI.saFactoryUpdate();
   if (!saFactory || (saFactoryUI.loadedParams != saFactoryUI.currentParams)) {
-    saFactory = saFactoryUI.loadedParams.getFactory();
+    saFactory = saFactoryUI.loadedParams.getFactory(saCallUI.progress);
     saFactoryUI.currentParams = saFactoryUI.loadedParams;
   }
 }

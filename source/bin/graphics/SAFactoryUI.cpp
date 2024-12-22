@@ -134,26 +134,27 @@ sa::policies::IResource::CPtr SAFactoryUI::Params::getResource()
   return nullptr;
 }
 
-sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor()
+sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& progress)
 {
+  auto callback = [&progress](double newProgress) { progress.store(newProgress); };
   if (monitorIndex == 0) {
     return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Low, bestCatchQ);
   }
   if (monitorIndex == 1) {
     return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, bestCatchQ, 1e-6, localEnvLength,
-                                                  steps, memoryLimitInGb * 1000000000UL);
+                                                  steps, memoryLimitInGb * 1000000000UL, std::move(callback));
   }
   if (monitorIndex == 2) {
     return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, bestCatchQ, 1e-6, localEnvLength, 20,
-                                                  memoryLimitInGb * 1000000000UL);
+                                                  memoryLimitInGb * 1000000000UL, std::move(callback));
   }
   return nullptr;
 }
 
-sa::sa::SAFactory::CPtr SAFactoryUI::Params::getFactory()
+sa::sa::SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress)
 {
   return std::make_unique<sa::sa::SAFactory>(getResource(), getAcceptance(), getCooling(), getMoveSelector(),
-                                             getMonitor());
+                                             getMonitor(progress));
 }
 
 void SAFactoryUI::saFactoryUpdate()
