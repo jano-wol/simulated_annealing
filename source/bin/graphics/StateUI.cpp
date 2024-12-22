@@ -124,7 +124,17 @@ void StateUI::handleSACall()
   updateSimulating();
 }
 
-void StateUI::handleResults() {}
+void StateUI::handleResults()
+{
+  if (sa && mtx.try_lock()) {
+    std::stringstream ss;
+    const auto& x = sa->getBest();
+    double energy = x->getEnergy();
+    ss << "Energy=" << energy;
+    ImGui::Text(ss.str().c_str());
+    mtx.unlock();
+  }
+}
 
 void StateUI::handleGraphics() {}
 
