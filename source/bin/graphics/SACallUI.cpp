@@ -2,6 +2,23 @@
 
 #include <imgui/imgui.h>
 
+void updateProgressBar(double progress)
+{
+  ImGui::SameLine();
+  ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
+  ImVec2 p = ImGui::GetItemRectMin();
+  ImVec2 size = ImGui::GetItemRectSize();
+  double percentage = progress * 100.0f;
+  std::stringstream ss;
+  ss.precision(1);
+  ss << std::fixed << percentage << "%";
+  std::string progressText = ss.str();
+  ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  ImVec2 textSize = ImGui::CalcTextSize(progressText.c_str());
+  ImVec2 textPos(p.x + (size.x - textSize.x) * 0.5f, p.y + (size.y - textSize.y) * 0.5f);
+  draw_list->AddText(textPos, IM_COL32(255, 255, 255, 255), progressText.c_str());
+}
+
 void SACallUI::saCallUpdate(bool isSimulating)
 {
   ImVec2 cursorPos = ImGui::GetCursorScreenPos();
@@ -22,9 +39,7 @@ void SACallUI::saCallUpdate(bool isSimulating)
       ImVec2(buttonMin.x + (buttonWidth - textSize.x) * 0.5f, buttonMin.y + (buttonHeight - textSize.y) * 0.5f);
   drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), title.c_str());
   if (isSimulating) {
-    ImGui::SameLine();
-    double currentProgress = progress.load();
-    ImGui::ProgressBar(currentProgress, ImVec2(0.0f, 0.0f), "Simulating...");
+    updateProgressBar(progress.load());
   }
   if (ImGui::IsItemClicked()) {
     saCalled = true;
