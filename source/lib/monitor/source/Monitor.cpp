@@ -45,7 +45,7 @@ void Monitor::onCandidate(const core::IPosition::CPtr& position, double delta, d
       addSnapshotChecked(position, progress);
     }
     if ((level == MonitorLevel::High) && (stalledAcceptance == 0) && (snapshotsMemory < snapshotsMemoryLimit)) {
-      addSnapshot(position);
+      addSnapshot(position, progress);
     }
     ++stalledAcceptance;
   }
@@ -75,7 +75,7 @@ void Monitor::onEnd(const core::IPosition::CPtr& position)
   if (level > MonitorLevel::Low) {
     energies.push(position->getEnergy());
     if (level == MonitorLevel::Medium || ((level == MonitorLevel::High) && (stalledAcceptance == 0))) {
-      addSnapshot(position);
+      addSnapshot(position, 1.0);
     }
   }
 }
@@ -95,11 +95,12 @@ void Monitor::bestCatch(const core::IPosition::CPtr& position, double progress)
   }
 }
 
-void Monitor::addSnapshot(const core::IPosition::CPtr& position)
+void Monitor::addSnapshot(const core::IPosition::CPtr& position, double progress)
 {
   refreshGlobalMetrics();
   snapshots.push_back({position, globalMetrics, deltas, energies});
   snapshotsMemory += snapshots.back().size();
+  progressCallback(progress);
 }
 
 void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double progress)
@@ -107,7 +108,7 @@ void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double p
   if (((snapshots.size() < steps) && (snapshots.size() <= progress * double(steps)) &&
        (snapshotsMemory < snapshotsMemoryLimit)) ||
       (snapshots.size() == 0)) {
-    addSnapshot(position);
+    addSnapshot(position, progress);
   }
 }
 

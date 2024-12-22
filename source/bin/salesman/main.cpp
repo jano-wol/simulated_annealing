@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     IGenerator::CPtr g = std::make_unique<SalesmanGenerator>(1000, 100, true);
     auto pos = Io::getPosition(g, 1);
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
-          std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
+          std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Medium));
     sa.anneal(pos);
     print(sa, 1);
   } else {

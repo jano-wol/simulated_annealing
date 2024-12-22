@@ -2,6 +2,7 @@
 #define SIMULATED_ANNEALING_MONITOR_MONITOR_H_
 
 #include <chrono>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -50,14 +51,18 @@ class Monitor
 {
 public:
   using CPtr = std::unique_ptr<Monitor>;
-  Monitor(MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
-          std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL)
+  using ProgressCallback = std::function<void(double)>;
+  Monitor(
+      MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
+      std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL,
+      ProgressCallback progressCallback_ = [](double /*progress*/) {})
       : level(level_),
         bestCatchQ(bestCatchQ_),
         catchPrecision(catchPrecision_),
         localEnv(localEnv_),
         steps(steps_),
         snapshotsMemoryLimit(snapshotsMemoryLimit_),
+        progressCallback(std::move(progressCallback_)),
         deltas(localEnv),
         energies(localEnv)
   {}
@@ -67,7 +72,7 @@ public:
   void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress, double energy);
   void onEnd(const core::IPosition::CPtr& position);
   void bestCatch(const core::IPosition::CPtr& position, double progress);
-  void addSnapshot(const core::IPosition::CPtr& position);
+  void addSnapshot(const core::IPosition::CPtr& position, double progress);
   void addSnapshotChecked(const core::IPosition::CPtr& position, double progress);
   void refreshGlobalMetrics();
   std::string toString() const;
@@ -80,6 +85,7 @@ public:
   std::size_t localEnv;
   std::size_t steps;
   std::size_t snapshotsMemoryLimit;
+  ProgressCallback progressCallback;
   std::size_t snapshotsMemory = 0;
 
   // low

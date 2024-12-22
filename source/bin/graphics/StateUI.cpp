@@ -131,7 +131,7 @@ void StateUI::handleResults()
     const auto& x = sa->getBest();
     double energy = x->getEnergy();
     ss << "Energy=" << energy;
-    ImGui::Text(ss.str().c_str());
+    ImGui::TextUnformatted(ss.str().c_str());
     mtx.unlock();
   }
 }
