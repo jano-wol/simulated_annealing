@@ -12,6 +12,7 @@
 
 #include "InfoUI.h"
 #include "MenuUI.h"
+#include "SACallUI.h"
 #include "SAFactoryUI.h"
 
 class StateUI
@@ -27,13 +28,16 @@ public:
   void updateParsing();
   void updateSaving();
   void updateInformating(const std::string& message);
+  void updateSimulating();
 
   bool isParsing = false;
   bool isSaving = false;
   bool isInformating = false;
+  bool isSimulating = false;
   InfoUI infoUI;
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
+  SACallUI saCallUI;
   sa::sa::SA::CPtr sa = nullptr;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
   std::unique_ptr<sa::core::IPosition> currentPosition = nullptr;

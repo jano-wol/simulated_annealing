@@ -44,6 +44,15 @@ void StateUI::updateInformating(const std::string& message)
   }
 }
 
+void StateUI::updateSimulating()
+{
+  if (isSimulating) {
+    if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      isSimulating = false;
+    }
+  }
+}
+
 void StateUI::handleInfo()
 {
   if (isInformating) {
@@ -91,7 +100,28 @@ void StateUI::handleSAFactory()
   }
 }
 
-void StateUI::handleSACall() {}
+void StateUI::handleSACall()
+{
+  saCallUI.saCallUpdate();
+  if (saCallUI.saCalled) {
+    if (currentPosition) {
+      if (mtx.try_lock()) {
+        sa = saFactory->create();
+        isSimulating = true;
+        saCallUI.startSimulating(currentPosition, sa);
+        saCallUI.saCalled = false;
+        mtx.unlock();
+      } else {
+        saCallUI.saCalled = false;
+        updateInformating("Computation is busy. Simulation request ignored.");
+      }
+    } else {
+      saCallUI.saCalled = false;
+      updateInformating("Start position is not loaded. Simulation request ignored.");
+    }
+  }
+  updateSimulating();
+}
 
 void StateUI::handleResults() {}
 
