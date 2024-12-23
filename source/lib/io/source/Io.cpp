@@ -118,7 +118,7 @@ IPosition::CPtr Io::getPosition(const IGenerator::CPtr& generator, int idx)
   if (std::filesystem::exists(filePath)) {
     return getPosition(filePath);
   }
-  return position;
+  return std::move(position);
 }
 
 IPosition::CPtr Io::getPosition(const std::string& path)
