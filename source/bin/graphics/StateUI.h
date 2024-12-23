@@ -10,6 +10,7 @@
 #include <core/IPosition.h>
 #include <sa/SAFactory.h>
 
+#include "BS_thread_pool.hpp"
 #include "InfoUI.h"
 #include "MenuUI.h"
 #include "SACallUI.h"
@@ -18,6 +19,7 @@
 class StateUI
 {
 public:
+  StateUI() : pool(1) {}
   void handleInfo();
   void handleMenu();
   void handleSAFactory();
@@ -30,6 +32,7 @@ public:
   void updateInformating(const std::string& message);
   void updateSimulating();
 
+  BS::thread_pool<0> pool;
   bool isParsing = false;
   bool isSaving = false;
   bool isInformating = false;

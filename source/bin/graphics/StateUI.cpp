@@ -111,7 +111,7 @@ void StateUI::handleSACall()
       if (mtx.try_lock()) {
         sa = saFactory->create();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, sa);
+        saCallUI.startSimulating(currentPosition, sa, pool);
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;

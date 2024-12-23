@@ -46,7 +46,7 @@ void SACallUI::saCallUpdate(bool isSimulating)
   }
 }
 
-void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa)
+void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa, BS::thread_pool<0>& pool)
 {
-  simulatingFuture = std::async(std::launch::async, [&currPosition, &sa]() { sa->anneal(currPosition); });
+  simulatingFuture = pool.submit_task([&currPosition, &sa]() { sa->anneal(currPosition); });
 }
