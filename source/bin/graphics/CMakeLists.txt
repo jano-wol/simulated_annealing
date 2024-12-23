@@ -14,5 +14,5 @@ set(headers ${source_path}/InfoUI.h
             ${source_path}/StateUI.h
             )  
 add_executable(${target} ${headers} ${sources})
-target_link_libraries(${target} PUBLIC core imgui implot io sa serializator)
+target_link_libraries(${target} PUBLIC bs core imgui implot io sa serializator)
 

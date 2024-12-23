@@ -7,10 +7,11 @@
 #include <string>
 #include <vector>
 
+#include <bs/BS_thread_pool.hpp>
+
 #include <core/IPosition.h>
 #include <sa/SAFactory.h>
 
-#include "BS_thread_pool.hpp"
 #include "InfoUI.h"
 #include "MenuUI.h"
 #include "SACallUI.h"
