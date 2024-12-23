@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include <core/Rounding.h>
 #include <io/Io.h>
 
 using namespace sa::core;
@@ -127,10 +128,16 @@ void StateUI::handleSACall()
 void StateUI::handleResults()
 {
   if (sa && mtx.try_lock()) {
+    const auto& globalMetrics = sa->monitor->globalMetrics;
     std::stringstream ss;
-    const auto& x = sa->getBest();
-    double energy = x->getEnergy();
-    ss << "Energy=" << energy;
+    ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << "iterations = " << globalMetrics.idx;
+    ImGui::TextUnformatted(ss.str().c_str());
+    ss.str("");
+    ss << "speed = " << int(globalMetrics.speed) << " (iteration/s)";
+    ImGui::TextUnformatted(ss.str().c_str());
+    ss.str("");
+    ss << "Acceptance ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
     ImGui::TextUnformatted(ss.str().c_str());
     mtx.unlock();
   }
