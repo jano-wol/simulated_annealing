@@ -177,6 +177,11 @@ void MenuUI::menuUpdate()
       }
       ImGui::EndMenu();
     }
+    {
+      ImGuiIO& io = ImGui::GetIO();
+      ImGui::SetCursorPosX(ImGui::GetWindowWidth() * (9.0 / 10.0));
+      ImGui::Text("FPS: %.1f", io.Framerate);
+    }
     ImGui::EndMenuBar();
   }
   render();
