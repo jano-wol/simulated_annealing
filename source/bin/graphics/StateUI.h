@@ -27,7 +27,7 @@ public:
   void handleResults();
   void handleGraphics();
   void handleSACall();
-  void handleSA();
+  void handleSAOutput();
   void updateParsing();
   void updateSaving();
   void updateInformating(const std::string& message);

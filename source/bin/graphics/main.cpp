@@ -24,7 +24,8 @@ int main()
     state.handleInfo();
     state.handleMenu();
     state.handleSAFactory();
-    state.handleSA();
+    state.handleSACall();
+    state.handleSAOutput();
     windowEnd();
     render(window);
   }
