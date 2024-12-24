@@ -117,7 +117,7 @@ void StateUI::handleSACall()
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;
-        saCallUI.stop.store(true);
+        updateInformating("Computation is busy. Simulation request ignored.");
       }
     } else {
       saCallUI.saCalled = false;

@@ -39,7 +39,11 @@ void SACallUI::saCallUpdate(bool isSimulating)
       ImVec2(buttonMin.x + (buttonWidth - textSize.x) * 0.5f, buttonMin.y + (buttonHeight - textSize.y) * 0.5f);
   drawList->AddText(textPos, IM_COL32(255, 255, 255, 255), title.c_str());
   if (ImGui::IsItemClicked()) {
-    saCalled = true;
+    if (isSimulating) {
+      stop.store(true);
+    } else {
+      saCalled = true;
+    }
   }
   if (isSimulating) {
     updateProgressBar(progress.load(), buttonWidth * 2, buttonHeight);
