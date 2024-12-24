@@ -27,7 +27,7 @@ void SACallUI::saCallUpdate(bool isSimulating)
   float buttonHeight = availSize.y * 0.05f;
   ImVec2 buttonSize(buttonWidth, buttonHeight);
   ImU32 buttonColor = isSimulating ? IM_COL32(120, 10, 10, 255) : IM_COL32(10, 120, 10, 255);
-  std::string title = isSimulating ? "Calculating" : "Simulate";
+  std::string title = isSimulating ? "Stop" : "Simulate";
   float rounding = 12.0f;
   ImDrawList* drawList = ImGui::GetWindowDrawList();
   ImVec2 buttonMin = cursorPos;
@@ -46,7 +46,8 @@ void SACallUI::saCallUpdate(bool isSimulating)
   }
 }
 
-void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa, BS::thread_pool<0>& pool)
+void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa,
+                               BS::thread_pool<0>& pool)
 {
   simulatingFuture = pool.submit_task([&currPosition, &sa]() { sa->anneal(currPosition); });
 }

@@ -8,5 +8,5 @@ using namespace sa::sa;
 SA::CPtr SAFactory::create() const
 {
   return make_unique<SA>(resourcePolicy->clone(), acceptancePolicy->clone(), coolingPolicy->clone(),
-                         moveSelectorPolicy->clone(), monitor->clone());
+                         moveSelectorPolicy->clone(), monitor->clone(), stopCallback);
 }

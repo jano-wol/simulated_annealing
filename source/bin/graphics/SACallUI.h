@@ -17,6 +17,7 @@ public:
   bool saCalled = false;
   std::future<void> simulatingFuture;
   std::atomic<double> progress = std::atomic<double>(0);
+  std::atomic<bool> stop = std::atomic<bool>(false);
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_SA_CALL_UI_H_

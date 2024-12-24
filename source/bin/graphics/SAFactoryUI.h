@@ -46,7 +46,7 @@ public:
     sa::policies::IMoveSelector::CPtr getMoveSelector();
     sa::policies::IResource::CPtr getResource();
     sa::monitor::Monitor::CPtr getMonitor(std::atomic<double>& progress);
-    sa::sa::SAFactory::CPtr getFactory(std::atomic<double>& progress);
+    sa::sa::SAFactory::CPtr getFactory(std::atomic<double>& progress, std::atomic<bool>& stop);
   };
 
   void saFactoryUpdate();

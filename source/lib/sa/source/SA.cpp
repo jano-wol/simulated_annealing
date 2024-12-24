@@ -11,6 +11,9 @@ void SA::anneal(const IPosition::CPtr& startPosition)
   monitor->onStart(startPosition);
   currPosition = startPosition->clone();
   while (resourcePolicy->getLeft() > 0) {
+    if (stopCallback() == true) {
+      return;
+    }
     auto move = moveSelectorPolicy->selectMove(currPosition);
     double progress = 1.0 - (resourcePolicy->getLeft() / resourcePolicy->getAll());
     double temperature = coolingPolicy->getTemperature(progress);

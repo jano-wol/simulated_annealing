@@ -53,6 +53,7 @@ void StateUI::updateSimulating()
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSimulating = false;
       saCallUI.progress = 0;
+      saCallUI.stop.store(false);
       mtx.unlock();
     }
   }
@@ -99,7 +100,7 @@ void StateUI::handleSAFactory()
 {
   saFactoryUI.saFactoryUpdate();
   if (!saFactory || (saFactoryUI.loadedParams != saFactoryUI.currentParams)) {
-    saFactory = saFactoryUI.loadedParams.getFactory(saCallUI.progress);
+    saFactory = saFactoryUI.loadedParams.getFactory(saCallUI.progress, saCallUI.stop);
     saFactoryUI.currentParams = saFactoryUI.loadedParams;
   }
 }
@@ -116,7 +117,7 @@ void StateUI::handleSACall()
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;
-        updateInformating("Computation is busy. Simulation request ignored.");
+        saCallUI.stop.store(true);
       }
     } else {
       saCallUI.saCalled = false;

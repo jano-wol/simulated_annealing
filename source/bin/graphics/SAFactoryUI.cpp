@@ -151,10 +151,11 @@ sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& 
   return nullptr;
 }
 
-sa::sa::SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress)
+sa::sa::SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress, std::atomic<bool>& stop)
 {
+  auto callback = [&stop]() { return stop.load(); };
   return std::make_unique<sa::sa::SAFactory>(getResource(), getAcceptance(), getCooling(), getMoveSelector(),
-                                             getMonitor(progress));
+                                             getMonitor(progress), std::move(callback));
 }
 
 void SAFactoryUI::saFactoryUpdate()
