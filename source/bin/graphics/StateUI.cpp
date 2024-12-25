@@ -143,7 +143,7 @@ void StateUI::handleResults()
        << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
     ImGui::TextUnformatted(ss.str().c_str());
     ss.str("");
-    ss << "up energy = " << globalMetrics.upEnergyChanges
+    ss << "up energy changes = " << globalMetrics.upEnergyChanges
        << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
     ImGui::TextUnformatted(ss.str().c_str());
     mtx.unlock();
