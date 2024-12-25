@@ -139,7 +139,12 @@ void StateUI::handleResults()
     ss << "speed = " << int(globalMetrics.speed) << " (iteration/s)";
     ImGui::TextUnformatted(ss.str().c_str());
     ss.str("");
-    ss << "Acceptance ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
+    ss << "all acceptance = " << globalMetrics.acceptance
+       << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
+    ImGui::TextUnformatted(ss.str().c_str());
+    ss.str("");
+    ss << "up energy = " << globalMetrics.upEnergyChanges
+       << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
     ImGui::TextUnformatted(ss.str().c_str());
     mtx.unlock();
   }
