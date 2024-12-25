@@ -133,6 +133,10 @@ void StateUI::handleResults()
     const auto& globalMetrics = sa->monitor->globalMetrics;
     std::stringstream ss;
     ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << "best energy = " << globalMetrics.bestEnergy << "; progress = " << globalMetrics.bestProgress
+       << "; catched = " << bool(sa->monitor->bestPosition);
+    ImGui::TextUnformatted(ss.str().c_str());
+    ss.str("");
     ss << "iterations = " << globalMetrics.idx;
     ImGui::TextUnformatted(ss.str().c_str());
     ss.str("");
@@ -146,6 +150,7 @@ void StateUI::handleResults()
     ss << "up energy changes = " << globalMetrics.upEnergyChanges
        << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
     ImGui::TextUnformatted(ss.str().c_str());
+    ss.str("");
     mtx.unlock();
   }
 }

@@ -23,6 +23,7 @@ public:
 
   double bestEnergy = 0;
   std::size_t bestIdx = 0;
+  double bestProgress = 0;
   std::size_t idx = 0;
   std::size_t upEnergyChanges = 0;
   std::size_t acceptance = 0;

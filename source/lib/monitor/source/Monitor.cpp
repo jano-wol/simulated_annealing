@@ -62,6 +62,7 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
       (bestCatchQ < progress && !bestPosition && (energy - globalMetrics.bestEnergy < catchPrecision))) {
     globalMetrics.bestEnergy = energy;
     globalMetrics.bestIdx = globalMetrics.idx;
+    globalMetrics.bestProgress = progress;
     bestCatch(position, progress);
   }
   if (level > MonitorLevel::Low) {
