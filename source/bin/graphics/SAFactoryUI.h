@@ -32,7 +32,7 @@ public:
     int moveSelectorIndex = 0;
     int k = 1;
 
-    int monitorIndex = 1;
+    int monitorIndex = 0;
     double bestCatchQ = 0.9;
     int localEnvLength = 1000;
     int steps = 20;
@@ -55,7 +55,7 @@ public:
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
   std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
   std::vector<const char*> moveSelectorNames{"KBest"};
-  std::vector<const char*> monitorNames{"Low", "Medium", "High"};
+  std::vector<const char*> monitorNames{"Snapshots", "All"};
   Params currentParams;
   Params loadedParams;
 };

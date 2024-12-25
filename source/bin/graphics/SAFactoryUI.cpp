@@ -138,13 +138,10 @@ sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& 
 {
   auto callback = [&progress](double newProgress) { progress.store(newProgress); };
   if (monitorIndex == 0) {
-    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Low, bestCatchQ);
-  }
-  if (monitorIndex == 1) {
     return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, bestCatchQ, 1e-6, localEnvLength,
                                                   steps, memoryLimitInGb * 1000000000UL, std::move(callback));
   }
-  if (monitorIndex == 2) {
+  if (monitorIndex == 1) {
     return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, bestCatchQ, 1e-6, localEnvLength, 20,
                                                   memoryLimitInGb * 1000000000UL, std::move(callback));
   }
@@ -192,10 +189,6 @@ void SAFactoryUI::saFactoryUpdate()
   combo("Monitor:", "##MonitorLevel", &loadedParams.monitorIndex, monitorNames);
   if (loadedParams.monitorIndex == 0) {
     ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ0Input", &loadedParams.bestCatchQ);
-  }
-  if (loadedParams.monitorIndex == 1) {
-    ImGui::SameLine();
     readU32("Snapshots:", "##Snapshots1Input", &loadedParams.steps);
     ImGui::SameLine();
     readU32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
@@ -204,7 +197,7 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readU32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
-  if (loadedParams.monitorIndex == 2) {
+  if (loadedParams.monitorIndex == 1) {
     ImGui::SameLine();
     readU32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
