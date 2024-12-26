@@ -162,7 +162,25 @@ void StateUI::handleResults()
 void StateUI::handleGraphics()
 {
   if (currentPosition) {
+    ImVec2 plot_size = ImGui::GetContentRegionAvail();
+    float ratio = 0.8f;
+    ImPlot::BeginPlot("", {plot_size.y * ratio, plot_size.y * ratio}, ImPlotFlags_NoLegend);
+    int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
+    ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
+    ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
     currentPosition->plot();
+    ImPlot::EndPlot();
+    if (ImGui::Button("<<")) {
+    }
+    ImGui::SameLine();  // Keep buttons on the same line
+    if (ImGui::Button("<")) {
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(">")) {
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(">>")) {
+    }
   }
 }
 
