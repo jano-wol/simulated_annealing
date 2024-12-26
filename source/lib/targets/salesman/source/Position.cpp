@@ -4,6 +4,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include <imgui/imgui.h>
+#include <implot/implot.h>
+
 #include <core/IPosition.h>
 #include <core/Random.h>
 #include <core/Rounding.h>
@@ -117,3 +120,25 @@ IPosition::CPtr SalesmanPosition::fromString(const std::string& data)
 }
 
 std::string SalesmanPosition::getTypeId() { return "salesman"; }
+
+void SalesmanPosition::plot() const
+{
+  ImVec2 plot_size = ImGui::GetContentRegionAvail();
+  float ratio = 0.8f;
+  if (ImPlot::BeginPlot("Position", {plot_size.y * ratio, plot_size.y * ratio}, ImPlotFlags_NoLegend)) {
+    int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
+    ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
+    ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
+    for (const auto& [x, y] : cities) {
+      ImPlot::PlotScatter("Points", &x, &y, 1);
+    }
+    for (size_t idx = 0; idx < cities.size(); ++idx) {
+      const auto& [x1, y1] = cities[idx];
+      const auto& [x2, y2] = cities[(idx + 1) % cities.size()];
+      double xs[2] = {x1, x2};
+      double ys[2] = {y1, y2};
+      ImPlot::PlotLine("Edges", xs, ys, 2);
+    }
+    ImPlot::EndPlot();
+  }
+}

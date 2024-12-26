@@ -26,6 +26,8 @@ public:
   void makeMove(core::IMove::CPtr move) override;
   int size() const override;
   core::IPosition::CPtr clone() const override;
+  void plot() const override;
+
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const;
   double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const;
   double calcEnergy() const;
@@ -33,7 +35,7 @@ public:
   static std::string getTypeId();
   static std::string toString(const core::IPosition::CPtr& position);
   static core::IPosition::CPtr fromString(const std::string& data);
-  
+
   double energy;
   std::vector<std::pair<double, double>> cities;
   core::Random r;

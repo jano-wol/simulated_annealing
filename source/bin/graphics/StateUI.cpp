@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include <implot/implot.h>
+
 #include <core/Rounding.h>
 #include <io/Io.h>
 
@@ -20,6 +22,7 @@ void StateUI::updateParsing()
         updateInformating("Parsing failed.");
       }
       isParsing = false;
+      ImPlot::SetNextAxesToFit();
       mtx.unlock();
     }
   }
@@ -156,7 +159,12 @@ void StateUI::handleResults()
   }
 }
 
-void StateUI::handleGraphics() {}
+void StateUI::handleGraphics()
+{
+  if (currentPosition) {
+    currentPosition->plot();
+  }
+}
 
 void StateUI::handleSAOutput()
 {
