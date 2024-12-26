@@ -172,7 +172,7 @@ void StateUI::handleGraphics()
     ImPlot::EndPlot();
     if (ImGui::Button("<<")) {
     }
-    ImGui::SameLine();  // Keep buttons on the same line
+    ImGui::SameLine();
     if (ImGui::Button("<")) {
     }
     ImGui::SameLine();
