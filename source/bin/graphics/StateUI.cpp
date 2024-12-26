@@ -170,16 +170,27 @@ void StateUI::handleGraphics()
     ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
     currentPosition->plot();
     ImPlot::EndPlot();
+    float button_width_1 = ImGui::CalcTextSize("<").x;
+    float button_width_2 = ImGui::CalcTextSize("<<").x;  // Approx button width
+    float spacing = ImGui::GetStyle().ItemSpacing.x;                                            // Space between buttons
+    float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;                    // 4 buttons + 3 spaces
+    float center_offset = (plot_size.y * ratio - total_width) / 2.0f;
+
+    ImGui::SetCursorPosX(center_offset);  // Align buttons to center
     if (ImGui::Button("<<")) {
+      // Move to beginning
     }
     ImGui::SameLine();
     if (ImGui::Button("<")) {
+      // Move to previous
     }
     ImGui::SameLine();
     if (ImGui::Button(">")) {
+      // Move to next
     }
     ImGui::SameLine();
     if (ImGui::Button(">>")) {
+      // Move to end
     }
   }
 }
