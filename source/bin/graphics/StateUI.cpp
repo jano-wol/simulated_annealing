@@ -163,8 +163,7 @@ void StateUI::handleGraphics()
   const int totalSteps = 20;
   if (currentPosition) {
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
-    float ratio = 0.8f;
-    ImVec2 plotSize = ImVec2(availableSize.y * ratio, availableSize.y * ratio);
+    ImVec2 plotSize = ImVec2(availableSize.x, availableSize.x);
     ImPlot::BeginPlot("", {plotSize.x, plotSize.y}, ImPlotFlags_NoLegend);
     int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
     ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
@@ -180,7 +179,7 @@ void StateUI::handleGraphics()
     float spacing = ImGui::GetStyle().ItemSpacing.x;
     float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;
     float center_offset = (plotSize.x - total_width) / 2.0f;
-    ImGui::SetCursorPosX(style.WindowPadding.x + center_offset);
+    ImGui::SetCursorPosX(center_offset);
     if (ImGui::Button("<<")) {
       // Move to beginning
     }
@@ -201,14 +200,23 @@ void StateUI::handleGraphics()
 
 void StateUI::handleSAOutput()
 {
-  ImVec2 window_size = ImGui::GetContentRegionAvail();
-  float left_width = window_size.x * 0.3f;
-  float right_width = window_size.x - left_width;
-  ImGui::BeginChild("Left Panel", ImVec2(left_width, 0), true);
-  handleResults();
-  ImGui::EndChild();
-  ImGui::SameLine();
-  ImGui::BeginChild("Right Panel", ImVec2(right_width, 0), true);
-  handleGraphics();
-  ImGui::EndChild();
+  ImVec2 windowSize = ImGui::GetContentRegionAvail();
+  float graphicsRatio = 0.7f;
+  float graphicsWidth = windowSize.x * graphicsRatio;
+  auto style = ImGui::GetStyle();
+  if (currentPosition) {
+    float navigatorRatio = 0.45f;
+    ImGui::BeginChild("Graphics panel", ImVec2(graphicsWidth, 0), 0, ImGuiWindowFlags_NoDecoration);
+    ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * navigatorRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
+    handleGraphics();
+    ImGui::EndChild();
+    ImGui::SameLine();
+    if (sa && !isSimulating) {
+      ImGui::BeginChild("Right Panel", ImVec2(graphicsWidth * (1 - navigatorRatio) - 3 * style.WindowPadding.x, 0), 0,
+                        ImGuiWindowFlags_NoDecoration);
+      handleResults();
+      ImGui::EndChild();
+    }
+    ImGui::EndChild();
+  }
 }
