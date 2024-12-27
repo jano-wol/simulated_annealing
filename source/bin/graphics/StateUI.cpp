@@ -77,20 +77,17 @@ void StateUI::handleMenu()
 {
   menuUI.menuUpdate();
 
-  if (menuUI.loadedPath != menuUI.currentPath) {
+  if (menuUI.operationRequest) {
     if (mtx.try_lock()) {
       if (menuUI.mode == 1) {
         isParsing = true;
         menuUI.startParsing();
-        menuUI.currentPath = menuUI.loadedPath;
       }
       if (menuUI.mode == 2) {
         isSaving = true;
         menuUI.startSaving(currentPosition);
-        menuUI.currentPath = menuUI.loadedPath;
       }
     } else {
-      menuUI.loadedPath = menuUI.currentPath;
       std::stringstream ss;
       ss << "Computation is busy. " << menuUI.title << " request ignored.";
       updateInformating(ss.str());

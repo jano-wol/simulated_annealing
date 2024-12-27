@@ -67,6 +67,7 @@ void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
   if (activateButton) {
     ImGui::CloseCurrentPopup();
     loadedPath = outPath;
+    operationRequest = true;
     visible = false;
     nextPath.clear();
     saveFileName[0] = '\0';
@@ -163,6 +164,7 @@ void MenuUI::render()
 void MenuUI::menuUpdate()
 {
   loadedVisible = false;
+  operationRequest = false;
   if (ImGui::BeginMenuBar()) {
     if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("Open")) {
