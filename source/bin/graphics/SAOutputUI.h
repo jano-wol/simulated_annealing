@@ -7,7 +7,8 @@
 class SAOutputUI
 {
 public:
-  void handleNavigator(const sa::core::IPosition::CPtr& currentPosition);
+  void handleNavigator(float plotSize);
+  void handlePlot(const sa::core::IPosition::CPtr& currentPosition, float plotSize);
   void handleResults(const sa::sa::SA::CPtr& sa);
   void saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition, const sa::sa::SA::CPtr& sa, bool isSimulating);
 };
