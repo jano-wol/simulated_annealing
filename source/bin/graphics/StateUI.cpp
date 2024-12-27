@@ -21,8 +21,9 @@ void StateUI::updateParsing()
       } else {
         updateInformating("Parsing failed.");
       }
-      isParsing = false;
       ImPlot::SetNextAxesToFit();
+      sa = nullptr;
+      isParsing = false;
       mtx.unlock();
     }
   }
@@ -132,7 +133,7 @@ void StateUI::handleSACall()
 
 void StateUI::handleResults()
 {
-  if (sa && mtx.try_lock()) {
+  if (sa && !isSimulating) {
     const auto& globalMetrics = sa->monitor->globalMetrics;
     std::stringstream ss;
     ss << std::setprecision(2) << std::fixed;
