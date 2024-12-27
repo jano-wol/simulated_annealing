@@ -101,8 +101,8 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     std::stringstream ss;
     ss << std::setprecision(Rounding::precision) << std::fixed;
     ss << "curr energy = " << currentPosition->getEnergy();
+    ImGui::TextUnformatted(ss.str().c_str());
     if (simulated) {
-      ImGui::TextUnformatted(ss.str().c_str());
       ImGui::TextUnformatted("\nGlobal metrics:");
       handleResults(sa);
     }
