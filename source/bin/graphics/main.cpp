@@ -9,8 +9,6 @@
 #include "WindowBegin.h"
 #include "WindowEnd.h"
 
-#include <iostream>
-
 using namespace sa::io;
 
 int main()

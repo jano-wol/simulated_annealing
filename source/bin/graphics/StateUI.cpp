@@ -161,22 +161,28 @@ void StateUI::handleResults()
 
 void StateUI::handleGraphics()
 {
+  static int currentStep = 0;
+  const int totalSteps = 20;
   if (currentPosition) {
-    ImVec2 plot_size = ImGui::GetContentRegionAvail();
+    ImVec2 availableSize = ImGui::GetContentRegionAvail();
     float ratio = 0.8f;
-    ImPlot::BeginPlot("", {plot_size.y * ratio, plot_size.y * ratio}, ImPlotFlags_NoLegend);
+    ImVec2 plotSize = ImVec2(availableSize.y * ratio, availableSize.y * ratio);
+    ImPlot::BeginPlot("", {plotSize.x, plotSize.y}, ImPlotFlags_NoLegend);
     int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
     ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
     ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
     currentPosition->plot();
     ImPlot::EndPlot();
-    float button_width_1 = ImGui::CalcTextSize("<").x;
-    float button_width_2 = ImGui::CalcTextSize("<<").x;  // Approx button width
-    float spacing = ImGui::GetStyle().ItemSpacing.x;                                            // Space between buttons
-    float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;                    // 4 buttons + 3 spaces
-    float center_offset = (plot_size.y * ratio - total_width) / 2.0f;
-
-    ImGui::SetCursorPosX(center_offset);  // Align buttons to center
+    ImGui::SetNextItemWidth(plotSize.x);
+    if (ImGui::SliderInt("##SnapshotSlider", &currentStep, 0, totalSteps - 1)) {
+    }
+    const ImGuiStyle& style = ImGui::GetStyle();
+    float button_width_1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
+    float button_width_2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
+    float spacing = ImGui::GetStyle().ItemSpacing.x;
+    float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;
+    float center_offset = (plotSize.x - total_width) / 2.0f;
+    ImGui::SetCursorPosX(style.WindowPadding.x + center_offset);
     if (ImGui::Button("<<")) {
       // Move to beginning
     }
