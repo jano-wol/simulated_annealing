@@ -16,6 +16,7 @@
 #include "MenuUI.h"
 #include "SACallUI.h"
 #include "SAFactoryUI.h"
+#include "SAOutputUI.h"
 
 class StateUI
 {
@@ -24,8 +25,6 @@ public:
   void handleInfo();
   void handleMenu();
   void handleSAFactory();
-  void handleResults();
-  void handleGraphics();
   void handleSACall();
   void handleSAOutput();
   void updateParsing();
@@ -42,6 +41,7 @@ public:
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
   SACallUI saCallUI;
+  SAOutputUI saOutputUI;
   sa::sa::SA::CPtr sa = nullptr;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
   std::unique_ptr<sa::core::IPosition> currentPosition = nullptr;
