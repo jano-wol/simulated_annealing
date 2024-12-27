@@ -25,7 +25,6 @@ void SAOutputUI::handleNavigator(float plotSize)
   ImGui::SetCursorPosX(center_offset);
   if (ImGui::Button("<<")) {
     // Move to beginning
-    // Szia Janó its a prankster
   }
   ImGui::SameLine();
   if (ImGui::Button("<")) {
@@ -85,10 +84,9 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     ImVec2 windowSize = ImGui::GetContentRegionAvail();
     float graphicsRatio = 0.7f;
     float graphicsWidth = windowSize.x * graphicsRatio;
-    auto style = ImGui::GetStyle();
-    float navigatorRatio = 0.45f;
+    float plotRatio = 0.45f;
     ImGui::BeginChild("Graphics panel", ImVec2(graphicsWidth, 0), 0, ImGuiWindowFlags_NoDecoration);
-    ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * navigatorRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
+    ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * plotRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
     float plotSize = availableSize.x;
     handlePlot(currentPosition, plotSize);
@@ -98,8 +96,9 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     ImGui::EndChild();
     ImGui::SameLine();
     if (simulated) {
-      ImGui::BeginChild("Right Panel", ImVec2(graphicsWidth * (1 - navigatorRatio) - 3 * style.WindowPadding.x, 0), 0,
-                        ImGuiWindowFlags_NoDecoration);
+      auto style = ImGui::GetStyle();
+      ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
+      ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
       handleResults(sa);
       ImGui::EndChild();
     }
