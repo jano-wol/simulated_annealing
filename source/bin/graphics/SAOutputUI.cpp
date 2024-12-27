@@ -95,13 +95,18 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     }
     ImGui::EndChild();
     ImGui::SameLine();
+    auto style = ImGui::GetStyle();
+    ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
+    ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
+    std::stringstream ss;
+    ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << "curr energy = " << currentPosition->getEnergy();
     if (simulated) {
-      auto style = ImGui::GetStyle();
-      ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
-      ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
+      ImGui::TextUnformatted(ss.str().c_str());
+      ImGui::TextUnformatted("\nGlobal metrics:");
       handleResults(sa);
-      ImGui::EndChild();
     }
+    ImGui::EndChild();
     ImGui::EndChild();
   }
 }
