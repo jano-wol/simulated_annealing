@@ -40,13 +40,13 @@ void SAOutputUI::handleNavigator(float plotSize)
   }
 }
 
-void SAOutputUI::handlePlot(const sa::core::IPosition::CPtr& currentPosition, float plotSize)
+void SAOutputUI::handlePlot(float plotSize)
 {
   ImPlot::BeginPlot("", {plotSize, plotSize}, ImPlotFlags_NoLegend);
   int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
   ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
   ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
-  currentPosition->plot();
+  plotPosition->plot();
   ImPlot::EndPlot();
 }
 
@@ -76,10 +76,9 @@ void SAOutputUI::handleResults(const sa::sa::SA::CPtr& sa)
   ss.str("");
 }
 
-void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition, const sa::sa::SA::CPtr& sa,
-                                bool isSimulating)
+void SAOutputUI::saOutputUpdate(const sa::sa::SA::CPtr& sa, bool isSimulating)
 {
-  if (currentPosition) {
+  if (plotPosition) {
     bool simulated = sa && !isSimulating;
     ImVec2 windowSize = ImGui::GetContentRegionAvail();
     float graphicsRatio = 0.7f;
@@ -89,7 +88,7 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * plotRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
     ImVec2 availableSize = ImGui::GetContentRegionAvail();
     float plotSize = availableSize.x;
-    handlePlot(currentPosition, plotSize);
+    handlePlot(plotSize);
     if (simulated) {
       handleNavigator(plotSize);
     }
@@ -100,7 +99,7 @@ void SAOutputUI::saOutputUpdate(const sa::core::IPosition::CPtr& currentPosition
     ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
     std::stringstream ss;
     ss << std::setprecision(Rounding::precision) << std::fixed;
-    ss << "curr energy = " << currentPosition->getEnergy();
+    ss << "curr energy = " << plotPosition->getEnergy();
     ImGui::TextUnformatted(ss.str().c_str());
     if (simulated) {
       ImGui::TextUnformatted("\nGlobal metrics:");

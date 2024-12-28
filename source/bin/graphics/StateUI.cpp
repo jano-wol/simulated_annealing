@@ -14,11 +14,12 @@ void StateUI::updateParsing()
       auto loadingPosition = menuUI.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
+        ImPlot::SetNextAxesToFit();
+        saOutputUI.plotPosition = currentPosition.get();
+        sa = nullptr;
       } else {
         updateInformating("Parsing failed.");
       }
-      ImPlot::SetNextAxesToFit();
-      sa = nullptr;
       isParsing = false;
       mtx.unlock();
     }
@@ -124,4 +125,4 @@ void StateUI::handleSACall()
   updateSimulating();
 }
 
-void StateUI::handleSAOutput() { saOutputUI.saOutputUpdate(currentPosition, sa, isSimulating); }
+void StateUI::handleSAOutput() { saOutputUI.saOutputUpdate(sa, isSimulating); }
