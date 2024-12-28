@@ -32,6 +32,14 @@ void readU32(const char* text, const char* id, int* val)
   }
 }
 
+void readP32(const char* text, const char* id, int* val)
+{
+  readU32(text, id, val);
+  if (*val == 0) {
+    *val = 1;
+  }
+}
+
 void readU64(const char* text, const char* id, std::size_t* val)
 {
   ImGui::TextUnformatted(text);
@@ -184,26 +192,26 @@ void SAFactoryUI::saFactoryUpdate()
 
   combo("Move Selector Policy:", "##MoveSelectorPolicy", &loadedParams.moveSelectorIndex, moveSelectorNames);
   ImGui::SameLine();
-  readU32("K:", "##KInput", &loadedParams.k);
+  readP32("K:", "##KInput", &loadedParams.k);
 
   combo("Monitor:", "##MonitorLevel", &loadedParams.monitorIndex, monitorNames);
   if (loadedParams.monitorIndex == 0) {
     ImGui::SameLine();
-    readU32("Snapshots:", "##Snapshots1Input", &loadedParams.steps);
+    readP32("Snapshots:", "##Snapshots1Input", &loadedParams.steps);
     ImGui::SameLine();
-    readU32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
+    readP32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
     readDouble01("BestCatchQ:", "##BestQ1Input", &loadedParams.bestCatchQ);
     ImGui::SameLine();
-    readU32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
+    readP32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
   if (loadedParams.monitorIndex == 1) {
     ImGui::SameLine();
-    readU32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
+    readP32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
     readDouble01("BestCatchQ:", "##BestQ2Input", &loadedParams.bestCatchQ);
     ImGui::SameLine();
-    readU32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
+    readP32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
   ImGui::PopItemWidth();
 }
