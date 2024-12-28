@@ -53,6 +53,7 @@ void StateUI::updateSimulating()
   if (isSimulating) {
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSimulating = false;
+      saOutputUI.snapshotIdx = sa->monitor->snapshots.size() - 1;
       saCallUI.progress = 0;
       saCallUI.stop.store(false);
       mtx.unlock();
@@ -108,6 +109,10 @@ void StateUI::handleSACall()
   saCallUI.saCallUpdate(isSimulating);
   if (saCallUI.saCalled) {
     if (currentPosition) {
+      if (saOutputUI.plotPosition) {
+        currentPosition = saOutputUI.plotPosition->clone();
+        saOutputUI.plotPosition = currentPosition.get();
+      }
       if (mtx.try_lock()) {
         sa = saFactory->create();
         isSimulating = true;

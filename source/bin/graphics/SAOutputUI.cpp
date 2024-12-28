@@ -9,13 +9,11 @@
 
 using namespace sa::core;
 
-void SAOutputUI::handleNavigator(float plotSize)
+void SAOutputUI::handleNavigator(const sa::sa::SA::CPtr& sa, float plotSize)
 {
-  static int currentStep = 0;
-  const int totalSteps = 20;
   ImGui::SetNextItemWidth(plotSize);
-  if (ImGui::SliderInt("##SnapshotSlider", &currentStep, 0, totalSteps - 1)) {
-  }
+  ImGui::SliderInt("##SnapshotSlider", &snapshotIdx, 0, sa->monitor->snapshots.size() - 1);
+  plotPosition = sa->monitor->snapshots[snapshotIdx].position.get();
   const ImGuiStyle& style = ImGui::GetStyle();
   float button_width_1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
   float button_width_2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
@@ -42,7 +40,7 @@ void SAOutputUI::handleNavigator(float plotSize)
 
 void SAOutputUI::handlePlot(float plotSize)
 {
-  ImPlot::BeginPlot("", {plotSize, plotSize}, ImPlotFlags_NoLegend);
+  ImPlot::BeginPlot("##PositionPlot", {plotSize, plotSize}, ImPlotFlags_NoLegend);
   int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
   ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
   ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
@@ -90,7 +88,7 @@ void SAOutputUI::saOutputUpdate(const sa::sa::SA::CPtr& sa, bool isSimulating)
     float plotSize = availableSize.x;
     handlePlot(plotSize);
     if (simulated) {
-      handleNavigator(plotSize);
+      handleNavigator(sa, plotSize);
     }
     ImGui::EndChild();
     ImGui::SameLine();

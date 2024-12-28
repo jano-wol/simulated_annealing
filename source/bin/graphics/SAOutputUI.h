@@ -7,12 +7,13 @@
 class SAOutputUI
 {
 public:
-  void handleNavigator(float plotSize);
+  void handleNavigator(const sa::sa::SA::CPtr& sa, float plotSize);
   void handlePlot(float plotSize);
   void handleResults(const sa::sa::SA::CPtr& sa);
   void saOutputUpdate(const sa::sa::SA::CPtr& sa, bool isSimulating);
 
   sa::core::IPosition* plotPosition = nullptr;
+  int snapshotIdx = 0;
 };
 
 #endif  // SIMULATED_ANNEALING_GRAPHICS_SA_OUTPUT_UI_H_
