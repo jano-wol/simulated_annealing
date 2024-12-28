@@ -137,7 +137,7 @@ void SAOutputUI::saOutputUpdate(const SA::CPtr& sa, bool isSimulating)
     ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
     ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
     std::stringstream ss;
-    ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << std::setprecision(2) << std::fixed;
     ss << "curr energy = " << plotPosition->getEnergy();
     ImGui::TextUnformatted(ss.str().c_str());
     if (simulated) {
