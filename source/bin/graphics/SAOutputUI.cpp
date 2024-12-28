@@ -32,7 +32,14 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
       snapshotIdx = 0;
     }
     ImGui::SameLine();
+    bool activateButton = false;
     if (ImGui::Button("<")) {
+      activateButton = true;
+    }
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
+      activateButton = true;
+    }
+    if (activateButton) {
       --snapshotIdx;
     }
   }
@@ -47,7 +54,14 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     ImGui::SameLine();
     ImGui::PopStyleColor(3);
   } else {
+    bool activateButton = false;
     if (ImGui::Button(">")) {
+      activateButton = true;
+    }
+    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {
+      activateButton = true;
+    }
+    if (activateButton) {
       ++snapshotIdx;
     }
     ImGui::SameLine();
