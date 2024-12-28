@@ -27,7 +27,6 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     ImGui::Button("<");
     ImGui::SameLine();
     ImGui::PopStyleColor(3);
-    ImGui::Spacing();
   } else {
     if (ImGui::Button("<<")) {
       snapshotIdx = 0;
@@ -47,7 +46,6 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     ImGui::Button(">>");
     ImGui::SameLine();
     ImGui::PopStyleColor(3);
-    ImGui::Spacing();
   } else {
     if (ImGui::Button(">")) {
       ++snapshotIdx;
