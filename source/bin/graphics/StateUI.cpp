@@ -99,7 +99,8 @@ void StateUI::handleMenu()
       }
       if (menuUI.mode == 2) {
         isSaving = true;
-        menuUI.startSaving(currentPosition);
+        const auto& positionToSave = getPlotPosition();
+        menuUI.startSaving(positionToSave);
       }
     } else {
       std::stringstream ss;
