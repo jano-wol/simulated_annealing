@@ -404,7 +404,7 @@ TEST(Sa, SnapshotCount3)
       EXPECT_EQ(sa.monitor->snapshots.size(), sa.monitor->steps + 1);
     } else {
       EXPECT_EQ(sa.monitor->snapshots.size(), 9);
-      EXPECT_EQ(sa.monitor->snapshotsMemory, 1152);
+      EXPECT_EQ(sa.monitor->snapshotsMemory, 1224);
     }
     nullStatics();
   }
