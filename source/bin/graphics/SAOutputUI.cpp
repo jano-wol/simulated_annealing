@@ -2,18 +2,15 @@
 
 #include <iomanip>
 
-#include <imgui/imgui.h>
 #include <implot/implot.h>
 
 #include <core/Rounding.h>
 
 using namespace sa::core;
+using namespace sa::sa;
 
-void SAOutputUI::handleNavigator(const sa::sa::SA::CPtr& sa, float plotSize)
+void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
 {
-  ImGui::SetNextItemWidth(plotSize);
-  ImGui::SliderInt("##SnapshotSlider", &snapshotIdx, 0, sa->monitor->snapshots.size() - 1);
-  plotPosition = sa->monitor->snapshots[snapshotIdx].position.get();
   const ImGuiStyle& style = ImGui::GetStyle();
   float button_width_1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
   float button_width_2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
@@ -21,21 +18,53 @@ void SAOutputUI::handleNavigator(const sa::sa::SA::CPtr& sa, float plotSize)
   float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;
   float center_offset = (plotSize - total_width) / 2.0f;
   ImGui::SetCursorPosX(center_offset);
-  if (ImGui::Button("<<")) {
-    // Move to beginning
+  if (snapshotIdx == 0) {
+    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+    ImGui::Button("<<");
+    ImGui::SameLine();
+    ImGui::Button("<");
+    ImGui::SameLine();
+    ImGui::PopStyleColor(3);
+    ImGui::Spacing();
+  } else {
+    if (ImGui::Button("<<")) {
+      snapshotIdx = 0;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("<")) {
+      --snapshotIdx;
+    }
   }
   ImGui::SameLine();
-  if (ImGui::Button("<")) {
-    // Move to previous
+  if (snapshotIdx == int(sa->monitor->snapshots.size() - 1)) {
+    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+    ImGui::Button(">");
+    ImGui::SameLine();
+    ImGui::Button(">>");
+    ImGui::SameLine();
+    ImGui::PopStyleColor(3);
+    ImGui::Spacing();
+  } else {
+    if (ImGui::Button(">")) {
+      ++snapshotIdx;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(">>")) {
+      snapshotIdx = sa->monitor->snapshots.size() - 1;
+    }
   }
-  ImGui::SameLine();
-  if (ImGui::Button(">")) {
-    // Move to next
-  }
-  ImGui::SameLine();
-  if (ImGui::Button(">>")) {
-    // Move to end
-  }
+}
+
+void SAOutputUI::handleNavigator(const SA::CPtr& sa, float plotSize)
+{
+  ImGui::SetNextItemWidth(plotSize);
+  ImGui::SliderInt("##SnapshotSlider", &snapshotIdx, 0, sa->monitor->snapshots.size() - 1);
+  plotPosition = sa->monitor->snapshots[snapshotIdx].position.get();
+  handleButtons(sa, plotSize);
 }
 
 void SAOutputUI::handlePlot(float plotSize)
@@ -48,7 +77,7 @@ void SAOutputUI::handlePlot(float plotSize)
   ImPlot::EndPlot();
 }
 
-void SAOutputUI::handleResults(const sa::sa::SA::CPtr& sa)
+void SAOutputUI::handleResults(const SA::CPtr& sa)
 {
   const auto& globalMetrics = sa->monitor->globalMetrics;
   std::stringstream ss;
@@ -74,7 +103,7 @@ void SAOutputUI::handleResults(const sa::sa::SA::CPtr& sa)
   ss.str("");
 }
 
-void SAOutputUI::saOutputUpdate(const sa::sa::SA::CPtr& sa, bool isSimulating)
+void SAOutputUI::saOutputUpdate(const SA::CPtr& sa, bool isSimulating)
 {
   if (plotPosition) {
     bool simulated = sa && !isSimulating;
