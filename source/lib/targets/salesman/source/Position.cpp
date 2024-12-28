@@ -62,7 +62,7 @@ int SalesmanPosition::size() const
          sizeof(std::pair<double, double>) * cities.capacity();
 }
 
-IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities, r); }
+IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities); }
 
 std::pair<std::size_t, std::size_t> SalesmanPosition::getNeighbourIdxs(std::size_t idx) const
 {

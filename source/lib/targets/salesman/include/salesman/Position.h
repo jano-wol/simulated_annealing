@@ -17,8 +17,8 @@ public:
     energy = calcEnergy();
   }
 
-  SalesmanPosition(double energy_, std::vector<std::pair<double, double>> cities_, core::Random r_)
-      : energy(energy_), cities(std::move(cities_)), r(std::move(r_))
+  SalesmanPosition(double energy_, std::vector<std::pair<double, double>> cities_)
+      : energy(energy_), cities(std::move(cities_))
   {}
 
   double getEnergy() const override;
