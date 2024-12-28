@@ -16,6 +16,14 @@ const IPosition::CPtr& StateUI::getPlotPosition() const
   }
 }
 
+bool StateUI::currentPositionPlotted() const
+{
+  if (currentPosition && (!sa || (isSimulating) || (saOutputUI.snapshotIdx == 0))) {
+    return true;
+  }
+  return false;
+}
+
 void StateUI::updateParsing()
 {
   if (isParsing) {
@@ -117,7 +125,9 @@ void StateUI::handleSACall()
   saCallUI.saCallUpdate(isSimulating);
   if (saCallUI.saCalled) {
     if (currentPosition) {
-      currentPosition = getPlotPosition()->clone();
+      if (currentPositionPlotted() == false) {
+        currentPosition = getPlotPosition()->clone();
+      }
       if (mtx.try_lock()) {
         sa = saFactory->create();
         isSimulating = true;
