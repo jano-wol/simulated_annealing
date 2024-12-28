@@ -11,11 +11,10 @@ class SAOutputUI
 public:
   void handleButtons(const sa::sa::SA::CPtr& sa, float plotSize);
   void handleNavigator(const sa::sa::SA::CPtr& sa, float plotSize);
-  void handlePlot(float plotSize);
+  void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
   void handleResults(const sa::sa::SA::CPtr& sa);
-  void saOutputUpdate(const sa::sa::SA::CPtr& sa, bool isSimulating);
+  void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition, const sa::sa::SA::CPtr& sa, bool isSimulating);
 
-  sa::core::IPosition* plotPosition = nullptr;
   int snapshotIdx = 0;
   const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
 };

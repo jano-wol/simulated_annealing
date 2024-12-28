@@ -75,11 +75,10 @@ void SAOutputUI::handleNavigator(const SA::CPtr& sa, float plotSize)
 {
   ImGui::SetNextItemWidth(plotSize);
   ImGui::SliderInt("##SnapshotSlider", &snapshotIdx, 0, sa->monitor->snapshots.size() - 1);
-  plotPosition = sa->monitor->snapshots[snapshotIdx].position.get();
   handleButtons(sa, plotSize);
 }
 
-void SAOutputUI::handlePlot(float plotSize)
+void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
 {
   ImPlot::BeginPlot("##PositionPlot", {plotSize, plotSize}, ImPlotFlags_NoLegend);
   int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
@@ -115,36 +114,34 @@ void SAOutputUI::handleResults(const SA::CPtr& sa)
   ss.str("");
 }
 
-void SAOutputUI::saOutputUpdate(const SA::CPtr& sa, bool isSimulating)
+void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::CPtr& sa, bool isSimulating)
 {
-  if (plotPosition) {
-    bool simulated = sa && !isSimulating;
-    ImVec2 windowSize = ImGui::GetContentRegionAvail();
-    float graphicsRatio = 0.7f;
-    float graphicsWidth = windowSize.x * graphicsRatio;
-    float plotRatio = 0.45f;
-    ImGui::BeginChild("Graphics panel", ImVec2(graphicsWidth, 0), 0, ImGuiWindowFlags_NoDecoration);
-    ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * plotRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
-    ImVec2 availableSize = ImGui::GetContentRegionAvail();
-    float plotSize = availableSize.x;
-    handlePlot(plotSize);
-    if (simulated) {
-      handleNavigator(sa, plotSize);
-    }
-    ImGui::EndChild();
-    ImGui::SameLine();
-    auto style = ImGui::GetStyle();
-    ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
-    ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
-    std::stringstream ss;
-    ss << std::setprecision(2) << std::fixed;
-    ss << "curr energy = " << plotPosition->getEnergy();
-    ImGui::TextUnformatted(ss.str().c_str());
-    if (simulated) {
-      ImGui::TextUnformatted("\nGlobal metrics:");
-      handleResults(sa);
-    }
-    ImGui::EndChild();
-    ImGui::EndChild();
+  bool simulated = sa && !isSimulating;
+  ImVec2 windowSize = ImGui::GetContentRegionAvail();
+  float graphicsRatio = 0.7f;
+  float graphicsWidth = windowSize.x * graphicsRatio;
+  float plotRatio = 0.45f;
+  ImGui::BeginChild("Graphics panel", ImVec2(graphicsWidth, 0), 0, ImGuiWindowFlags_NoDecoration);
+  ImGui::BeginChild("Navigator", ImVec2(graphicsWidth * plotRatio, 0), 0, ImGuiWindowFlags_NoDecoration);
+  ImVec2 availableSize = ImGui::GetContentRegionAvail();
+  float plotSize = availableSize.x;
+  handlePlot(plotPosition, plotSize);
+  if (simulated) {
+    handleNavigator(sa, plotSize);
   }
+  ImGui::EndChild();
+  ImGui::SameLine();
+  auto style = ImGui::GetStyle();
+  ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
+  ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
+  std::stringstream ss;
+  ss << std::setprecision(2) << std::fixed;
+  ss << "curr energy = " << plotPosition->getEnergy();
+  ImGui::TextUnformatted(ss.str().c_str());
+  if (simulated) {
+    ImGui::TextUnformatted("\nGlobal metrics:");
+    handleResults(sa);
+  }
+  ImGui::EndChild();
+  ImGui::EndChild();
 }

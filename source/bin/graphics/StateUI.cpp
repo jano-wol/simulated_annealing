@@ -7,6 +7,15 @@
 using namespace sa::core;
 using namespace sa::sa;
 
+const IPosition::CPtr& StateUI::getPlotPosition() const
+{
+  if (sa && !isSimulating) {
+    return sa->monitor->snapshots[saOutputUI.snapshotIdx].position;
+  } else {
+    return currentPosition;
+  }
+}
+
 void StateUI::updateParsing()
 {
   if (isParsing) {
@@ -15,7 +24,6 @@ void StateUI::updateParsing()
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
         ImPlot::SetNextAxesToFit();
-        saOutputUI.plotPosition = currentPosition.get();
         sa = nullptr;
       } else {
         updateInformating("Parsing failed.");
@@ -109,10 +117,7 @@ void StateUI::handleSACall()
   saCallUI.saCallUpdate(isSimulating);
   if (saCallUI.saCalled) {
     if (currentPosition) {
-      if (saOutputUI.plotPosition) {
-        currentPosition = saOutputUI.plotPosition->clone();
-        saOutputUI.plotPosition = currentPosition.get();
-      }
+      currentPosition = getPlotPosition()->clone();
       if (mtx.try_lock()) {
         sa = saFactory->create();
         isSimulating = true;
@@ -130,4 +135,10 @@ void StateUI::handleSACall()
   updateSimulating();
 }
 
-void StateUI::handleSAOutput() { saOutputUI.saOutputUpdate(sa, isSimulating); }
+void StateUI::handleSAOutput()
+{
+  if (currentPosition) {
+    const auto& plotPosition = getPlotPosition();
+    saOutputUI.saOutputUpdate(plotPosition, sa, isSimulating);
+  }
+}

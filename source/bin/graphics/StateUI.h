@@ -31,6 +31,7 @@ public:
   void updateSaving();
   void updateInformating(const std::string& message);
   void updateSimulating();
+  const sa::core::IPosition::CPtr& getPlotPosition() const;
 
   BS::thread_pool<0> pool;
   bool isParsing = false;
