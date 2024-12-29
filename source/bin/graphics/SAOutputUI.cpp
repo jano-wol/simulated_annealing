@@ -5,8 +5,10 @@
 #include <implot/implot.h>
 
 #include <core/Rounding.h>
+#include <monitor/Monitor.h>
 
 using namespace sa::core;
+using namespace sa::monitor;
 using namespace sa::sa;
 
 std::string toString(std::optional<double> val)
@@ -20,6 +22,21 @@ std::string toString(std::optional<double> val)
   } else {
     return "nullopt";
   }
+}
+
+void printLocalStats(std::stringstream& ss, const LocalStats& local)
+{
+  ss.str("");
+  ss << "local derivative = " << local.localDerivative;
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "energy window = [" << local.minEnergy << ";" << local.maxEnergy << "]";
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "delta mean=" << toString(local.deltaStats.mean)
+     << "; delta deviation=" << toString(local.deltaStats.deviation);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
 }
 
 void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
@@ -132,16 +149,10 @@ void SAOutputUI::handleResults(const SA::CPtr& sa)
   ss << "prog = " << double(snapshotMetrics.idx) / double(globalMetrics.idx);
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "local derivative = " << snapshot.localDerivative;
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ss << "energy window = [" << snapshot.minEnergy << ";" << snapshot.maxEnergy << "]";
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ss << "delta mean=" << toString(snapshot.deltaStats.mean)
-     << "; delta deviation=" << toString(snapshot.deltaStats.deviation);
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
+  ImGui::TextUnformatted("---- Candidate environment ----\n");
+  printLocalStats(ss, snapshot.candidate);
+  ImGui::TextUnformatted("---- Acceptance environment ----\n");
+  printLocalStats(ss, snapshot.acceptance);
 }
 
 void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::CPtr& sa, bool isSimulating)
