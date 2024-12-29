@@ -229,17 +229,13 @@ void SAFactoryUI::saFactoryUpdate()
   ImGui::PopItemWidth();
 }
 
-#include <iostream>
 void SAFactoryUI::setRandomSeed()
 {
   int seed = loadedParams.seed;
-  std::cout << Random::seed << "\n";
   if (loadedParams.randomIndex == 0) {
-    std::cout << "hohohohoho\n";
     std::mt19937 randomEngine(static_cast<unsigned>(std::time(0)));
     std::uniform_int_distribution<int> dist(0, std::numeric_limits<int>::max());
     seed = dist(randomEngine);
   }
-  //Random::setSeed(seed);
-  std::cout << Random::seed << "\n";
+  Random::setSeed(seed);
 }
