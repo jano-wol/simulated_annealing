@@ -463,6 +463,7 @@ TEST(Sa, Statistics1)
     EXPECT_FALSE(snapshot0.acceptance.deltaStats.deviation.has_value());
     EXPECT_NEAR(*snapshot0.candidate.deltaStats.deviation, 0, precision);
     EXPECT_NEAR(snapshot0.candidate.localDerivative, 0, precision);
+    EXPECT_NEAR(snapshot0.acceptance.localDerivative, 0, precision);
     EXPECT_NEAR(snapshot0.globalMetrics.bestEnergy, snapshot0.candidate.minEnergy, precision);
     std::vector<int> toTest{1, 2, 3, 17, 18, 19, 20};
     for (auto idx : toTest) {
@@ -470,8 +471,11 @@ TEST(Sa, Statistics1)
       EXPECT_TRUE(snapshot.candidate.deltaStats.mean.has_value());
       EXPECT_TRUE(snapshot.candidate.deltaStats.deviation.has_value());
       EXPECT_NEAR(*snapshot.candidate.deltaStats.mean, -1, precision);
+      EXPECT_NEAR(*snapshot.acceptance.deltaStats.mean, -1, precision);
       EXPECT_NEAR(*snapshot.candidate.deltaStats.deviation, 0, precision);
+      EXPECT_NEAR(*snapshot.acceptance.deltaStats.deviation, 0, precision);
       EXPECT_NEAR(snapshot.candidate.localDerivative, -1, precision);
+      EXPECT_NEAR(snapshot.acceptance.localDerivative, -1, precision);
       EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.candidate.minEnergy, precision);
     }
     nullStatics();
