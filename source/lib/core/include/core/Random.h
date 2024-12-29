@@ -31,7 +31,7 @@ public:
   double randomDouble(double min, double max) const;
   static void setSeed(int s);
 
-private:
+//private:
   mutable std::mt19937 r;
 
   static int seed;

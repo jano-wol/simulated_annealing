@@ -130,6 +130,7 @@ void StateUI::handleSACall()
         currentPosition = getPlotPosition()->clone();
       }
       if (mtx.try_lock()) {
+        saFactoryUI.setRandomSeed();
         sa = saFactory->create();
         isSimulating = true;
         saCallUI.startSimulating(currentPosition, sa, pool);
