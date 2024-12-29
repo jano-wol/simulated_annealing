@@ -29,7 +29,7 @@ std::string Metropolis::toString() const
 
 IAcceptance::CPtr Metropolis::clone() const { return std::make_unique<Metropolis>(normalizator); }
 
-bool Greedy::accept(double /*currEnergy*/, double delta, double /*temperature*/) const { return delta <= 0; }
+bool Greedy::accept(double /*currEnergy*/, double delta, double /*temperature*/) const { return delta < 0; }
 
 std::string Greedy::toString() const { return "Greedy"; }
 
