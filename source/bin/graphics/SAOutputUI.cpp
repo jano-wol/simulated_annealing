@@ -80,11 +80,11 @@ void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& s
   ImGui::TextUnformatted(ss.str().c_str());
   ss << std::setprecision(2) << std::fixed;
   ss.str("");
-  ss << "energy windows = [" << candidate.minEnergy << ";" << candidate.maxEnergy << "] and [" << acceptance.minEnergy
+  ss << "e. win. = [" << candidate.minEnergy << ";" << candidate.maxEnergy << "] and [" << acceptance.minEnergy
      << ";" << acceptance.maxEnergy << "]";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "delta (mean;deviation) = (" << toString(candidate.deltaStats.mean) << ";"
+  ss << "d (mean;deviation) = (" << toString(candidate.deltaStats.mean) << ";"
      << toString(candidate.deltaStats.deviation) << ") and (" << toString(acceptance.deltaStats.mean) << ";"
      << toString(acceptance.deltaStats.deviation) << ")";
   ImGui::TextUnformatted(ss.str().c_str());
