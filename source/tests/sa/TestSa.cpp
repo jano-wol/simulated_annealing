@@ -459,6 +459,8 @@ TEST(Sa, Statistics1)
     EXPECT_TRUE(snapshot0.candidate.deltaStats.mean.has_value());
     EXPECT_TRUE(snapshot0.candidate.deltaStats.deviation.has_value());
     EXPECT_NEAR(*snapshot0.candidate.deltaStats.mean, -1, precision);
+    EXPECT_FALSE(snapshot0.acceptance.deltaStats.mean.has_value());
+    EXPECT_FALSE(snapshot0.acceptance.deltaStats.deviation.has_value());
     EXPECT_NEAR(*snapshot0.candidate.deltaStats.deviation, 0, precision);
     EXPECT_NEAR(snapshot0.candidate.localDerivative, 0, precision);
     EXPECT_NEAR(snapshot0.globalMetrics.bestEnergy, snapshot0.candidate.minEnergy, precision);
