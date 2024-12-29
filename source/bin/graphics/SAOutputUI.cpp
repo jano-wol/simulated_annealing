@@ -11,14 +11,22 @@ using namespace sa::core;
 using namespace sa::monitor;
 using namespace sa::sa;
 
+std::string toShortString(double val)
+{
+  std::stringstream ss;
+  if (val < 100000 && val > -10000) {
+    ss << std::setprecision(2) << std::fixed;
+    ss << val;
+  } else {
+    ss << std::scientific << std::setprecision(2) << val;
+  }
+  return ss.str();
+}
+
 std::string toString(std::optional<double> val)
 {
   if (val) {
-    std::stringstream ss;
-    ss << std::setprecision(2) << std::fixed;
-    ss << *val;
-    return ss.str();
-
+    return toShortString(*val);
   } else {
     return "nn";
   }
@@ -73,20 +81,19 @@ void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& s
 {
   const auto& candidate = sa->monitor->snapshots[snapshotIdx].candidate;
   const auto& acceptance = sa->monitor->snapshots[snapshotIdx].acceptance;
-  ImGui::TextUnformatted("---- Candidate and Acceptance local metrics ----");
+  ImGui::TextUnformatted("---- Candidate & Acceptance local metrics ----");
   ss.str("");
   ss << std::setprecision(4) << std::fixed;
-  ss << "local derivatives = " << candidate.localDerivative << " and " << acceptance.localDerivative;
+  ss << "local derivatives = " << candidate.localDerivative << "  " << acceptance.localDerivative;
   ImGui::TextUnformatted(ss.str().c_str());
   ss << std::setprecision(2) << std::fixed;
   ss.str("");
-  ss << "e. win. = [" << candidate.minEnergy << ";" << candidate.maxEnergy << "] and [" << acceptance.minEnergy
-     << ";" << acceptance.maxEnergy << "]";
+  ss << "e. win. = [" << toShortString(candidate.minEnergy) << ";" << toShortString(candidate.maxEnergy) << "] and ["
+     << toShortString(acceptance.minEnergy) << ";" << toShortString(acceptance.maxEnergy) << "]";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "d (mean;deviation) = (" << toString(candidate.deltaStats.mean) << ";"
-     << toString(candidate.deltaStats.deviation) << ") and (" << toString(acceptance.deltaStats.mean) << ";"
-     << toString(acceptance.deltaStats.deviation) << ")";
+  ss << "d (mean;dev.) = (" << toString(candidate.deltaStats.mean) << ";" << toString(candidate.deltaStats.deviation)
+     << ") and (" << toString(acceptance.deltaStats.mean) << ";" << toString(acceptance.deltaStats.deviation) << ")";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
