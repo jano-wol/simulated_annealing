@@ -60,7 +60,7 @@ public:
   std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Snapshots", "All"};
-  std::vector<const char*> randomNames{"Time", "Seed"};
+  std::vector<const char*> randomNames{"Time-based", "Explicit"};
   Params currentParams;
   Params loadedParams;
 };

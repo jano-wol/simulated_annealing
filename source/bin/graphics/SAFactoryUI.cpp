@@ -221,7 +221,7 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readP32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
-  combo("Random:", "##RandomLevel", &loadedParams.randomIndex, randomNames);
+  combo("Random seed:", "##RandomLevel", &loadedParams.randomIndex, randomNames);
   if (loadedParams.randomIndex == 1) {
     ImGui::SameLine();
     readU32("Seed:", "##seedInput", &loadedParams.seed);
