@@ -400,11 +400,12 @@ TEST(Sa, SnapshotCount3)
     sa.monitor->snapshotsMemoryLimit = 1000;
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
-    if (i < 9) {
+    EXPECT_EQ(sa.monitor->snapshots[0].size(), 192);
+    if (i < 7) {
       EXPECT_EQ(sa.monitor->snapshots.size(), sa.monitor->steps + 1);
     } else {
-      EXPECT_EQ(sa.monitor->snapshots.size(), 9);
-      EXPECT_EQ(sa.monitor->snapshotsMemory, 1224);
+      EXPECT_EQ(sa.monitor->snapshots.size(), 7);
+      EXPECT_EQ(sa.monitor->snapshotsMemory, 1344);
     }
     nullStatics();
   }
@@ -443,7 +444,7 @@ TEST(Sa, SnapshotCount6)
     sa.monitor->snapshotsMemoryLimit = 1000;
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
-    EXPECT_EQ(sa.monitor->snapshots.size(), std::min(l + 1, 9UL));
+    EXPECT_EQ(sa.monitor->snapshots.size(), std::min(l + 1, 7UL));
   }
 }
 
