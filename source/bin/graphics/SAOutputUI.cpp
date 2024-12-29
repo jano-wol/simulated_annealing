@@ -9,6 +9,19 @@
 using namespace sa::core;
 using namespace sa::sa;
 
+std::string toString(std::optional<double> val)
+{
+  if (val) {
+    std::stringstream ss;
+    ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << *val;
+    return ss.str();
+
+  } else {
+    return "nullopt";
+  }
+}
+
 void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
 {
   const ImGuiStyle& style = ImGui::GetStyle();
@@ -90,6 +103,7 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
 
 void SAOutputUI::handleResults(const SA::CPtr& sa)
 {
+  ImGui::TextUnformatted("\nGlobal metrics:");
   const auto& globalMetrics = sa->monitor->globalMetrics;
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
@@ -110,6 +124,22 @@ void SAOutputUI::handleResults(const SA::CPtr& sa)
   ss.str("");
   ss << "up energy changes = " << globalMetrics.upEnergyChanges
      << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ImGui::TextUnformatted("\nSnapshot metrics:");
+  const auto& snapshot = sa->monitor->snapshots[snapshotIdx];
+  const auto& snapshotMetrics = snapshot.globalMetrics;
+  ss << "prog = " << double(snapshotMetrics.idx) / double(globalMetrics.idx);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "local derivative = " << snapshot.localDerivative;
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "energy window = [" << snapshot.minEnergy << ";" << snapshot.maxEnergy << "]";
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "delta mean=" << toString(snapshot.deltaStats.mean)
+     << "; delta deviation=" << toString(snapshot.deltaStats.deviation);
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
@@ -139,7 +169,6 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   ss << "curr energy = " << plotPosition->getEnergy();
   ImGui::TextUnformatted(ss.str().c_str());
   if (simulated) {
-    ImGui::TextUnformatted("\nGlobal metrics:");
     handleResults(sa);
   }
   ImGui::EndChild();
