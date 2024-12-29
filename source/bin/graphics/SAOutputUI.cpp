@@ -15,26 +15,78 @@ std::string toString(std::optional<double> val)
 {
   if (val) {
     std::stringstream ss;
-    ss << std::setprecision(Rounding::precision) << std::fixed;
+    ss << std::setprecision(2) << std::fixed;
     ss << *val;
     return ss.str();
 
   } else {
-    return "nullopt";
+    return "nn";
   }
 }
 
-void printLocalStats(std::stringstream& ss, const LocalStats& local)
+void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& ss)
 {
-  ss.str("");
-  ss << "local derivative = " << local.localDerivative;
+  ImGui::TextUnformatted("---- Global metrics ----");
+  ss << "best energy = " << globalMetrics.bestEnergy
+     << " (at prog. = " << Rounding::roundDouble(globalMetrics.bestProgress) << ")";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "energy window = [" << local.minEnergy << ";" << local.maxEnergy << "]";
+  ss << "iterations = " << globalMetrics.idx;
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "delta mean=" << toString(local.deltaStats.mean)
-     << "; delta deviation=" << toString(local.deltaStats.deviation);
+  ss << "speed = " << int(globalMetrics.speed) << " (iteration/s)";
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "all acceptance = " << globalMetrics.acceptance
+     << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "up energy changes = " << globalMetrics.upEnergyChanges
+     << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+}
+
+void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, const GlobalMetrics& globalMetrics,
+                          std::stringstream& ss)
+{
+  const auto& snapshot = sa->monitor->snapshots[snapshotIdx];
+  const auto& snapshotMetrics = snapshot.globalMetrics;
+  int iterations = 0;
+  int acceptances = 0;
+  int upEnergyChanges = 0;
+  if (0 < snapshotIdx) {
+    const auto& snapshotPrev = sa->monitor->snapshots[snapshotIdx - 1];
+    iterations = snapshot.globalMetrics.idx - snapshotPrev.globalMetrics.idx;
+    acceptances = snapshot.globalMetrics.acceptance - snapshotPrev.globalMetrics.acceptance;
+    upEnergyChanges = snapshot.globalMetrics.upEnergyChanges - snapshotPrev.globalMetrics.upEnergyChanges;
+  }
+  ImGui::TextUnformatted("---- Snapshot metrics ----");
+  ss.str("");
+  ss << "prog = " << double(snapshotMetrics.idx) / double(globalMetrics.idx) << "\niterations = " << iterations
+     << "\nacceptances = " << acceptances << "\nup energy changes = " << upEnergyChanges;
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+}
+
+void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& ss)
+{
+  const auto& candidate = sa->monitor->snapshots[snapshotIdx].candidate;
+  const auto& acceptance = sa->monitor->snapshots[snapshotIdx].acceptance;
+  ImGui::TextUnformatted("---- Candidate and Acceptance local metrics ----");
+  ss.str("");
+  ss << std::setprecision(4) << std::fixed;
+  ss << "local derivatives = " << candidate.localDerivative << " and " << acceptance.localDerivative;
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss << std::setprecision(2) << std::fixed;
+  ss.str("");
+  ss << "energy windows = [" << candidate.minEnergy << ";" << candidate.maxEnergy << "] and [" << acceptance.minEnergy
+     << ";" << acceptance.maxEnergy << "]";
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "delta (mean;deviation) = (" << toString(candidate.deltaStats.mean) << ";"
+     << toString(candidate.deltaStats.deviation) << ") and (" << toString(acceptance.deltaStats.mean) << ";"
+     << toString(acceptance.deltaStats.deviation) << ")";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
@@ -120,39 +172,15 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
 
 void SAOutputUI::handleResults(const SA::CPtr& sa)
 {
-  ImGui::TextUnformatted("\nGlobal metrics:");
-  const auto& globalMetrics = sa->monitor->globalMetrics;
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
-  ss << "best energy = " << globalMetrics.bestEnergy
-     << " (at prog. = " << Rounding::roundDouble(globalMetrics.bestProgress) << ")";
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss << std::setprecision(Rounding::precision) << std::fixed;
-  ss.str("");
-  ss << "iterations = " << globalMetrics.idx;
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ss << "speed = " << int(globalMetrics.speed) << " (iteration/s)";
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ss << "all acceptance = " << globalMetrics.acceptance
-     << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ss << "up energy changes = " << globalMetrics.upEnergyChanges
-     << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ImGui::TextUnformatted("\nSnapshot metrics:");
-  const auto& snapshot = sa->monitor->snapshots[snapshotIdx];
-  const auto& snapshotMetrics = snapshot.globalMetrics;
-  ss << "prog = " << double(snapshotMetrics.idx) / double(globalMetrics.idx);
-  ImGui::TextUnformatted(ss.str().c_str());
-  ss.str("");
-  ImGui::TextUnformatted("---- Candidate environment ----\n");
-  printLocalStats(ss, snapshot.candidate);
-  ImGui::TextUnformatted("---- Acceptance environment ----\n");
-  printLocalStats(ss, snapshot.acceptance);
+  const auto& globalMetrics = sa->monitor->globalMetrics;
+  ImGui::TextUnformatted("");
+  printSnapshotMetrics(sa, snapshotIdx, globalMetrics, ss);
+  ImGui::TextUnformatted("");
+  printLocalMetrics(sa, snapshotIdx, ss);
+  ImGui::TextUnformatted("");
+  printGlobalMetrics(globalMetrics, ss);
 }
 
 void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::CPtr& sa, bool isSimulating)
