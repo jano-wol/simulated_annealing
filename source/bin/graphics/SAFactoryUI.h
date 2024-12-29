@@ -38,6 +38,9 @@ public:
     int steps = 20;
     int memoryLimitInGb = 2;
 
+    int randomIndex = 0;
+    int seed = 0;
+
     bool operator==(const Params& other) const;
     bool operator!=(const Params& other) const;
 
@@ -50,12 +53,14 @@ public:
   };
 
   void saFactoryUpdate();
+  void setRandomSeed();
 
   std::vector<const char*> resourceNames{"Time", "Iteration"};
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
   std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Snapshots", "All"};
+  std::vector<const char*> randomNames{"Time", "Seed"};
   Params currentParams;
   Params loadedParams;
 };

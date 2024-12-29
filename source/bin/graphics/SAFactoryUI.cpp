@@ -1,6 +1,14 @@
 #include "SAFactoryUI.h"
 
+#include <ctime>
+#include <limits>
+#include <random>
+
 #include <imgui/imgui.h>
+
+#include <core/Random.h>
+
+using namespace sa::core;
 
 bool almostEqual(double a, double b, double tolerance = 1e-6) { return std::abs(a - b) <= tolerance; }
 
@@ -213,5 +221,21 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readP32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
+  combo("Random:", "##RandomLevel", &loadedParams.randomIndex, randomNames);
+  if (loadedParams.randomIndex == 1) {
+    ImGui::SameLine();
+    readU32("Seed:", "##seedInput", &loadedParams.seed);
+  }
   ImGui::PopItemWidth();
+}
+
+void SAFactoryUI::setRandomSeed()
+{
+  int seed = loadedParams.seed;
+  if (loadedParams.randomIndex == 0) {
+    std::mt19937 randomEngine(static_cast<unsigned>(std::time(0)));
+    std::uniform_int_distribution<int> dist(0, std::numeric_limits<int>::max());
+    seed = dist(randomEngine);
+  }
+  Random::setSeed(seed);
 }
