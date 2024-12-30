@@ -32,11 +32,10 @@ public:
   double speed = 0;
 };
 
-class Snapshot
+class LocalStats
 {
 public:
-  Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_, const core::CircularBuffer& deltas,
-           const core::CircularBuffer& energies);
+  LocalStats(const core::CircularBuffer& deltas, const core::CircularBuffer& energies, double bestEnergy);
 
   int size() const;
 
@@ -44,6 +43,19 @@ public:
   double minEnergy;
   double maxEnergy;
   core::Statistics deltaStats;
+};
+
+class Snapshot
+{
+public:
+  Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_,
+           const core::CircularBuffer& deltasCandidate, const core::CircularBuffer& deltasAcceptance,
+           const core::CircularBuffer& energiesCandidate, const core::CircularBuffer& energiesAcceptance);
+
+  int size() const;
+
+  LocalStats candidate;
+  LocalStats acceptance;
   GlobalMetrics globalMetrics;
   core::IPosition::CPtr position;
 };
@@ -64,8 +76,10 @@ public:
         steps(steps_),
         snapshotsMemoryLimit(snapshotsMemoryLimit_),
         progressCallback(std::move(progressCallback_)),
-        deltas(localEnv),
-        energies(localEnv)
+        deltasCandidate(localEnv),
+        deltasAcceptance(localEnv),
+        energiesCandidate(localEnv),
+        energiesAcceptance(localEnv)
   {}
 
   void onStart(const core::IPosition::CPtr& startPosition);
@@ -95,8 +109,10 @@ public:
 
   // medium
   std::size_t stalledAcceptance = 0;
-  core::CircularBuffer deltas;
-  core::CircularBuffer energies;
+  core::CircularBuffer deltasCandidate;
+  core::CircularBuffer deltasAcceptance;
+  core::CircularBuffer energiesCandidate;
+  core::CircularBuffer energiesAcceptance;
   std::vector<Snapshot> snapshots;
 };
 
