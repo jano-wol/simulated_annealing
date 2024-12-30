@@ -52,8 +52,7 @@ void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& s
   ss.str("");
 }
 
-void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, const GlobalMetrics& globalMetrics,
-                          std::stringstream& ss)
+void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& ss)
 {
   const auto& snapshot = sa->monitor->snapshots[snapshotIdx];
   const auto& snapshotMetrics = snapshot.globalMetrics;
@@ -95,15 +94,30 @@ void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& s
   ss.str("");
 }
 
+int SAOutputUI::getSnapshotIdx() const
+{
+  if (isSnapshotBest) {
+    return scrollIdx;
+  } else {
+    if (scrollIdx < bestScrollIdx) {
+      return scrollIdx;
+    }
+    if (scrollIdx > bestScrollIdx) {
+      return scrollIdx - 1;
+    }
+    return -1;
+  }
+}
+
 void SAOutputUI::init(const SA::CPtr& sa)
 {
   bestValue = sa->monitor->snapshots[0].position->getEnergy();
-  bestIdx = 0;
+  bestScrollIdx = 0;
   for (int idx = 1; idx < int(sa->monitor->snapshots.size()); ++idx) {
     auto currValue = sa->monitor->snapshots[idx].position->getEnergy();
     if (currValue < bestValue) {
       bestValue = currValue;
-      bestIdx = idx;
+      bestScrollIdx = idx;
     }
   }
 
@@ -113,7 +127,6 @@ void SAOutputUI::init(const SA::CPtr& sa)
   if (sa->monitor->bestPosition && sa->monitor->bestPosition->getEnergy() < bestValue) {
     isSnapshotBest = false;
     bestValue = sa->monitor->bestPosition->getEnergy();
-    bestIdx = -1;
     double bestProgress = sa->monitor->globalMetrics.bestProgress;
     int idx = 0;
     while (sa->monitor->snapshots[idx].globalMetrics.progress < bestProgress) {
@@ -121,7 +134,7 @@ void SAOutputUI::init(const SA::CPtr& sa)
       ++idx;
     }
     progresses.push_back(bestProgress);
-    bestIdx = idx;
+    bestScrollIdx = idx;
     while (idx < int(sa->monitor->snapshots.size())) {
       progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
       ++idx;
@@ -133,11 +146,11 @@ void SAOutputUI::init(const SA::CPtr& sa)
       ++idx;
     }
   }
-  snapshotIdx = bestIdx;
-  sliderValue = progresses[snapshotIdx];
+  scrollIdx = bestScrollIdx;
+  sliderValue = progresses[scrollIdx];
 }
 
-void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
+void SAOutputUI::handleButtons(float plotSize)
 {
   const ImGuiStyle& style = ImGui::GetStyle();
   float buttonWidth1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
@@ -147,7 +160,7 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
   float total_width = (buttonWidth1 + buttonWidth2) * 2 + bestWidth + spacing * 4;
   float center_offset = (plotSize - total_width) / 2.0f;
   ImGui::SetCursorPosX(center_offset);
-  if (snapshotIdx == 0) {
+  if (scrollIdx == 0) {
     ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
@@ -158,8 +171,8 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     ImGui::PopStyleColor(3);
   } else {
     if (ImGui::Button("<<")) {
-      snapshotIdx = 0;
-      sliderValue = float(progresses[snapshotIdx]);
+      scrollIdx = 0;
+      sliderValue = float(progresses[scrollIdx]);
     }
     ImGui::SameLine();
     bool activateButton = false;
@@ -170,12 +183,12 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
       activateButton = true;
     }
     if (activateButton) {
-      --snapshotIdx;
-      sliderValue = float(progresses[snapshotIdx]);
+      --scrollIdx;
+      sliderValue = float(progresses[scrollIdx]);
     }
   }
   ImGui::SameLine();
-  if (snapshotIdx == bestIdx) {
+  if (scrollIdx == bestScrollIdx) {
     ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
@@ -183,12 +196,12 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     ImGui::PopStyleColor(3);
   } else {
     if (ImGui::Button("best")) {
-      snapshotIdx = bestIdx;
-      sliderValue = float(progresses[snapshotIdx]);
+      scrollIdx = bestScrollIdx;
+      sliderValue = float(progresses[scrollIdx]);
     }
   }
   ImGui::SameLine();
-  if (snapshotIdx == int(progresses.size() - 1)) {
+  if (scrollIdx == int(progresses.size() - 1)) {
     ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
@@ -206,29 +219,29 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
       activateButton = true;
     }
     if (activateButton) {
-      ++snapshotIdx;
-      sliderValue = float(progresses[snapshotIdx]);
+      ++scrollIdx;
+      sliderValue = float(progresses[scrollIdx]);
     }
     ImGui::SameLine();
     if (ImGui::Button(">>")) {
-      snapshotIdx = progresses.size() - 1;
-      sliderValue = float(progresses[snapshotIdx]);
+      scrollIdx = progresses.size() - 1;
+      sliderValue = float(progresses[scrollIdx]);
     }
   }
-  sliderValue = progresses[snapshotIdx];
+  sliderValue = progresses[scrollIdx];
 }
 
-void SAOutputUI::handleNavigator(const SA::CPtr& sa, float plotSize)
+void SAOutputUI::handleNavigator(float plotSize)
 {
   ImGui::SetNextItemWidth(plotSize);
   if (ImGui::SliderFloat("##SnapshotSlider", &sliderValue, 0, 1, "%.2f")) {
     auto closestIt = std::min_element(progresses.begin(), progresses.end(), [&](float a, float b) {
       return std::abs(a - sliderValue) < std::abs(b - sliderValue);
     });
-    snapshotIdx = int(std::distance(progresses.begin(), closestIt));
-    sliderValue = progresses[snapshotIdx];
+    scrollIdx = int(std::distance(progresses.begin(), closestIt));
+    sliderValue = progresses[scrollIdx];
   }
-  handleButtons(sa, plotSize);
+  handleButtons(plotSize);
 }
 
 void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
@@ -245,13 +258,13 @@ void SAOutputUI::handleResults(const SA::CPtr& sa)
 {
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
-  const auto& globalMetrics = sa->monitor->globalMetrics;
+  int snapshotIdx = getSnapshotIdx();
   ImGui::TextUnformatted("");
-  printSnapshotMetrics(sa, snapshotIdx, globalMetrics, ss);
+  printSnapshotMetrics(sa, snapshotIdx, ss);
   ImGui::TextUnformatted("");
   printLocalMetrics(sa, snapshotIdx, ss);
   ImGui::TextUnformatted("");
-  printGlobalMetrics(globalMetrics, ss);
+  printGlobalMetrics(sa->monitor->globalMetrics, ss);
 }
 
 void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::CPtr& sa, bool isSimulating)
@@ -267,7 +280,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   float plotSize = availableSize.x;
   handlePlot(plotPosition, plotSize);
   if (simulated) {
-    handleNavigator(sa, plotSize);
+    handleNavigator(plotSize);
   }
   ImGui::EndChild();
   ImGui::SameLine();
@@ -275,10 +288,10 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   ImVec2 rightPanelSize(graphicsWidth * (1 - plotRatio) - 3 * style.WindowPadding.x, 0);
   ImGui::BeginChild("Right Panel", rightPanelSize, 0, ImGuiWindowFlags_NoDecoration);
   std::stringstream ss;
-  ss << std::setprecision(2) << std::fixed;
+  ss << std::setprecision(4) << std::fixed;
   ss << "curr energy = " << plotPosition->getEnergy();
   ImGui::TextUnformatted(ss.str().c_str());
-  if (simulated && (isSnapshotBest || (snapshotIdx != bestIdx))) {
+  if (simulated && (isSnapshotBest || (scrollIdx != bestScrollIdx))) {
     handleResults(sa);
   }
   ImGui::EndChild();

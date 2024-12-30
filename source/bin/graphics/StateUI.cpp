@@ -10,14 +10,11 @@ using namespace sa::sa;
 const IPosition::CPtr& StateUI::getPlotPosition() const
 {
   if (sa && !isSimulating) {
-    if (saOutputUI.isSnapshotBest || saOutputUI.snapshotIdx != saOutputUI.bestIdx) {
-      if (saOutputUI.snapshotIdx < saOutputUI.bestIdx) {
-        return sa->monitor->snapshots[saOutputUI.snapshotIdx].position;
-      } else {
-        return sa->monitor->snapshots[saOutputUI.snapshotIdx - 1].position;
-      }
-    } else {
+    int snapshotIdx = saOutputUI.getSnapshotIdx();
+    if (snapshotIdx == -1) {
       return sa->monitor->bestPosition;
+    } else {
+      return sa->monitor->snapshots[snapshotIdx].position;
     }
   } else {
     return currentPosition;
@@ -26,7 +23,7 @@ const IPosition::CPtr& StateUI::getPlotPosition() const
 
 bool StateUI::currentPositionPlotted() const
 {
-  if (currentPosition && (!sa || (isSimulating) || (saOutputUI.snapshotIdx == 0))) {
+  if (currentPosition && (!sa || (isSimulating) || (saOutputUI.scrollIdx == 0))) {
     return true;
   }
   return false;
