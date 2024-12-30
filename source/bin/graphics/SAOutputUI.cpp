@@ -125,7 +125,7 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     if (ImGui::Button("<")) {
       activateButton = true;
     }
-    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
+    if (!ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {
       activateButton = true;
     }
     if (activateButton) {
@@ -147,7 +147,7 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     if (ImGui::Button(">")) {
       activateButton = true;
     }
-    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {
+    if (!ImGui::IsAnyItemActive() && ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {
       activateButton = true;
     }
     if (activateButton) {
