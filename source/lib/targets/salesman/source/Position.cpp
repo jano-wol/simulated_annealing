@@ -19,12 +19,14 @@ double SalesmanPosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanPosition::generateMove() const
 {
-  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
-  std::size_t idx2 = r.randomInt(0, cities.size() - 1);
-  if (idx1 == idx2) {
-    return std::make_unique<SalesmanMove>(idx1, idx2, 0);
+  if (cities.size() < 2) {
+    return std::make_unique<SalesmanMove>(0, 0, 0);
   }
-  if (idx2 < idx1) {
+  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
+  std::size_t idx2 = r.randomInt(0, cities.size() - 2);
+  if (idx2 >= idx1) {
+    ++idx2;
+  } else {
     std::swap(idx1, idx2);
   }
   if (idx1 == 0 && idx2 == cities.size() - 1) {
