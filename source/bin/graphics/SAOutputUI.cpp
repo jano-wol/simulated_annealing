@@ -35,9 +35,6 @@ std::string toString(std::optional<double> val)
 void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& ss)
 {
   ImGui::TextUnformatted("---- Global metrics ----");
-  ss << "best energy = " << globalMetrics.bestEnergy
-     << " (at prog. = " << Rounding::roundDouble(globalMetrics.bestProgress) << ")";
-  ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
   ss << "iterations = " << globalMetrics.idx;
   ImGui::TextUnformatted(ss.str().c_str());
@@ -71,8 +68,8 @@ void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, const GlobalMetri
   }
   ImGui::TextUnformatted("---- Snapshot metrics ----");
   ss.str("");
-  ss << "prog = " << double(snapshotMetrics.idx) / double(globalMetrics.idx) << "\niterations = " << iterations
-     << "\nacceptances = " << acceptances << "\nup energy changes = " << upEnergyChanges;
+  ss << "prog = " << snapshotMetrics.progress << "\niterations = " << iterations << "\nacceptances = " << acceptances
+     << "\nup energy changes = " << upEnergyChanges;
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
@@ -98,13 +95,56 @@ void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& s
   ss.str("");
 }
 
+void SAOutputUI::init(const SA::CPtr& sa)
+{
+  bestValue = sa->monitor->snapshots[0].position->getEnergy();
+  bestIdx = 0;
+  for (int idx = 1; idx < int(sa->monitor->snapshots.size()); ++idx) {
+    auto currValue = sa->monitor->snapshots[idx].position->getEnergy();
+    if (currValue < bestValue) {
+      bestValue = currValue;
+      bestIdx = idx;
+    }
+  }
+
+  isSnapshotBest = true;
+  progresses.clear();
+  progresses.reserve(sa->monitor->snapshots.size() + 1);
+  if (sa->monitor->bestPosition && sa->monitor->bestPosition->getEnergy() < bestValue) {
+    isSnapshotBest = false;
+    bestValue = sa->monitor->bestPosition->getEnergy();
+    bestIdx = -1;
+    double bestProgress = sa->monitor->globalMetrics.bestProgress;
+    int idx = 0;
+    while (sa->monitor->snapshots[idx].globalMetrics.progress < bestProgress) {
+      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+      ++idx;
+    }
+    progresses.push_back(bestProgress);
+    bestIdx = idx;
+    while (idx < int(sa->monitor->snapshots.size())) {
+      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+      ++idx;
+    }
+  } else {
+    int idx = 0;
+    while (idx < int(sa->monitor->snapshots.size())) {
+      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+      ++idx;
+    }
+  }
+  snapshotIdx = bestIdx;
+  sliderValue = progresses[snapshotIdx];
+}
+
 void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
 {
   const ImGuiStyle& style = ImGui::GetStyle();
-  float button_width_1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
-  float button_width_2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
+  float buttonWidth1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
+  float buttonWidth2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
+  float bestWidth = ImGui::CalcTextSize("best").x + style.FramePadding.x * 2.0f;
   float spacing = ImGui::GetStyle().ItemSpacing.x;
-  float total_width = (button_width_1 + button_width_2) * 2 + spacing * 3;
+  float total_width = (buttonWidth1 + buttonWidth2) * 2 + bestWidth + spacing * 4;
   float center_offset = (plotSize - total_width) / 2.0f;
   ImGui::SetCursorPosX(center_offset);
   if (snapshotIdx == 0) {
@@ -119,6 +159,7 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
   } else {
     if (ImGui::Button("<<")) {
       snapshotIdx = 0;
+      sliderValue = float(progresses[snapshotIdx]);
     }
     ImGui::SameLine();
     bool activateButton = false;
@@ -130,10 +171,24 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     }
     if (activateButton) {
       --snapshotIdx;
+      sliderValue = float(progresses[snapshotIdx]);
     }
   }
   ImGui::SameLine();
-  if (snapshotIdx == int(sa->monitor->snapshots.size() - 1)) {
+  if (snapshotIdx == bestIdx) {
+    ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
+    ImGui::Button("best");
+    ImGui::PopStyleColor(3);
+  } else {
+    if (ImGui::Button("best")) {
+      snapshotIdx = bestIdx;
+      sliderValue = float(progresses[snapshotIdx]);
+    }
+  }
+  ImGui::SameLine();
+  if (snapshotIdx == int(progresses.size() - 1)) {
     ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
@@ -152,18 +207,27 @@ void SAOutputUI::handleButtons(const SA::CPtr& sa, float plotSize)
     }
     if (activateButton) {
       ++snapshotIdx;
+      sliderValue = float(progresses[snapshotIdx]);
     }
     ImGui::SameLine();
     if (ImGui::Button(">>")) {
-      snapshotIdx = sa->monitor->snapshots.size() - 1;
+      snapshotIdx = progresses.size() - 1;
+      sliderValue = float(progresses[snapshotIdx]);
     }
   }
+  sliderValue = progresses[snapshotIdx];
 }
 
 void SAOutputUI::handleNavigator(const SA::CPtr& sa, float plotSize)
 {
   ImGui::SetNextItemWidth(plotSize);
-  ImGui::SliderInt("##SnapshotSlider", &snapshotIdx, 0, sa->monitor->snapshots.size() - 1);
+  if (ImGui::SliderFloat("##SnapshotSlider", &sliderValue, 0, 1, "%.2f")) {
+    auto closestIt = std::min_element(progresses.begin(), progresses.end(), [&](float a, float b) {
+      return std::abs(a - sliderValue) < std::abs(b - sliderValue);
+    });
+    snapshotIdx = int(std::distance(progresses.begin(), closestIt));
+    sliderValue = progresses[snapshotIdx];
+  }
   handleButtons(sa, plotSize);
 }
 
@@ -214,7 +278,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   ss << std::setprecision(2) << std::fixed;
   ss << "curr energy = " << plotPosition->getEnergy();
   ImGui::TextUnformatted(ss.str().c_str());
-  if (simulated) {
+  if (simulated && (isSnapshotBest || (snapshotIdx != bestIdx))) {
     handleResults(sa);
   }
   ImGui::EndChild();

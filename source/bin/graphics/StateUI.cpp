@@ -10,7 +10,15 @@ using namespace sa::sa;
 const IPosition::CPtr& StateUI::getPlotPosition() const
 {
   if (sa && !isSimulating) {
-    return sa->monitor->snapshots[saOutputUI.snapshotIdx].position;
+    if (saOutputUI.isSnapshotBest || saOutputUI.snapshotIdx != saOutputUI.bestIdx) {
+      if (saOutputUI.snapshotIdx < saOutputUI.bestIdx) {
+        return sa->monitor->snapshots[saOutputUI.snapshotIdx].position;
+      } else {
+        return sa->monitor->snapshots[saOutputUI.snapshotIdx - 1].position;
+      }
+    } else {
+      return sa->monitor->bestPosition;
+    }
   } else {
     return currentPosition;
   }
@@ -69,7 +77,7 @@ void StateUI::updateSimulating()
   if (isSimulating) {
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSimulating = false;
-      saOutputUI.snapshotIdx = sa->monitor->snapshots.size() - 1;
+      saOutputUI.init(sa);
       saCallUI.progress = 0;
       saCallUI.stop.store(false);
       mtx.unlock();

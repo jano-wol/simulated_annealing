@@ -85,7 +85,7 @@ void Monitor::onAcceptance(const IPosition::CPtr& position, double delta, double
 
 void Monitor::onEnd(const IPosition::CPtr& position)
 {
-  refreshGlobalMetrics();
+  refreshGlobalMetrics(1.0);
   if (level > MonitorLevel::Low) {
     energiesCandidate.push(position->getEnergy());
     if (level == MonitorLevel::Medium || ((level == MonitorLevel::High) && (stalledAcceptance == 0))) {
@@ -94,11 +94,12 @@ void Monitor::onEnd(const IPosition::CPtr& position)
   }
 }
 
-void Monitor::refreshGlobalMetrics()
+void Monitor::refreshGlobalMetrics(double progress)
 {
   auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
   globalMetrics.duration = std::chrono::duration<double>(elapsed).count();
   globalMetrics.speed = double(globalMetrics.idx) / globalMetrics.duration;
+  globalMetrics.progress = progress;
 }
 
 void Monitor::bestCatch(const IPosition::CPtr& position, double progress)
@@ -111,7 +112,7 @@ void Monitor::bestCatch(const IPosition::CPtr& position, double progress)
 
 void Monitor::addSnapshot(const IPosition::CPtr& position, double progress)
 {
-  refreshGlobalMetrics();
+  refreshGlobalMetrics(progress);
   snapshots.push_back(
       {position, globalMetrics, deltasCandidate, deltasAcceptance, energiesCandidate, energiesAcceptance});
   snapshotsMemory += snapshots.back().size();

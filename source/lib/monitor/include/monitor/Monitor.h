@@ -25,6 +25,7 @@ public:
   std::size_t bestIdx = 0;
   double bestProgress = 0;
   std::size_t idx = 0;
+  double progress = 0;
   std::size_t upEnergyChanges = 0;
   std::size_t acceptance = 0;
   std::size_t bestCatch = 0;
@@ -89,7 +90,7 @@ public:
   void bestCatch(const core::IPosition::CPtr& position, double progress);
   void addSnapshot(const core::IPosition::CPtr& position, double progress);
   void addSnapshotChecked(const core::IPosition::CPtr& position, double progress);
-  void refreshGlobalMetrics();
+  void refreshGlobalMetrics(double progress);
   std::string toString() const;
   CPtr clone() const;
 
