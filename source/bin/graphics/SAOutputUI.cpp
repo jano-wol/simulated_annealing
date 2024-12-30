@@ -45,12 +45,12 @@ void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& s
   ss << "speed = " << int(globalMetrics.speed) << " (iteration/s)";
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "all acceptance = " << globalMetrics.acceptance
-     << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx);
+  ss << "all acceptance = " << globalMetrics.acceptance << std::setprecision(4)
+     << "; ratio = " << double(globalMetrics.acceptance) / double(globalMetrics.idx) << std::setprecision(2);
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
-  ss << "up energy changes = " << globalMetrics.upEnergyChanges
-     << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx);
+  ss << "up energy changes = " << globalMetrics.upEnergyChanges << std::setprecision(4)
+     << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx) << std::setprecision(2);
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
@@ -81,10 +81,10 @@ void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& s
 {
   const auto& candidate = sa->monitor->snapshots[snapshotIdx].candidate;
   const auto& acceptance = sa->monitor->snapshots[snapshotIdx].acceptance;
-  ImGui::TextUnformatted("---- Candidate & Acceptance local metrics ----");
+  ImGui::TextUnformatted("---- Candidate and Acceptance local metrics ----");
   ss.str("");
   ss << std::setprecision(4) << std::fixed;
-  ss << "local derivatives = " << candidate.localDerivative << "  " << acceptance.localDerivative;
+  ss << "local derivatives = " << candidate.localDerivative << " and " << acceptance.localDerivative;
   ImGui::TextUnformatted(ss.str().c_str());
   ss << std::setprecision(2) << std::fixed;
   ss.str("");
