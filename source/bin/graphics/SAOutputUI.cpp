@@ -246,10 +246,11 @@ void SAOutputUI::handleNavigator(float plotSize)
 
 void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
 {
-  ImPlot::BeginPlot("##PositionPlot", {plotSize, plotSize}, ImPlotFlags_NoLegend);
-  int axisFlag = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
-  ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlag);
-  ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlag);
+  int plotFlags = ImPlotFlags_NoLegend | ImPlotFlags_Equal;
+  ImPlot::BeginPlot("##PositionPlot", {plotSize, plotSize}, plotFlags);
+  int axisFlags = ImPlotAxisFlags_NoDecorations | ImPlotAxisFlags_NoHighlight;
+  ImPlot::SetupAxis(ImAxis_X1, nullptr, axisFlags);
+  ImPlot::SetupAxis(ImAxis_Y1, nullptr, axisFlags);
   plotPosition->plot();
   ImPlot::EndPlot();
 }

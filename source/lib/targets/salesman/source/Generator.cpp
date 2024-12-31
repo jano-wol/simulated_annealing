@@ -30,10 +30,11 @@ IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx) const
   std::vector<int> chosenSubsquares;
   std::vector<int> chosenSubsquaresDensity;
   chosenSubsquares.push_back(0);
+  chosenSubsquaresDensity.push_back(0);
   for (int i = 1; i < 25; ++i) {
     int rr = r.randomInt(0, 4);
     if (rr == 0) {
-      chosenSubsquares.push_back(0);
+      chosenSubsquares.push_back(i);
     }
   }
 
