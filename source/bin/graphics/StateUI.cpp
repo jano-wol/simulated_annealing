@@ -4,10 +4,7 @@
 
 #include <implot/implot.h>
 
-#include <io/Io.h>
-
 using namespace sa::core;
-using namespace sa::io;
 using namespace sa::sa;
 
 const IPosition::CPtr& StateUI::getPlotPosition() const
@@ -79,17 +76,6 @@ void StateUI::updateSimulating()
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
       isSimulating = false;
       saOutputUI.init(sa);
-      if (menuUI.trackBest) {
-        if ((!allTimeBest) || (saOutputUI.bestValue < allTimeBest->getEnergy())) {
-          if (saOutputUI.isSnapshotBest) {
-            int snapshotIdx = saOutputUI.getSnapshotIdx();
-            allTimeBest = sa->monitor->snapshots[snapshotIdx].position->clone();
-          } else {
-            allTimeBest = sa->monitor->bestPosition->clone();
-          }
-          Io::savePosition(menuUI.bestFileName, allTimeBest);
-        }
-      }
       saCallUI.progress = 0;
       saCallUI.stop.store(false);
       mtx.unlock();
@@ -154,7 +140,7 @@ void StateUI::handleSACall()
         saFactoryUI.setRandomSeed();
         sa = saFactory->create();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, sa, pool);
+        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, sa, pool);
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;

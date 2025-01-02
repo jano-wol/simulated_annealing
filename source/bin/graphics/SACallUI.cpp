@@ -2,6 +2,10 @@
 
 #include <imgui/imgui.h>
 
+#include <io/Io.h>
+
+using namespace sa::io;
+
 void updateProgressBar(double progress, float width, float height)
 {
   ImGui::SameLine();
@@ -50,8 +54,18 @@ void SACallUI::saCallUpdate(bool isSimulating)
   }
 }
 
-void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::sa::SA::CPtr& sa,
+void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::core::IPosition::CPtr& allTimeBest,
+                               bool trackBest, const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa,
                                BS::thread_pool<0>& pool)
 {
-  simulatingFuture = pool.submit_task([&currPosition, &sa]() { sa->anneal(currPosition); });
+  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, &allTimeBestFile, &sa]() {
+    sa->anneal(currPosition);
+    if (trackBest) {
+      const auto& currBestPosition = sa->getBest();
+      if ((!allTimeBest) || (currBestPosition->getEnergy() < allTimeBest->getEnergy())) {
+        allTimeBest = currBestPosition->clone();
+        Io::savePosition(allTimeBestFile, allTimeBest);
+      }
+    }
+  });
 }
