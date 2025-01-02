@@ -33,9 +33,10 @@ void StateUI::updateParsing()
 {
   if (isParsing) {
     if (menuUI.parsingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      auto loadingPosition = menuUI.parsingFuture.get();
+      auto [best, loadingPosition] = menuUI.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
+        bestSolution = std::move(best);
         ImPlot::SetNextAxesToFit();
         sa = nullptr;
       } else {
@@ -99,6 +100,7 @@ void StateUI::handleMenu()
   if (menuUI.operationRequest) {
     if (mtx.try_lock()) {
       if (menuUI.mode == 1) {
+        menuUI.trackBest = menuUI.trackBestCandidate;
         isParsing = true;
         menuUI.startParsing();
       }

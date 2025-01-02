@@ -35,14 +35,6 @@ std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator:
   std::filesystem::path filePath = folder / getFileName(idx);
   return {filePath, std::move(position)};
 }
-
-std::string getCorrespondingBest(const std::string& filePath)
-{
-  std::filesystem::path path(filePath);
-  std::filesystem::path parentPath = path.parent_path();
-  std::filesystem::path newPath = parentPath / "best" / path.filename();
-  return newPath.string();
-}
 }  // namespace
 
 std::string Io::getWorkspaceRootPath()
@@ -142,6 +134,14 @@ void Io::tryImproveBest(const IGenerator::CPtr& generator, int idx, const IPosit
 {
   auto [filePath, position] = getFilePathAndPosition(generator, idx);
   tryImproveBest(filePath, bestCandidate);
+}
+
+std::string Io::getCorrespondingBest(const std::string& filePath)
+{
+  std::filesystem::path path(filePath);
+  std::filesystem::path parentPath = path.parent_path();
+  std::filesystem::path newPath = parentPath / "best" / path.filename();
+  return newPath.string();
 }
 
 void Io::tryImproveBest(const std::string& positionPath, const core::IPosition::CPtr& bestCandidate)

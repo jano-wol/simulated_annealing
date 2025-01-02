@@ -47,6 +47,7 @@ public:
   sa::sa::SA::CPtr sa = nullptr;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
   std::unique_ptr<sa::core::IPosition> currentPosition = nullptr;
+  std::unique_ptr<sa::core::IPosition> bestSolution = nullptr;
   std::mutex mtx;
 };
 

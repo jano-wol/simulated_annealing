@@ -73,7 +73,6 @@ void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
     saveFileName[0] = '\0';
     selection = -1;
   }
-  ImGui::Spacing();
 }
 
 void MenuUI::renderDisabledButton()
@@ -84,13 +83,14 @@ void MenuUI::renderDisabledButton()
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disabledColor);
   ImGui::Button(buttonNames[mode].c_str());
   ImGui::PopStyleColor(3);
-  ImGui::Spacing();
 }
 
 void MenuUI::renderOpen()
 {
   if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
     renderActiveButton(nextPath);
+    ImGui::SameLine();
+    ImGui::Checkbox("Enable Best Tracking", &trackBestCandidate);
   } else {
     renderDisabledButton();
   }
@@ -130,11 +130,11 @@ void MenuUI::render()
   float maxHeight = ImGui::GetWindowHeight() * 0.8f;
   ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, -1), ImVec2(maxWidth, maxHeight));
   ImGui::SetNextWindowPos({0, 0});
-  if (ImGui::BeginPopupModal(title.c_str(), &isOpen,
-                             ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar)) {
+  if (ImGui::BeginPopupModal(title.c_str(), &isOpen, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
       nextPath = filesInScope[selection].path;
       strncpy(saveFileName, nextPath.filename().string().c_str(), IM_ARRAYSIZE(saveFileName));
+      strncpy(bestFileName, Io::getCorrespondingBest(nextPath).c_str(), IM_ARRAYSIZE(bestFileName));
     }
     if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
       get_files_in_path(nextPath, filesInScope);
@@ -149,8 +149,8 @@ void MenuUI::render()
     if (mode == 2) {
       renderSave();
     }
-
-    ImVec2 childSize(ImGui::GetContentRegionAvail().x, 100.0f);
+    float lineHeight = ImGui::GetTextLineHeight();
+    ImVec2 childSize(ImGui::GetContentRegionAvail().x, 4 * lineHeight);
     ImGui::BeginChild("PathDisplayRegion", childSize, true, ImGuiWindowFlags_HorizontalScrollbar);
     ImGui::TextWrapped("Path: %s", displayPath.string().c_str());
 
@@ -174,6 +174,7 @@ void MenuUI::menuUpdate()
       }
       if (ImGui::MenuItem("Save")) {
         loadedVisible = true;
+        saveFileName[0] = '\0';
         title = "Save";
         mode = 2;
       }
@@ -191,7 +192,14 @@ void MenuUI::menuUpdate()
 
 void MenuUI::startParsing()
 {
-  parsingFuture = std::async(std::launch::async, [this]() { return Io::getPosition(loadedPath); });
+  parsingFuture = std::async(std::launch::async, [this]() {
+    std::unique_ptr<sa::core::IPosition> best;
+    if (trackBest) {
+      best = Io::getPosition(bestFileName);
+    }
+    return std::pair<std::unique_ptr<sa::core::IPosition>, std::unique_ptr<sa::core::IPosition>>{
+        std::move(best), Io::getPosition(loadedPath)};
+  });
 }
 
 void MenuUI::startSaving(const IPosition::CPtr& currPosition)

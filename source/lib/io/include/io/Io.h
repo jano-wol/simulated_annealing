@@ -18,6 +18,7 @@ public:
   static std::string getDataPath();
   static std::string getTargetsPath();
   static std::string getTargetPath(const std::string& target);
+  static std::string getCorrespondingBest(const std::string& filePath);
   static void savePosition(const std::string& path, const core::IPosition::CPtr& position);
   static void savePosition(const core::IGenerator::CPtr& generator, int idx);
   static core::IPosition::CPtr getPosition(const core::IGenerator::CPtr& generator, int idx);

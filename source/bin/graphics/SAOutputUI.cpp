@@ -292,8 +292,13 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   ss << std::setprecision(4) << std::fixed;
   ss << "curr energy = " << plotPosition->getEnergy();
   ImGui::TextUnformatted(ss.str().c_str());
-  if (simulated && (isSnapshotBest || (scrollIdx != bestScrollIdx))) {
-    handleResults(sa);
+  if (simulated) {
+    if ((isSnapshotBest || (scrollIdx != bestScrollIdx))) {
+      handleResults(sa);
+    } else {
+      ImGui::TextUnformatted("");
+      printGlobalMetrics(sa->monitor->globalMetrics, ss);
+    }
   }
   ImGui::EndChild();
   ImGui::EndChild();
