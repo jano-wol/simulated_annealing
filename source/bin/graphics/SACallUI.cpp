@@ -58,7 +58,7 @@ void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa
                                bool trackBest, const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa,
                                BS::thread_pool<0>& pool)
 {
-  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, &allTimeBestFile, &sa]() {
+  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &sa]() {
     sa->anneal(currPosition);
     if (trackBest) {
       const auto& currBestPosition = sa->getBest();
