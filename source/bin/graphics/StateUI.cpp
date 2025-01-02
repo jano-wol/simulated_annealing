@@ -36,7 +36,7 @@ void StateUI::updateParsing()
       auto [best, loadingPosition] = menuUI.parsingFuture.get();
       if (loadingPosition) {
         currentPosition = std::move(loadingPosition);
-        bestSolution = std::move(best);
+        allTimeBest = std::move(best);
         ImPlot::SetNextAxesToFit();
         sa = nullptr;
       } else {
@@ -158,6 +158,6 @@ void StateUI::handleSAOutput()
 {
   if (currentPosition) {
     const auto& plotPosition = getPlotPosition();
-    saOutputUI.saOutputUpdate(plotPosition, sa, isSimulating);
+    saOutputUI.saOutputUpdate(plotPosition, allTimeBest, sa, isSimulating);
   }
 }

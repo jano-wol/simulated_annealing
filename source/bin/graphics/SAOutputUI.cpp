@@ -32,7 +32,8 @@ std::string toString(std::optional<double> val)
   }
 }
 
-void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& ss)
+void printGlobalMetrics(const GlobalMetrics& globalMetrics, const std::unique_ptr<sa::core::IPosition>& allTimeBest,
+                        std::stringstream& ss)
 {
   ImGui::TextUnformatted("---- Global metrics ----");
   ss.str("");
@@ -48,6 +49,16 @@ void printGlobalMetrics(const GlobalMetrics& globalMetrics, std::stringstream& s
   ss.str("");
   ss << "up energy changes = " << globalMetrics.upEnergyChanges << std::setprecision(4)
      << "; ratio = " << double(globalMetrics.upEnergyChanges) / double(globalMetrics.idx) << std::setprecision(2);
+  ImGui::TextUnformatted(ss.str().c_str());
+  ss.str("");
+  ss << "all-time-best = ";
+  if (allTimeBest) {
+    ss << std::setprecision(4) << std::fixed;
+    ss << allTimeBest->getEnergy();
+    ss << std::setprecision(2) << std::fixed;
+  } else {
+    ss << "nn";
+  }
   ImGui::TextUnformatted(ss.str().c_str());
   ss.str("");
 }
@@ -255,7 +266,7 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
   ImPlot::EndPlot();
 }
 
-void SAOutputUI::handleResults(const SA::CPtr& sa)
+void SAOutputUI::handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest, const SA::CPtr& sa)
 {
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
@@ -265,10 +276,12 @@ void SAOutputUI::handleResults(const SA::CPtr& sa)
   ImGui::TextUnformatted("");
   printLocalMetrics(sa, snapshotIdx, ss);
   ImGui::TextUnformatted("");
-  printGlobalMetrics(sa->monitor->globalMetrics, ss);
+  printGlobalMetrics(sa->monitor->globalMetrics, allTimeBest, ss);
 }
 
-void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::CPtr& sa, bool isSimulating)
+void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
+                                const std::unique_ptr<sa::core::IPosition>& allTimeBest, const SA::CPtr& sa,
+                                bool isSimulating)
 {
   bool simulated = sa && !isSimulating;
   ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -294,10 +307,10 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const SA::C
   ImGui::TextUnformatted(ss.str().c_str());
   if (simulated) {
     if ((isSnapshotBest || (scrollIdx != bestScrollIdx))) {
-      handleResults(sa);
+      handleResults(allTimeBest, sa);
     } else {
       ImGui::TextUnformatted("");
-      printGlobalMetrics(sa->monitor->globalMetrics, ss);
+      printGlobalMetrics(sa->monitor->globalMetrics, allTimeBest, ss);
     }
   }
   ImGui::EndChild();
