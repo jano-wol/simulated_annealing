@@ -12,12 +12,12 @@ class SACallUI
 {
 public:
   void saCallUpdate(bool isSimulating);
-  void startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::core::IPosition::CPtr& allTimeBest,
+  void startSimulating(const sa::core::IPosition::CPtr& currPosition, const sa::core::IPosition::CPtr& allTimeBest,
                        bool trackBest, const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa,
                        BS::thread_pool<0>& pool);
 
   bool saCalled = false;
-  std::future<void> simulatingFuture;
+  std::future<std::unique_ptr<sa::core::IPosition>> simulatingFuture;
   std::atomic<double> progress = std::atomic<double>(0);
   std::atomic<bool> stop = std::atomic<bool>(false);
 };

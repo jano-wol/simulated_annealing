@@ -74,6 +74,10 @@ void StateUI::updateSimulating()
 {
   if (isSimulating) {
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      auto allTimeBestCandidate = saCallUI.simulatingFuture.get();
+      if (allTimeBestCandidate) {
+        allTimeBest = std::move(allTimeBestCandidate);
+      }
       isSimulating = false;
       saOutputUI.init(sa);
       saCallUI.progress = 0;

@@ -54,18 +54,19 @@ void SACallUI::saCallUpdate(bool isSimulating)
   }
 }
 
-void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition, sa::core::IPosition::CPtr& allTimeBest,
-                               bool trackBest, const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa,
-                               BS::thread_pool<0>& pool)
+void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition,
+                               const sa::core::IPosition::CPtr& allTimeBest, bool trackBest,
+                               const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa, BS::thread_pool<0>& pool)
 {
   simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &sa]() {
     sa->anneal(currPosition);
     if (trackBest) {
       const auto& currBestPosition = sa->getBest();
       if ((!allTimeBest) || (currBestPosition->getEnergy() + sa->monitor->catchPrecision < allTimeBest->getEnergy())) {
-        allTimeBest = currBestPosition->clone();
         Io::savePosition(allTimeBestFile, allTimeBest);
+        return currBestPosition->clone();
       }
     }
+    return sa::core::IPosition::CPtr(nullptr);
   });
 }
