@@ -34,8 +34,18 @@ IMove::CPtr SalesmanAnglePosition::generateMove() const
   }
   const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
   const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-  double delta = distance(cities[idx1], cities[nextIdx2]) + distance(cities[idx2], cities[prevIdx1]) -
-                 distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
+
+  double old1 = std::abs((std::numbers::pi - angle(prevIdx1)));
+  double old2 = std::abs((std::numbers::pi - angle(idx1)));
+  double old3 = std::abs((std::numbers::pi - angle(idx2)));
+  double old4 = std::abs((std::numbers::pi - angle(nextIdx2)));
+
+  double new1 = std::abs((std::numbers::pi - angle(prevIdx1, getNeighbourIdxs(prevIdx1).first, idx2)));
+  double new2 = std::abs((std::numbers::pi - angle(idx2, prevIdx1, prevIdx2)));
+  double new3 = std::abs((std::numbers::pi - angle(idx1, nextIdx1, nextIdx2)));
+  double new4 = std::abs((std::numbers::pi - angle(nextIdx2, idx1, getNeighbourIdxs(nextIdx2).second)));
+
+  double delta = new1 + new2 + new3 + new4 - old1 - old2 - old3 - old4;
   return std::make_unique<SalesmanAngleMove>(idx1, idx2, delta);
 }
 
@@ -73,13 +83,28 @@ std::pair<std::size_t, std::size_t> SalesmanAnglePosition::getNeighbourIdxs(std:
   return {prevIdx, nextIdx};
 }
 
-double SalesmanAnglePosition::distance(const std::pair<double, double>& city1,
-                                       const std::pair<double, double>& city2) const
+double SalesmanAnglePosition::angle(std::size_t curr, std::size_t prev, std::size_t next) const
 {
-  const auto& [x1, y1] = city1;
-  const auto& [x2, y2] = city2;
-  double ret = ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-  return std::sqrt(ret);
+  const auto& [prevX, prevY] = cities[prev];
+  const auto& [currX, currY] = cities[curr];
+  const auto& [nextX, nextY] = cities[next];
+  double v1x = prevX - currX;
+  double v1y = prevY - currY;
+  double v2x = nextX - currX;
+  double v2y = nextY - currY;
+  double dot = v1x * v2x + v1y * v2y;
+  double l1 = std::sqrt(v1x * v1x + v1y * v1y);
+  double l2 = std::sqrt(v2x * v2x + v2y * v2y);
+  double cosTheta = dot / (l1 * l2);
+  cosTheta = std::max(-1.0, std::min(1.0, cosTheta));
+  double angle = std::acos(cosTheta);
+  return angle;
+}
+
+double SalesmanAnglePosition::angle(std::size_t idx) const
+{
+  auto [prevIdx, nextIdx] = getNeighbourIdxs(idx);
+  return angle(idx, prevIdx, nextIdx);
 }
 
 double SalesmanAnglePosition::calcEnergy() const
@@ -89,9 +114,9 @@ double SalesmanAnglePosition::calcEnergy() const
   }
   double ret = 0;
   for (std::size_t idx = 0; idx < cities.size(); ++idx) {
-    const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
-    ret += distance(cities[idx], cities[nextIdx]);
-  };
+    double val = std::abs((std::numbers::pi - angle(idx))); 
+    ret += val;
+  }
   return ret;
 }
 

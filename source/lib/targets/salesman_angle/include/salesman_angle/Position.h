@@ -29,7 +29,8 @@ public:
   void plot() const override;
 
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const;
-  double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const;
+  double angle(std::size_t idx) const;
+  double angle(std::size_t curr, std::size_t prev, std::size_t next) const;
   double calcEnergy() const;
 
   static std::string getTypeId();
