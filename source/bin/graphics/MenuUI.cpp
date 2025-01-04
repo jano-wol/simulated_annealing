@@ -90,7 +90,7 @@ void MenuUI::renderOpen()
   if (!nextPath.empty() && !std::filesystem::is_directory(nextPath)) {
     renderActiveButton(nextPath);
     ImGui::SameLine();
-    ImGui::Checkbox("Enable Best Tracking", &trackBestCandidate);
+    ImGui::Checkbox("Enable all-time-best tracking", &trackBestCandidate);
   } else {
     renderDisabledButton();
   }

@@ -161,16 +161,16 @@ void SAOutputUI::init(const SA::CPtr& sa)
   sliderValue = progresses[scrollIdx];
 }
 
-void SAOutputUI::handleButtons(float plotSize)
+void SAOutputUI::handleButtons(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest)
 {
   const ImGuiStyle& style = ImGui::GetStyle();
   float buttonWidth1 = ImGui::CalcTextSize("<").x + style.FramePadding.x * 2.0f;
   float buttonWidth2 = ImGui::CalcTextSize("<<").x + style.FramePadding.x * 2.0f;
   float bestWidth = ImGui::CalcTextSize("best").x + style.FramePadding.x * 2.0f;
   float spacing = ImGui::GetStyle().ItemSpacing.x;
-  float total_width = (buttonWidth1 + buttonWidth2) * 2 + bestWidth + spacing * 4;
-  float center_offset = (plotSize - total_width) / 2.0f;
-  ImGui::SetCursorPosX(center_offset);
+  float totalWidth = (buttonWidth1 + buttonWidth2) * 2 + bestWidth + spacing * 4;
+  float centerOffset = (plotSize - totalWidth) / 2.0f;
+  ImGui::SetCursorPosX(centerOffset);
   if (scrollIdx == 0) {
     ImGui::PushStyleColor(ImGuiCol_Button, disabledColor);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, disabledColor);
@@ -219,7 +219,6 @@ void SAOutputUI::handleButtons(float plotSize)
     ImGui::Button(">");
     ImGui::SameLine();
     ImGui::Button(">>");
-    ImGui::SameLine();
     ImGui::PopStyleColor(3);
   } else {
     bool activateButton = false;
@@ -240,9 +239,17 @@ void SAOutputUI::handleButtons(float plotSize)
     }
   }
   sliderValue = progresses[scrollIdx];
+  if (allTimeBest) {
+    ImGui::SetCursorPosX(centerOffset);
+    float widgetHeight = ImGui::GetItemRectSize().y;
+    float verticalSkip = 0.1f * widgetHeight;
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalSkip);
+    if (ImGui::Button("Load all-time-best", ImVec2(totalWidth, 0))) {
+    }
+  }
 }
 
-void SAOutputUI::handleNavigator(float plotSize)
+void SAOutputUI::handleNavigator(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest)
 {
   ImGui::SetNextItemWidth(plotSize);
   if (ImGui::SliderFloat("##SnapshotSlider", &sliderValue, 0, 1, "%.2f")) {
@@ -252,7 +259,7 @@ void SAOutputUI::handleNavigator(float plotSize)
     scrollIdx = int(std::distance(progresses.begin(), closestIt));
     sliderValue = progresses[scrollIdx];
   }
-  handleButtons(plotSize);
+  handleButtons(plotSize, allTimeBest);
 }
 
 void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
@@ -294,7 +301,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
   float plotSize = availableSize.x;
   handlePlot(plotPosition, plotSize);
   if (simulated) {
-    handleNavigator(plotSize);
+    handleNavigator(plotSize, allTimeBest);
   }
   ImGui::EndChild();
   ImGui::SameLine();
