@@ -63,7 +63,7 @@ void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition,
     if (trackBest) {
       const auto& currBestPosition = sa->getBest();
       if ((!allTimeBest) || (currBestPosition->getEnergy() + sa->monitor->catchPrecision < allTimeBest->getEnergy())) {
-        Io::savePosition(allTimeBestFile, allTimeBest);
+        Io::savePosition(allTimeBestFile, currBestPosition);
         return currBestPosition->clone();
       }
     }
