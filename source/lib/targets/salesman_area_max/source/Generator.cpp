@@ -1,14 +1,15 @@
+#include <salesman_area_max/Generator.h>
+
 #include <sstream>
 
 #include <core/Random.h>
 #include <core/Rounding.h>
-#include <salesman/Generator.h>
-#include <salesman/Position.h>
+#include <salesman_area_max/Position.h>
 
 using namespace sa::core;
-using namespace sa::targets::salesman;
+using namespace sa::targets::salesman_area_max;
 
-IPosition::CPtr SalesmanGenerator::getStartPosition(int idx) const
+IPosition::CPtr SalesmanAreaMaxGenerator::getStartPosition(int idx) const
 {
   Random r(idx);
   std::vector<std::pair<double, double>> cities;
@@ -18,10 +19,10 @@ IPosition::CPtr SalesmanGenerator::getStartPosition(int idx) const
     double randomResult2 = r.randomDouble(0.0, 1.0);
     cities.push_back({Rounding::roundDouble(length * randomResult1), Rounding::roundDouble(length * randomResult2)});
   }
-  return std::make_unique<SalesmanPosition>(cities);
+  return std::make_unique<SalesmanAreaMaxPosition>(cities);
 }
 
-IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx) const
+IPosition::CPtr SalesmanAreaMaxGenerator::getStartPosition_5x5(int idx) const
 {
   Random r(idx);
   std::vector<int> chosenSubsquares;
@@ -53,10 +54,10 @@ IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx) const
     cities.push_back(
         {Rounding::roundDouble((x + randomResult1) * length), Rounding::roundDouble((y + randomResult2) * length)});
   }
-  return std::make_unique<SalesmanPosition>(cities);
+  return std::make_unique<SalesmanAreaMaxPosition>(cities);
 }
 
-IPosition::CPtr SalesmanGenerator::generatePosition(int idx) const
+IPosition::CPtr SalesmanAreaMaxGenerator::generatePosition(int idx) const
 {
   if (subSquares) {
     return getStartPosition_5x5(idx);
@@ -65,7 +66,7 @@ IPosition::CPtr SalesmanGenerator::generatePosition(int idx) const
   }
 }
 
-std::string SalesmanGenerator::getGeneratorName() const
+std::string SalesmanAreaMaxGenerator::getGeneratorName() const
 {
   std::stringstream ss;
   ss << numCities << "_" << length;
