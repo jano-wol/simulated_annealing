@@ -8,7 +8,6 @@
 #include <policies/Resource.h>
 #include <sa/SA.h>
 #include <salesman/Generator.h>
-#include <salesman/Position.h>
 
 using namespace sa::core;
 using namespace sa::io;

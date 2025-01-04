@@ -7,14 +7,14 @@
 #include <policies/MoveSelector.h>
 #include <policies/Resource.h>
 #include <sa/SA.h>
-#include <salesman_angle/Generator.h>
+#include <salesman_area_max/Generator.h>
 
 using namespace sa::core;
 using namespace sa::io;
 using namespace sa::monitor;
 using namespace sa::policies;
 using namespace sa::sa;
-using namespace sa::targets::salesman_angle;
+using namespace sa::targets::salesman_area_max;
 
 void print(const SA& sa, int idx)
 {
@@ -27,14 +27,14 @@ int main(int argc, char** argv)
 {
   std::string mode = 1 < argc ? argv[1] : "";
   if (mode == "profile") {
-    IGenerator::CPtr g = std::make_unique<SalesmanAngleGenerator>(1000, 100, true);
+    IGenerator::CPtr g = std::make_unique<SalesmanAreaMaxGenerator>(1000, 100, true);
     auto pos = Io::getPosition(g, 1);
     SA sa(std::make_unique<Iteration>(1000000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Low));
     sa.anneal(pos);
     print(sa, 1);
   } else if (mode == "mem_check") {
-    IGenerator::CPtr g = std::make_unique<SalesmanAngleGenerator>(1000, 100, true);
+    IGenerator::CPtr g = std::make_unique<SalesmanAreaMaxGenerator>(1000, 100, true);
     auto pos = Io::getPosition(g, 1);
     SA sa(std::make_unique<Iteration>(100000), std::make_unique<Metropolis>(), std::make_unique<Linear>(),
           std::make_unique<KBest>(1), std::make_unique<Monitor>(MonitorLevel::Medium));
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
     for (std::size_t idx = 0; idx < 8; ++idx) {
       for (int b = 0; b < 2; ++b) {
-        IGenerator::CPtr g = std::make_unique<SalesmanAngleGenerator>(nc[idx], l[idx], b);
+        IGenerator::CPtr g = std::make_unique<SalesmanAreaMaxGenerator>(nc[idx], l[idx], b);
         auto position = Io::getPosition(g, 1);
         if (mode == "save") {
           Io::savePosition(g, 1);
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
         Io::tryImproveBest(g, 1, sa5.getBest());
       }
     }
-    Io::refreshBest(Io::getTargetPath("salesman_angle"));
+    Io::refreshBest(Io::getTargetPath("salesman_area_max"));
   }
   return 0;
 }
