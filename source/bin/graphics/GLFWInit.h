@@ -22,12 +22,14 @@ GLFWwindow* GLFWInit(std::string windowName)
   const char* glsl_version = "#version 130";
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
   GLFWwindow* window =
       glfwCreateWindow(glfwGetVideoMode(glfwGetPrimaryMonitor())->width,
                        glfwGetVideoMode(glfwGetPrimaryMonitor())->height, windowName.c_str(), NULL, NULL);
   if (window == NULL)
     exit(1);
   glfwMakeContextCurrent(window);
+  glfwMaximizeWindow(window);
   glfwSwapInterval(1);
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
