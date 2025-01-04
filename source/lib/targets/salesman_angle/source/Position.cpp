@@ -32,20 +32,32 @@ IMove::CPtr SalesmanAnglePosition::generateMove() const
   if (idx1 == 0 && idx2 == cities.size() - 1) {
     return std::make_unique<SalesmanAngleMove>(idx1, idx2, 0);
   }
-  const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
-  const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-
-  double old1 = std::abs((std::numbers::pi - angle(prevIdx1)));
-  double old2 = std::abs((std::numbers::pi - angle(idx1)));
-  double old3 = std::abs((std::numbers::pi - angle(idx2)));
-  double old4 = std::abs((std::numbers::pi - angle(nextIdx2)));
-
-  double new1 = std::abs((std::numbers::pi - angle(prevIdx1, getNeighbourIdxs(prevIdx1).first, idx2)));
-  double new2 = std::abs((std::numbers::pi - angle(idx2, prevIdx1, prevIdx2)));
-  double new3 = std::abs((std::numbers::pi - angle(idx1, nextIdx1, nextIdx2)));
-  double new4 = std::abs((std::numbers::pi - angle(nextIdx2, idx1, getNeighbourIdxs(nextIdx2).second)));
-
-  double delta = new1 + new2 + new3 + new4 - old1 - old2 - old3 - old4;
+  double delta = 0;
+  if ((idx2 + 2) % cities.size() == idx1) {
+    const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
+    const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
+    double old1 = std::abs((std::numbers::pi - angle(nextIdx1)));
+    double old2 = std::abs((std::numbers::pi - angle(idx1)));
+    double old3 = std::abs((std::numbers::pi - angle(idx2)));
+    double old4 = std::abs((std::numbers::pi - angle(prevIdx2)));
+    double new1 = std::abs((std::numbers::pi - angle(nextIdx1, getNeighbourIdxs(nextIdx1).second, idx2)));
+    double new2 = std::abs((std::numbers::pi - angle(idx2, nextIdx1, nextIdx2)));
+    double new3 = std::abs((std::numbers::pi - angle(idx1, prevIdx1, prevIdx2)));
+    double new4 = std::abs((std::numbers::pi - angle(prevIdx2, idx1, getNeighbourIdxs(prevIdx2).first)));
+    delta = new1 + new2 + new3 + new4 - old1 - old2 - old3 - old4;
+  } else {
+    const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
+    const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
+    double old1 = std::abs((std::numbers::pi - angle(prevIdx1)));
+    double old2 = std::abs((std::numbers::pi - angle(idx1)));
+    double old3 = std::abs((std::numbers::pi - angle(idx2)));
+    double old4 = std::abs((std::numbers::pi - angle(nextIdx2)));
+    double new1 = std::abs((std::numbers::pi - angle(prevIdx1, getNeighbourIdxs(prevIdx1).first, idx2)));
+    double new2 = std::abs((std::numbers::pi - angle(idx2, prevIdx1, prevIdx2)));
+    double new3 = std::abs((std::numbers::pi - angle(idx1, nextIdx1, nextIdx2)));
+    double new4 = std::abs((std::numbers::pi - angle(nextIdx2, idx1, getNeighbourIdxs(nextIdx2).second)));
+    delta = new1 + new2 + new3 + new4 - old1 - old2 - old3 - old4;
+  }
   return std::make_unique<SalesmanAngleMove>(idx1, idx2, delta);
 }
 
@@ -65,6 +77,10 @@ void SalesmanAnglePosition::makeMove(IMove::CPtr move)
     std::swap(cities[cityIdx1], cities[cityIdx2]);
     ++cityIdx1;
     --cityIdx2;
+  }
+  double energy2 = calcEnergy();
+  if (std::abs(energy - energy2) > 0.0001) {
+    int x = 0;
   }
 }
 
@@ -114,7 +130,7 @@ double SalesmanAnglePosition::calcEnergy() const
   }
   double ret = 0;
   for (std::size_t idx = 0; idx < cities.size(); ++idx) {
-    double val = std::abs((std::numbers::pi - angle(idx))); 
+    double val = std::abs((std::numbers::pi - angle(idx)));
     ret += val;
   }
   return ret;
