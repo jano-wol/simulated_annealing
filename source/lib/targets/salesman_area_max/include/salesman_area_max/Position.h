@@ -5,7 +5,7 @@
 
 #include <core/IPosition.h>
 #include <core/Random.h>
-#include <salesman/Move.h>
+#include <salesman_area_max/Move.h>
 
 namespace sa::targets::salesman_area_max
 {

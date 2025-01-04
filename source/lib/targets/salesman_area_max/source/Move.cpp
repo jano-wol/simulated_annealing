@@ -1,7 +1,7 @@
-#include <salesman/Move.h>
+#include <salesman_area_max/Move.h>
 
-using namespace sa::targets::salesman;
+using namespace sa::targets::salesman_area_max;
 
-double SalesmanMove::getDelta() const { return delta; }
+double SalesmanAreaMaxMove::getDelta() const { return delta; }
 
-int SalesmanMove::size() const { return 2 * sizeof(std::size_t); }
+int SalesmanAreaMaxMove::size() const { return 2 * sizeof(std::size_t); }
