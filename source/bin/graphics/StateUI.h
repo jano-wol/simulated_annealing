@@ -31,6 +31,7 @@ public:
   void updateSaving();
   void updateInformating(const std::string& message);
   void updateSimulating();
+  void updateAllTimeBestLoading();
   const sa::core::IPosition::CPtr& getPlotPosition() const;
   bool currentPositionPlotted() const;
 
@@ -39,6 +40,7 @@ public:
   bool isSaving = false;
   bool isInformating = false;
   bool isSimulating = false;
+  bool isLoadingAllTime = false;
   InfoUI infoUI;
   MenuUI menuUI;
   SAFactoryUI saFactoryUI;
