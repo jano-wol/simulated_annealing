@@ -245,6 +245,7 @@ void SAOutputUI::handleButtons(float plotSize, const std::unique_ptr<sa::core::I
     float verticalSkip = 0.1f * widgetHeight;
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalSkip);
     if (ImGui::Button("Load all-time-best", ImVec2(totalWidth, 0))) {
+      loadAllTimeBest = true;
     }
   }
 }
@@ -291,6 +292,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
                                 bool isSimulating)
 {
   bool simulated = sa && !isSimulating;
+  loadAllTimeBest = false;
   ImVec2 windowSize = ImGui::GetContentRegionAvail();
   float graphicsRatio = 0.7f;
   float graphicsWidth = windowSize.x * graphicsRatio;
@@ -322,4 +324,9 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
   }
   ImGui::EndChild();
   ImGui::EndChild();
+}
+
+void SAOutputUI::startLoadingAllTimeBest(const IPosition::CPtr& allTimeBest)
+{
+  loadAllTimeBestFuture = std::async(std::launch::async, [&allTimeBest]() { return allTimeBest->clone(); });
 }

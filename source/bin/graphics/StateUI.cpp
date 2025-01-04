@@ -87,6 +87,24 @@ void StateUI::updateSimulating()
   }
 }
 
+void StateUI::updateAllTimeBestLoading()
+{
+  if (isLoadingAllTime) {
+    if (saOutputUI.loadAllTimeBestFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      auto loadedPosition = saOutputUI.loadAllTimeBestFuture.get();
+      if (loadedPosition) {
+        currentPosition = std::move(loadedPosition);
+        ImPlot::SetNextAxesToFit();
+        sa = nullptr;
+      } else {
+        updateInformating("All time best load failed.");
+      }
+      isLoadingAllTime = false;
+      mtx.unlock();
+    }
+  }
+}
+
 void StateUI::handleInfo()
 {
   if (isInformating) {
@@ -163,5 +181,17 @@ void StateUI::handleSAOutput()
   if (currentPosition) {
     const auto& plotPosition = getPlotPosition();
     saOutputUI.saOutputUpdate(plotPosition, allTimeBest, sa, isSimulating);
+    if (saOutputUI.loadAllTimeBest) {
+      if (mtx.try_lock()) {
+        isLoadingAllTime = true;
+        saOutputUI.startLoadingAllTimeBest(allTimeBest);
+        saOutputUI.loadAllTimeBest = false;
+      } else {
+        std::stringstream ss;
+        ss << "Computation is busy. Load all-time best request ignored.";
+        updateInformating(ss.str());
+      }
+    }
   }
+  updateAllTimeBestLoading();
 }
