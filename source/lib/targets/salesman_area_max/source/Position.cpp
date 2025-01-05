@@ -23,63 +23,36 @@ IMove::CPtr SalesmanAreaMaxPosition::generateMove() const
   if (cities.size() < 2) {
     return std::make_unique<SalesmanAreaMaxMove>(0, 0, 0, 0);
   }
-  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
-  std::size_t idx2 = r.randomInt(0, cities.size() - 2);
-  if (idx2 >= idx1) {
-    ++idx2;
-  } else {
-    std::swap(idx1, idx2);
+  std::size_t idx = r.randomInt(0, cities.size() - 1);
+  std::size_t shiftIdx = r.randomInt(0, cities.size() - 1);
+  const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
+  const auto& [prevShiftIdx, nextShiftIdx] = getNeighbourIdxs(shiftIdx);
+  if ((idx == shiftIdx) || (nextIdx == shiftIdx)) {
+    return std::make_unique<SalesmanAreaMaxMove>(idx, shiftIdx, 0, 0);
   }
-  if (idx1 == 0 && idx2 == cities.size() - 1) {
-    return std::make_unique<SalesmanAreaMaxMove>(idx1, idx2, 0, 0);
-  }
-  const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
-  const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-  double signedDelta = shoelace(cities[idx1], cities[nextIdx2]) + shoelace(cities[prevIdx1], cities[idx2]) -
-                       shoelace(cities[prevIdx1], cities[idx1]) - shoelace(cities[idx2], cities[nextIdx2]);
-  std::cout << shoelace(cities[idx1], cities[nextIdx2]) << " " << shoelace(cities[idx2], cities[prevIdx1])
-            << " appear \n";
-  std::cout << shoelace(cities[idx1], cities[prevIdx1]) << " " << shoelace(cities[idx2], cities[nextIdx2])
-            << " disappear \n";
+  double signedDelta = shoelace(cities[prevIdx], cities[nextIdx]) + shoelace(cities[prevShiftIdx], cities[idx]) +
+                       shoelace(cities[idx], cities[shiftIdx]) - shoelace(cities[prevIdx], cities[idx]) -
+                       shoelace(cities[idx], cities[nextIdx]) - shoelace(cities[prevShiftIdx], cities[shiftIdx]);
   double delta = -std::abs(signedEnergy + signedDelta) - energy;
-  return std::make_unique<SalesmanAreaMaxMove>(idx1, idx2, delta, signedDelta);
+  return std::make_unique<SalesmanAreaMaxMove>(idx, shiftIdx, delta, signedDelta);
 }
 
 void SalesmanAreaMaxPosition::makeMove(IMove::CPtr move)
 {
-  std::stringstream ss1;
-  std::stringstream ss2;
   auto* m = dynamic_cast<SalesmanAreaMaxMove*>(move.get());
   energy += m->getDelta();
   signedEnergy += m->signedDelta;
-  for (std::size_t idx = 0; idx < cities.size(); ++idx) {
-    const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
-    ss1 << shoelace(cities[idx], cities[nextIdx]) << " ";
+  std::size_t idx = m->idx;
+  std::size_t shiftIdx = m->shiftIdx;
+  auto element = cities[idx];
+  cities.erase(cities.begin() + idx);
+  if (shiftIdx > idx) {
+    shiftIdx--;
   }
+  cities.insert(cities.begin() + shiftIdx, element);
 
-  std::size_t cityIdx1 = m->cityIdx1;
-  std::size_t cityIdx2 = m->cityIdx2;
-  if (cityIdx1 == cityIdx2) {
-    return;
-  }
-  if (cityIdx2 < cityIdx1) {
-    std::swap(cityIdx1, cityIdx2);
-  }
-  while (cityIdx1 < cityIdx2) {
-    std::swap(cities[cityIdx1], cities[cityIdx2]);
-    ++cityIdx1;
-    --cityIdx2;
-  }
-  for (std::size_t idx = 0; idx < cities.size(); ++idx) {
-    const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
-    ss2 << shoelace(cities[idx], cities[nextIdx]) << " ";
-  }
-  double se = calcSignedEnergy();
-  if (std::abs(signedEnergy - se) > 0.0001) {
-    std::cout << ss1.str() << "!\n";
-    std::cout << ss2.str() << "!!\n";
-    signedEnergy = se;
-    std::cout << "para" << signedEnergy << " " << se << " " << m->cityIdx1 << " " << m->cityIdx2 << "\n";
+  if (std::abs(energy - (-std::abs(signedEnergy))) > 0.0001) {
+    std::cout << "para " << signedEnergy << "\n";
   }
 }
 
