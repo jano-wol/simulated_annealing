@@ -50,10 +50,6 @@ void SalesmanAreaMaxPosition::makeMove(IMove::CPtr move)
     shiftIdx--;
   }
   cities.insert(cities.begin() + shiftIdx, element);
-
-  if (std::abs(energy - (-std::abs(signedEnergy))) > 0.0001) {
-    std::cout << "para " << signedEnergy << "\n";
-  }
 }
 
 int SalesmanAreaMaxPosition::size() const

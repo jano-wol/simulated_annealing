@@ -15,54 +15,65 @@
 using namespace sa::core;
 using namespace sa::targets::salesman_angle;
 
+double makeEnergyPenality(double angle) { return std::abs((std::numbers::pi - angle)); }
+
 double SalesmanAnglePosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanAnglePosition::generateMove() const
 {
-  if (cities.size() < 2) {
+  if (cities.size() < 4) {
     return std::make_unique<SalesmanAngleMove>(0, 0, 0);
   }
-  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
-  std::size_t idx2 = r.randomInt(0, cities.size() - 2);
-  if (idx2 >= idx1) {
-    ++idx2;
+  std::size_t idx = r.randomInt(0, cities.size() - 1);
+  std::size_t shiftIdx = r.randomInt(0, cities.size() - 1);
+  const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
+  const auto& [prevShiftIdx, nextShiftIdx] = getNeighbourIdxs(shiftIdx);
+  double delta = 0;
+  if (idx == shiftIdx || nextIdx == shiftIdx) {
+    return std::make_unique<SalesmanAngleMove>(idx, shiftIdx, 0);
+  }
+  if (getNeighbourIdxs(nextIdx).second == shiftIdx) {
+    double deltaNew = makeEnergyPenality(angle(prevIdx, getNeighbourIdxs(prevIdx).first, nextIdx)) +
+                      makeEnergyPenality(angle(nextIdx, prevIdx, idx)) +
+                      makeEnergyPenality(angle(idx, prevShiftIdx, shiftIdx)) +
+                      makeEnergyPenality(angle(shiftIdx, idx, nextShiftIdx));
+    double deltaOld = makeEnergyPenality(angle(prevIdx)) + makeEnergyPenality(angle(idx)) +
+                      makeEnergyPenality(angle(nextIdx)) + makeEnergyPenality(angle(shiftIdx));
+    delta = deltaNew - deltaOld;
+  } else if (nextShiftIdx == idx) {
+    double deltaNew = makeEnergyPenality(angle(prevShiftIdx, getNeighbourIdxs(prevShiftIdx).first, idx)) +
+                      makeEnergyPenality(angle(nextIdx, prevIdx, getNeighbourIdxs(nextIdx).second)) +
+                      makeEnergyPenality(angle(idx, prevShiftIdx, shiftIdx)) +
+                      makeEnergyPenality(angle(shiftIdx, idx, nextIdx));
+    double deltaOld = makeEnergyPenality(angle(prevIdx)) + makeEnergyPenality(angle(idx)) +
+                      makeEnergyPenality(angle(nextIdx)) + makeEnergyPenality(angle(prevShiftIdx));
+    delta = deltaNew - deltaOld;
   } else {
-    std::swap(idx1, idx2);
+    double deltaNew = makeEnergyPenality(angle(prevIdx, getNeighbourIdxs(prevIdx).first, nextIdx)) +
+                      makeEnergyPenality(angle(nextIdx, prevIdx, getNeighbourIdxs(nextIdx).second)) +
+                      makeEnergyPenality(angle(idx, prevShiftIdx, shiftIdx)) +
+                      makeEnergyPenality(angle(shiftIdx, idx, nextShiftIdx)) +
+                      makeEnergyPenality(angle(prevShiftIdx, getNeighbourIdxs(prevShiftIdx).first, idx));
+    double deltaOld = makeEnergyPenality(angle(prevIdx)) + makeEnergyPenality(angle(idx)) +
+                      makeEnergyPenality(angle(nextIdx)) + makeEnergyPenality(angle(shiftIdx)) +
+                      makeEnergyPenality(angle(prevShiftIdx));
+    delta = deltaNew - deltaOld;
   }
-  if ((idx1 == 0 && idx2 == cities.size() - 1) || ((idx2 + 2) % cities.size() == idx1)) {
-    return std::make_unique<SalesmanAngleMove>(idx1, idx2, 0);
-  }
-  const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
-  const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-  double old1 = std::abs((std::numbers::pi - angle(prevIdx1)));
-  double old2 = std::abs((std::numbers::pi - angle(idx1)));
-  double old3 = std::abs((std::numbers::pi - angle(idx2)));
-  double old4 = std::abs((std::numbers::pi - angle(nextIdx2)));
-  double new1 = std::abs((std::numbers::pi - angle(prevIdx1, getNeighbourIdxs(prevIdx1).first, idx2)));
-  double new2 = std::abs((std::numbers::pi - angle(idx2, prevIdx1, prevIdx2)));
-  double new3 = std::abs((std::numbers::pi - angle(idx1, nextIdx1, nextIdx2)));
-  double new4 = std::abs((std::numbers::pi - angle(nextIdx2, idx1, getNeighbourIdxs(nextIdx2).second)));
-  double delta = new1 + new2 + new3 + new4 - old1 - old2 - old3 - old4;
-  return std::make_unique<SalesmanAngleMove>(idx1, idx2, delta);
+  return std::make_unique<SalesmanAngleMove>(idx, shiftIdx, delta);
 }
 
 void SalesmanAnglePosition::makeMove(IMove::CPtr move)
 {
   auto* m = dynamic_cast<SalesmanAngleMove*>(move.get());
   energy += m->getDelta();
-  std::size_t cityIdx1 = m->cityIdx1;
-  std::size_t cityIdx2 = m->cityIdx2;
-  if (cityIdx1 == cityIdx2) {
-    return;
+  std::size_t idx = m->idx;
+  std::size_t shiftIdx = m->shiftIdx;
+  auto element = cities[idx];
+  cities.erase(cities.begin() + idx);
+  if (shiftIdx > idx) {
+    shiftIdx--;
   }
-  if (cityIdx2 < cityIdx1) {
-    std::swap(cityIdx1, cityIdx2);
-  }
-  while (cityIdx1 < cityIdx2) {
-    std::swap(cities[cityIdx1], cities[cityIdx2]);
-    ++cityIdx1;
-    --cityIdx2;
-  }
+  cities.insert(cities.begin() + shiftIdx, element);
 }
 
 int SalesmanAnglePosition::size() const
@@ -111,8 +122,9 @@ double SalesmanAnglePosition::calcEnergy() const
   }
   double ret = 0;
   for (std::size_t idx = 0; idx < cities.size(); ++idx) {
-    double val = std::abs((std::numbers::pi - angle(idx)));
-    ret += val;
+    double a = angle(idx);
+    double e = makeEnergyPenality(a);
+    ret += e;
   }
   return ret;
 }
