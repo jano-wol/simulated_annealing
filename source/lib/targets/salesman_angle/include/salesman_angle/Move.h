@@ -10,15 +10,15 @@ namespace sa::targets::salesman_angle
 class SalesmanAngleMove final : public core::IMove
 {
 public:
-  SalesmanAngleMove(std::size_t idx_, std::size_t shiftIdx_, double delta_)
-      : idx(idx_), shiftIdx(shiftIdx_), delta(delta_)
+  SalesmanAngleMove(std::size_t cityIdx1_, std::size_t cityIdx2_, double delta_)
+      : cityIdx1(cityIdx1_), cityIdx2(cityIdx2_), delta(delta_)
   {}
 
   double getDelta() const override;
   int size() const override;
 
-  std::size_t idx;
-  std::size_t shiftIdx;
+  std::size_t cityIdx1;
+  std::size_t cityIdx2;
   double delta;
 };
 }  // namespace sa::targets::salesman_angle
