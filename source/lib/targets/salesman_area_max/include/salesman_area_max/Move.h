@@ -10,8 +10,8 @@ namespace sa::targets::salesman_area_max
 class SalesmanAreaMaxMove final : public core::IMove
 {
 public:
-  SalesmanAreaMaxMove(std::size_t cityIdx1_, std::size_t cityIdx2_, double delta_)
-      : cityIdx1(cityIdx1_), cityIdx2(cityIdx2_), delta(delta_)
+  SalesmanAreaMaxMove(std::size_t cityIdx1_, std::size_t cityIdx2_, double delta_, double signedDelta_)
+      : cityIdx1(cityIdx1_), cityIdx2(cityIdx2_), delta(delta_), signedDelta(signedDelta_)
   {}
 
   double getDelta() const override;
@@ -20,6 +20,7 @@ public:
   std::size_t cityIdx1;
   std::size_t cityIdx2;
   double delta;
+  double signedDelta;
 };
 }  // namespace sa::targets::salesman_area_max
 
