@@ -34,8 +34,10 @@ IMove::CPtr SalesmanAreaMaxPosition::generateMove() const
   }
   const auto& [prevIdx1, nextIdx1] = getNeighbourIdxs(idx1);
   const auto& [prevIdx2, nextIdx2] = getNeighbourIdxs(idx2);
-  double delta = distance(cities[idx1], cities[nextIdx2]) + distance(cities[idx2], cities[prevIdx1]) -
-                 distance(cities[idx1], cities[prevIdx1]) - distance(cities[idx2], cities[nextIdx2]);
+  double newSignedEnergy = signedEnergy + shoelace(cities[idx1], cities[nextIdx2]) +
+                           shoelace(cities[idx2], cities[prevIdx1]) - shoelace(cities[idx1], cities[prevIdx1]) -
+                           shoelace(cities[idx2], cities[nextIdx2]);
+  double delta = -std::abs(newSignedEnergy) - energy;
   return std::make_unique<SalesmanAreaMaxMove>(idx1, idx2, delta);
 }
 
@@ -60,13 +62,13 @@ void SalesmanAreaMaxPosition::makeMove(IMove::CPtr move)
 
 int SalesmanAreaMaxPosition::size() const
 {
-  return sizeof(double) + sizeof(std::vector<std::pair<double, double>>) +
+  return 2 * sizeof(double) + sizeof(std::vector<std::pair<double, double>>) +
          sizeof(std::pair<double, double>) * cities.capacity();
 }
 
 IPosition::CPtr SalesmanAreaMaxPosition::clone() const
 {
-  return std::make_unique<SalesmanAreaMaxPosition>(energy, cities);
+  return std::make_unique<SalesmanAreaMaxPosition>(signedEnergy, cities);
 }
 
 std::pair<std::size_t, std::size_t> SalesmanAreaMaxPosition::getNeighbourIdxs(std::size_t idx) const
@@ -76,25 +78,24 @@ std::pair<std::size_t, std::size_t> SalesmanAreaMaxPosition::getNeighbourIdxs(st
   return {prevIdx, nextIdx};
 }
 
-double SalesmanAreaMaxPosition::distance(const std::pair<double, double>& city1,
+double SalesmanAreaMaxPosition::shoelace(const std::pair<double, double>& city1,
                                          const std::pair<double, double>& city2) const
 {
   const auto& [x1, y1] = city1;
   const auto& [x2, y2] = city2;
-  double ret = ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-  return std::sqrt(ret);
+  return (x1 * y2 - x2 * y1) / 2.0;
 }
 
-double SalesmanAreaMaxPosition::calcEnergy() const
+double SalesmanAreaMaxPosition::calcSignedEnergy() const
 {
-  if (cities.empty() || cities.size() == 1) {
+  if (cities.size() <= 2) {
     return 0;
   }
   double ret = 0;
   for (std::size_t idx = 0; idx < cities.size(); ++idx) {
     const auto& [prevIdx, nextIdx] = getNeighbourIdxs(idx);
-    ret += distance(cities[idx], cities[nextIdx]);
-  };
+    ret += shoelace(cities[idx], cities[nextIdx]);
+  }
   return ret;
 }
 
