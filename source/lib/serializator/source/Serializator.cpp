@@ -4,13 +4,11 @@
 
 #include <salesman/Position.h>
 #include <salesman_angle/Position.h>
-#include <salesman_area_max/Position.h>
 
 using namespace sa::core;
 using namespace sa::serializator;
 using namespace sa::targets::salesman;
 using namespace sa::targets::salesman_angle;
-using namespace sa::targets::salesman_area_max;
 
 std::string Serializator::getTypeId(const core::IPosition::CPtr& iPosition)
 {
@@ -18,8 +16,6 @@ std::string Serializator::getTypeId(const core::IPosition::CPtr& iPosition)
     return SalesmanPosition::getTypeId();
   } else if (dynamic_cast<SalesmanAnglePosition*>(iPosition.get())) {
     return SalesmanAnglePosition::getTypeId();
-  } else if (dynamic_cast<SalesmanAreaMaxPosition*>(iPosition.get())) {
-    return SalesmanAreaMaxPosition::getTypeId();
   } else {
     return "";
   }
@@ -74,7 +70,5 @@ static bool initFactory = [] {
   Serializator::registerToStringType(SalesmanPosition::getTypeId(), SalesmanPosition::toString);
   Serializator::registerFromStringType(SalesmanAnglePosition::getTypeId(), SalesmanAnglePosition::fromString);
   Serializator::registerToStringType(SalesmanAnglePosition::getTypeId(), SalesmanAnglePosition::toString);
-  Serializator::registerFromStringType(SalesmanAreaMaxPosition::getTypeId(), SalesmanAreaMaxPosition::fromString);
-  Serializator::registerToStringType(SalesmanAreaMaxPosition::getTypeId(), SalesmanAreaMaxPosition::toString);
   return true;
 }();
