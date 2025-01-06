@@ -12,10 +12,12 @@
 class SAOutputUI
 {
 public:
-  void handleButtons(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest);
-  void handleNavigator(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest);
+  void handleButtons(float plotSize);
+  void handleNavigator(float plotSize);
   void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
   void handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest, const sa::sa::SA::CPtr& sa);
+  void handleAllTimeBestButton(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest,
+                               const sa::sa::SA::CPtr& sa, bool isSimulating);
   void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition,
                       const std::unique_ptr<sa::core::IPosition>& allTimeBest, const sa::sa::SA::CPtr& sa,
                       bool isSimulating);
