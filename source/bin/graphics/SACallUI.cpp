@@ -2,6 +2,7 @@
 #include "ThreadPoolManager.h"
 
 #include <imgui/imgui.h>
+#include <implot/implot.h>
 
 #include <io/Io.h>
 
@@ -19,7 +20,6 @@ void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float 
     float fraction = progresses[i].load();
     totalProgress += fraction;
     if (i == 0) {
-      ImGui::SameLine();
       firstBarPos = ImGui::GetCursorScreenPos();
     } else {
       ImGui::SameLine(0.0f, 0.0f);
@@ -54,6 +54,13 @@ SA::CPtr simulate(const IPosition::CPtr& currPosition, const std::vector<SAFacto
 
 void SACallUI::saCallUpdate(bool isAnnealing)
 {
+  ImGui::NewLine();
+  ImVec2 windowSize = ImGui::GetContentRegionAvail();
+  float graphicsRatio = 0.7f;
+  float graphicsWidth = windowSize.x * graphicsRatio;
+  float plotRatio = 0.45f;
+  float width = graphicsWidth * plotRatio;
+
   ImVec2 cursorPos = ImGui::GetCursorScreenPos();
   ImVec2 availSize = ImGui::GetContentRegionAvail();
   float buttonWidth = availSize.x * 0.1f;
@@ -79,7 +86,11 @@ void SACallUI::saCallUpdate(bool isAnnealing)
     }
   }
   if (isAnnealing) {
-    updateProgressBar(progresses, buttonWidth * 4, buttonHeight);
+    ImGui::SameLine();
+    width -= ImGui::GetCursorScreenPos().x;
+    ImPlotStyle& style = ImPlot::GetStyle();
+    width += (2 * style.PlotBorderSize + style.PlotPadding.x);
+    updateProgressBar(progresses, width, buttonHeight);
   }
 }
 
