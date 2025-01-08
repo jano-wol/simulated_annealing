@@ -9,21 +9,19 @@ using namespace sa::core;
 using namespace sa::io;
 using namespace sa::sa;
 
-void updateProgressBar(double progress, float width, float height)
+void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float width, float height)
 {
   ImGui::SameLine();
-  ImGui::ProgressBar(progress, ImVec2(width, height), "");
-  ImVec2 p = ImGui::GetItemRectMin();
-  ImVec2 size = ImGui::GetItemRectSize();
-  double percentage = progress * 100.0f;
-  std::stringstream ss;
-  ss.precision(1);
-  ss << std::fixed << percentage << "%";
-  std::string progressText = ss.str();
-  ImDrawList* draw_list = ImGui::GetWindowDrawList();
-  ImVec2 textSize = ImGui::CalcTextSize(progressText.c_str());
-  ImVec2 textPos(p.x + (size.x - textSize.x) * 0.5f, p.y + (size.y - textSize.y) * 0.5f);
-  draw_list->AddText(textPos, IM_COL32(255, 255, 255, 255), progressText.c_str());
+  float totalFraction = 0;
+  for (std::size_t barIdx = 0; barIdx < progresses.size(); ++barIdx) {
+    float fraction = progresses[barIdx].load();
+    totalFraction += fraction;
+    ImGui::ProgressBar(fraction, ImVec2(width / progresses.size(), height), "");
+    if (barIdx != progresses.size() - 1) {
+      float gap = 2.0f;
+      ImGui::SameLine(0.0f, gap);
+    }
+  }
 }
 
 SA::CPtr simulate(const IPosition::CPtr& currPosition, const std::vector<SAFactory::CPtr>& factories,
@@ -62,7 +60,7 @@ void SACallUI::saCallUpdate(bool isAnnealing)
     }
   }
   if (isAnnealing) {
-    updateProgressBar(progresses[0].load(), buttonWidth * 2, buttonHeight);
+    updateProgressBar(progresses, buttonWidth * 2, buttonHeight);
   }
 }
 
@@ -83,8 +81,10 @@ void SACallUI::postProcessResults(const IPosition::CPtr& allTimeBest, bool track
       std::launch::async, [&allTimeBest, trackBest, allTimeBestFile, results = std::move(results_)]() mutable {
         double bestEnergy = results[0]->getBest()->getEnergy();
         std::size_t bestIdx = 0;
+        std::cout << bestEnergy << "\n";
         for (std::size_t i = 1; i < results.size(); ++i) {
           double currEnergy = results[i]->getBest()->getEnergy();
+          std::cout << currEnergy << "\n";
           if (currEnergy < bestEnergy) {
             bestIdx = i;
             bestEnergy = currEnergy;
