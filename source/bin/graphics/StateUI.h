@@ -21,7 +21,6 @@
 class StateUI
 {
 public:
-  StateUI() : pool(1) {}
   void handleInfo();
   void handleMenu();
   void handleSAFactory();
@@ -35,7 +34,6 @@ public:
   const sa::core::IPosition::CPtr& getPlotPosition() const;
   bool currentPositionPlotted() const;
 
-  BS::thread_pool<0> pool;
   bool isParsing = false;
   bool isSaving = false;
   bool isInformating = false;

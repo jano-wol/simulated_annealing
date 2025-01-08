@@ -161,7 +161,7 @@ void StateUI::handleSACall()
       if (mtx.try_lock()) {
         saFactoryUI.setRandomSeed();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, saFactory, pool);
+        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, saFactory);
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;

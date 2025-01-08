@@ -1,4 +1,5 @@
 #include "SACallUI.h"
+#include "ThreadPoolManager.h"
 
 #include <imgui/imgui.h>
 
@@ -57,9 +58,9 @@ void SACallUI::saCallUpdate(bool isSimulating)
 }
 
 void SACallUI::startSimulating(const IPosition::CPtr& currPosition, const IPosition::CPtr& allTimeBest, bool trackBest,
-                               const std::string& allTimeBestFile, const SAFactory::CPtr& saFactory,
-                               BS::thread_pool<0>& pool)
+                               const std::string& allTimeBestFile, const SAFactory::CPtr& saFactory)
 {
+  auto& pool = ThreadPoolManager::getPool();
   simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &saFactory]() {
     auto sa = saFactory->create();
     IPosition::CPtr bestPosition = nullptr;
