@@ -73,15 +73,23 @@ void StateUI::updateInformating(const std::string& message)
 void StateUI::updateSimulating()
 {
   if (isSimulating) {
-    if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      auto [sa, best] = saCallUI.simulatingFuture.get();
+    if (saCallUI.simulatingFutures.ready_count() == saCallUI.simulatingFutures.size()) {
+      auto results = saCallUI.simulatingFutures.get();
+      saCallUI.postProcessResults(allTimeBest, menuUI.trackBest, menuUI.bestFileName, std::move(results));
+      isSimulating = false;
+      isPostProcessing = true;
+    }
+  }
+  if (isPostProcessing) {
+    if (saCallUI.resultFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+      auto [sa, best] = saCallUI.resultFuture.get();
       if (best) {
         allTimeBest = std::move(best);
       }
-      isSimulating = false;
       saOutputUI.init(std::move(sa->monitor));
       saCallUI.progress = 0;
       saCallUI.stop.store(false);
+      isPostProcessing = false;
       mtx.unlock();
     }
   }
@@ -161,7 +169,7 @@ void StateUI::handleSACall()
       if (mtx.try_lock()) {
         saFactoryUI.setRandomSeed();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, saFactory);
+        saCallUI.startSimulating(currentPosition, saFactory);
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;

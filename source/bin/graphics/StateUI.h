@@ -36,6 +36,7 @@ public:
   bool isSaving = false;
   bool isInformating = false;
   bool isSimulating = false;
+  bool isPostProcessing = false;
   bool isLoadingAllTime = false;
   InfoUI infoUI;
   MenuUI menuUI;

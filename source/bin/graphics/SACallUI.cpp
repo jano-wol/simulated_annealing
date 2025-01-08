@@ -26,6 +26,14 @@ void updateProgressBar(double progress, float width, float height)
   draw_list->AddText(textPos, IM_COL32(255, 255, 255, 255), progressText.c_str());
 }
 
+SA::CPtr simulate(const IPosition::CPtr& currPosition, const SAFactory::CPtr& saFactory, const std::uint64_t /*n*/)
+{
+  auto sa = saFactory->create();
+  IPosition::CPtr bestPosition = nullptr;
+  sa->anneal(currPosition);
+  return SA::CPtr{std::move(sa)};
+}
+
 void SACallUI::saCallUpdate(bool isSimulating)
 {
   ImVec2 cursorPos = ImGui::GetCursorScreenPos();
@@ -57,21 +65,39 @@ void SACallUI::saCallUpdate(bool isSimulating)
   }
 }
 
-void SACallUI::startSimulating(const IPosition::CPtr& currPosition, const IPosition::CPtr& allTimeBest, bool trackBest,
-                               const std::string& allTimeBestFile, const SAFactory::CPtr& saFactory)
+void SACallUI::startSimulating(const IPosition::CPtr& currPosition, const SAFactory::CPtr& saFactory)
 {
   auto& pool = ThreadPoolManager::getPool();
-  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &saFactory]() {
-    auto sa = saFactory->create();
-    IPosition::CPtr bestPosition = nullptr;
-    sa->anneal(currPosition);
-    if (trackBest) {
-      const auto& currBestPosition = sa->getBest();
-      if ((!allTimeBest) || (currBestPosition->getEnergy() + sa->monitor->catchPrecision < allTimeBest->getEnergy())) {
-        Io::savePosition(allTimeBestFile, currBestPosition);
-        bestPosition = currBestPosition->clone();
-      }
-    }
-    return std::pair<SA::CPtr, IPosition::CPtr>{std::move(sa), std::move(bestPosition)};
-  });
+  int allTasks = 40;
+  int numberOfThreads = 8;
+  pool.reset(numberOfThreads);
+  simulatingFutures = pool.submit_sequence(
+      0, 1, [&currPosition, &saFactory](std::uint64_t n) { return simulate(currPosition, saFactory, n); });
+}
+
+void SACallUI::postProcessResults(const IPosition::CPtr& allTimeBest, bool trackBest,
+                                  const std::string& allTimeBestFile, std::vector<SA::CPtr> results_)
+{
+  resultFuture = std::async(
+      std::launch::async, [&allTimeBest, trackBest, allTimeBestFile, results = std::move(results_)]() mutable {
+        double bestEnergy = results[0]->getBest()->getEnergy();
+        std::size_t bestIdx = 0;
+        for (std::size_t i = 1; i < results.size(); ++i) {
+          double currEnergy = results[i]->getBest()->getEnergy();
+          if (currEnergy < bestEnergy) {
+            bestIdx = i;
+            bestEnergy = currEnergy;
+          }
+        }
+        IPosition::CPtr bestPosition = nullptr;
+        if (trackBest) {
+          const auto& currBestPosition = results[bestIdx]->getBest();
+          if ((!allTimeBest) ||
+              (currBestPosition->getEnergy() + results[bestIdx]->monitor->catchPrecision < allTimeBest->getEnergy())) {
+            Io::savePosition(allTimeBestFile, currBestPosition);
+            bestPosition = currBestPosition->clone();
+          }
+        }
+        return std::pair<SA::CPtr, IPosition::CPtr>{std::move(results[bestIdx]), std::move(bestPosition)};
+      });
 }
