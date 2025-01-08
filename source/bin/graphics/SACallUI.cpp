@@ -79,7 +79,7 @@ void SACallUI::saCallUpdate(bool isAnnealing)
     }
   }
   if (isAnnealing) {
-    updateProgressBar(progresses, buttonWidth * 2, buttonHeight);
+    updateProgressBar(progresses, buttonWidth * 4, buttonHeight);
   }
 }
 

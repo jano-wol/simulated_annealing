@@ -35,7 +35,7 @@ public:
 
     int monitorIndex = 0;
     int localEnvLength = 1000;
-    int steps = 20;
+    int steps = 100;
     int memoryLimitInGb = 2;
 
     int randomIndex = 0;
