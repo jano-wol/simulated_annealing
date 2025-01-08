@@ -43,7 +43,7 @@ public:
 
     int repeats = 1;
     int threads = 1;
-    int threadsMaximum = std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() - 1 : 1;
+    int threadsMaximum = std::thread::hardware_concurrency() > 1 ? std::thread::hardware_concurrency() - 1 : 1;
 
     sa::policies::IAcceptance::CPtr getAcceptance();
     sa::policies::ICooling::CPtr getCooling();
