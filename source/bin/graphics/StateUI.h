@@ -31,6 +31,7 @@ public:
   void updateAllTimeBestLoading();
   const sa::core::IPosition::CPtr& getPlotPosition() const;
   bool currentPositionPlotted() const;
+  bool isAnnealing() const;
 
   bool isParsing = false;
   bool isSaving = false;

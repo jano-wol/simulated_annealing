@@ -11,7 +11,7 @@
 class SACallUI
 {
 public:
-  void saCallUpdate(bool isSimulating);
+  void saCallUpdate(bool isAnnealing);
   void startSimulating(const sa::core::IPosition::CPtr& currPosition, const sa::sa::SAFactory::CPtr& saFactory);
   void postProcessResults(const sa::core::IPosition::CPtr& allTimeBest, bool trackBest,
                           const std::string& allTimeBestFile, std::vector<sa::sa::SA::CPtr> results);

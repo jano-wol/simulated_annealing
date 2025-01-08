@@ -9,7 +9,7 @@ using namespace sa::sa;
 
 const IPosition::CPtr& StateUI::getPlotPosition() const
 {
-  if (saOutputUI.monitor && !isSimulating) {
+  if (saOutputUI.monitor && !isAnnealing()) {
     int snapshotIdx = saOutputUI.getSnapshotIdx();
     if (snapshotIdx == -1) {
       return saOutputUI.monitor->bestPosition;
@@ -23,11 +23,13 @@ const IPosition::CPtr& StateUI::getPlotPosition() const
 
 bool StateUI::currentPositionPlotted() const
 {
-  if (currentPosition && (!saOutputUI.monitor || (isSimulating) || (saOutputUI.scrollIdx == 0))) {
+  if (currentPosition && (!saOutputUI.monitor || isAnnealing() || (saOutputUI.scrollIdx == 0))) {
     return true;
   }
   return false;
 }
+
+bool StateUI::isAnnealing() const { return isSimulating || isPostProcessing; }
 
 void StateUI::updateParsing()
 {
@@ -160,7 +162,7 @@ void StateUI::handleSAFactory()
 
 void StateUI::handleSACall()
 {
-  saCallUI.saCallUpdate(isSimulating);
+  saCallUI.saCallUpdate(isAnnealing());
   if (saCallUI.saCalled) {
     if (currentPosition) {
       if (currentPositionPlotted() == false) {
@@ -187,7 +189,7 @@ void StateUI::handleSAOutput()
 {
   if (currentPosition) {
     const auto& plotPosition = getPlotPosition();
-    saOutputUI.saOutputUpdate(plotPosition, allTimeBest, isSimulating);
+    saOutputUI.saOutputUpdate(plotPosition, allTimeBest, isAnnealing());
     if (saOutputUI.loadAllTimeBest) {
       if (mtx.try_lock()) {
         isLoadingAllTime = true;

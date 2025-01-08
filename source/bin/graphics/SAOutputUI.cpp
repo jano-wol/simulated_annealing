@@ -178,9 +178,9 @@ void SAOutputUI::init(Monitor::CPtr monitor_)
   sliderValue = progresses[scrollIdx];
 }
 
-void SAOutputUI::handleAllTimeBestButton(float plotSize, const IPosition::CPtr& allTimeBest, bool isSimulating)
+void SAOutputUI::handleAllTimeBestButton(float plotSize, const IPosition::CPtr& allTimeBest, bool isAnnealing)
 {
-  if (allTimeBest && !isSimulating) {
+  if (allTimeBest && !isAnnealing) {
     float totalButtonsWidth = getTotalButtonsWidth();
     float centerOffset = getCenterOffset(plotSize, totalButtonsWidth);
     ImGui::SetCursorPosX(centerOffset);
@@ -308,9 +308,9 @@ void SAOutputUI::handleResults(const IPosition::CPtr& allTimeBest)
 }
 
 void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const IPosition::CPtr& allTimeBest,
-                                bool isSimulating)
+                                bool isAnnealing)
 {
-  bool simulated = monitor && !isSimulating;
+  bool simulated = monitor && !isAnnealing;
   loadAllTimeBest = false;
   ImVec2 windowSize = ImGui::GetContentRegionAvail();
   float graphicsRatio = 0.7f;
@@ -324,7 +324,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const IPosi
   if (simulated) {
     handleNavigator(plotSize);
   }
-  handleAllTimeBestButton(plotSize, allTimeBest, isSimulating);
+  handleAllTimeBestButton(plotSize, allTimeBest, isAnnealing);
   ImGui::EndChild();
   ImGui::SameLine();
   auto style = ImGui::GetStyle();

@@ -17,9 +17,9 @@ public:
   void handleNavigator(float plotSize);
   void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
   void handleResults(const sa::core::IPosition::CPtr& allTimeBest);
-  void handleAllTimeBestButton(float plotSize, const sa::core::IPosition::CPtr& allTimeBest, bool isSimulating);
+  void handleAllTimeBestButton(float plotSize, const sa::core::IPosition::CPtr& allTimeBest, bool isAnnealing);
   void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition, const sa::core::IPosition::CPtr& allTimeBest,
-                      bool isSimulating);
+                      bool isAnnealing);
   int getSnapshotIdx() const;
   void startLoadingAllTimeBest(const sa::core::IPosition::CPtr& allTimeBest);
 
