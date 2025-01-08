@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <bs/BS_thread_pool.hpp>
-
 #include <core/IPosition.h>
 #include <sa/SAFactory.h>
 
