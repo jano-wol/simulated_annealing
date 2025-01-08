@@ -164,6 +164,9 @@ void StateUI::handleSACall()
       if (mtx.try_lock()) {
         isSimulating = true;
         auto& pool = ThreadPoolManager::getPool();
+        if (saFactoryUI.loadedParams.threads <= 0) {
+          saFactoryUI.loadedParams.threads = 1;
+        }
         pool.reset(saFactoryUI.loadedParams.threads);
         saCallUI.progresses.clear();
         int allTasks = saFactoryUI.loadedParams.threads * saFactoryUI.loadedParams.repeats;
