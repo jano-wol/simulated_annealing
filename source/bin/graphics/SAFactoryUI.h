@@ -1,6 +1,7 @@
 #ifndef SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_
 #define SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_
 
+#include <algorithm>
 #include <atomic>
 #include <deque>
 #include <thread>
@@ -42,7 +43,7 @@ public:
 
     int repeats = 1;
     int threads = 1;
-    int threadsMaximum = std::thread::hardware_concurrency() - 1;
+    int threadsMaximum = std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() - 1 : 1;
 
     sa::policies::IAcceptance::CPtr getAcceptance();
     sa::policies::ICooling::CPtr getCooling();
