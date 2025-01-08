@@ -29,6 +29,7 @@ public:
   void updateInformating(const std::string& message);
   void updateSimulating();
   void updateAllTimeBestLoading();
+  std::vector<sa::sa::SAFactory::CPtr> prepareSimulation();
   const sa::core::IPosition::CPtr& getPlotPosition() const;
   bool currentPositionPlotted() const;
   bool isAnnealing() const;

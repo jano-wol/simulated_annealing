@@ -32,6 +32,22 @@ bool StateUI::currentPositionPlotted() const
 
 bool StateUI::isAnnealing() const { return isSimulating || isPostProcessing; }
 
+std::vector<sa::sa::SAFactory::CPtr> StateUI::prepareSimulation()
+{
+  auto& pool = ThreadPoolManager::getPool();
+  if (saFactoryUI.loadedParams.threads <= 0) {
+    saFactoryUI.loadedParams.threads = 1;
+  }
+  pool.reset(saFactoryUI.loadedParams.threads);
+  saCallUI.progresses.clear();
+  int allTasks = saFactoryUI.loadedParams.threads * saFactoryUI.loadedParams.repeats;
+  for (int i = 0; i < allTasks; ++i) {
+    saCallUI.progresses.emplace_back(0);
+  }
+  saFactoryUI.setRandomSeed();
+  return saFactoryUI.loadedParams.getFactories(saCallUI.progresses, saCallUI.stop);
+}
+
 void StateUI::updateParsing()
 {
   if (isParsing) {
@@ -163,18 +179,7 @@ void StateUI::handleSACall()
       }
       if (mtx.try_lock()) {
         isSimulating = true;
-        auto& pool = ThreadPoolManager::getPool();
-        if (saFactoryUI.loadedParams.threads <= 0) {
-          saFactoryUI.loadedParams.threads = 1;
-        }
-        pool.reset(saFactoryUI.loadedParams.threads);
-        saCallUI.progresses.clear();
-        int allTasks = saFactoryUI.loadedParams.threads * saFactoryUI.loadedParams.repeats;
-        for (int i = 0; i < allTasks; ++i) {
-          saCallUI.progresses.emplace_back(0);
-        }
-        saFactoryUI.setRandomSeed();
-        auto factories = saFactoryUI.loadedParams.getFactories(saCallUI.progresses, saCallUI.stop);
+        auto factories = prepareSimulation();
         saCallUI.startSimulating(currentPosition, std::move(factories));
         saCallUI.saCalled = false;
       } else {
