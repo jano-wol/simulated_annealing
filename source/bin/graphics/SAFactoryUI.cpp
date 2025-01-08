@@ -9,6 +9,9 @@
 #include <core/Random.h>
 
 using namespace sa::core;
+using namespace sa::monitor;
+using namespace sa::policies;
+using namespace sa::sa;
 
 bool almostEqual(double a, double b, double tolerance = 1e-6) { return std::abs(a - b) <= tolerance; }
 
@@ -99,75 +102,75 @@ bool SAFactoryUI::Params::operator==(const SAFactoryUI::Params& other) const
 
 bool SAFactoryUI::Params::operator!=(const SAFactoryUI::Params& other) const { return !(*this == other); }
 
-sa::policies::IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
+IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
 {
   if (acceptanceIndex == 0) {
-    return std::make_unique<sa::policies::Metropolis>(normalizator);
+    return std::make_unique<Metropolis>(normalizator);
   }
   if (acceptanceIndex == 1) {
-    return std::make_unique<sa::policies::Greedy>();
+    return std::make_unique<Greedy>();
   }
   return nullptr;
 }
 
-sa::policies::ICooling::CPtr SAFactoryUI::Params::getCooling()
+ICooling::CPtr SAFactoryUI::Params::getCooling()
 {
   if (coolingIndex == 0) {
-    return std::make_unique<sa::policies::Linear>(t0);
+    return std::make_unique<Linear>(t0);
   }
   if (coolingIndex == 1) {
-    return std::make_unique<sa::policies::Quadratic>(t0);
+    return std::make_unique<Quadratic>(t0);
   }
   if (coolingIndex == 2) {
-    return std::make_unique<sa::policies::Cosine>(t0);
+    return std::make_unique<Cosine>(t0);
   }
   if (coolingIndex == 3) {
-    return std::make_unique<sa::policies::Exponential>(c, t0);
+    return std::make_unique<Exponential>(c, t0);
   }
   if (coolingIndex == 4) {
-    return std::make_unique<sa::policies::Logarithmic>(c, t0);
+    return std::make_unique<Logarithmic>(c, t0);
   }
   return nullptr;
 }
 
-sa::policies::IMoveSelector::CPtr SAFactoryUI::Params::getMoveSelector()
+IMoveSelector::CPtr SAFactoryUI::Params::getMoveSelector()
 {
   if (moveSelectorIndex == 0) {
-    return std::make_unique<sa::policies::KBest>(k);
+    return std::make_unique<KBest>(k);
   }
   return nullptr;
 }
 
-sa::policies::IResource::CPtr SAFactoryUI::Params::getResource()
+IResource::CPtr SAFactoryUI::Params::getResource()
 {
   if (resourceIndex == 0) {
-    return std::make_unique<sa::policies::Time>(durationInSeconds);
+    return std::make_unique<Time>(durationInSeconds);
   }
   if (resourceIndex == 1) {
-    return std::make_unique<sa::policies::Iteration>(iteration);
+    return std::make_unique<Iteration>(iteration);
   }
   return nullptr;
 }
 
-sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& progress)
+Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& progress)
 {
   auto callback = [&progress](double newProgress) { progress.store(newProgress); };
   if (monitorIndex == 0) {
-    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, 0.9, 1e-6, localEnvLength, steps,
-                                                  memoryLimitInGb * 1000000000UL, std::move(callback));
+    return std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1e-6, localEnvLength, steps,
+                                     memoryLimitInGb * 1000000000UL, std::move(callback));
   }
   if (monitorIndex == 1) {
-    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, 0.9, 1e-6, localEnvLength, 20,
-                                                  memoryLimitInGb * 1000000000UL, std::move(callback));
+    return std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1e-6, localEnvLength, 20, memoryLimitInGb * 1000000000UL,
+                                     std::move(callback));
   }
   return nullptr;
 }
 
-sa::sa::SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress, std::atomic<bool>& stop)
+SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress, std::atomic<bool>& stop)
 {
   auto callback = [&stop]() { return stop.load(); };
-  return std::make_unique<sa::sa::SAFactory>(getResource(), getAcceptance(), getCooling(), getMoveSelector(),
-                                             getMonitor(progress), std::move(callback));
+  return std::make_unique<SAFactory>(getResource(), getAcceptance(), getCooling(), getMoveSelector(),
+                                     getMonitor(progress), std::move(callback));
 }
 
 void SAFactoryUI::saFactoryUpdate()

@@ -193,12 +193,11 @@ void MenuUI::menuUpdate()
 void MenuUI::startParsing()
 {
   parsingFuture = std::async(std::launch::async, [this]() {
-    sa::core::IPosition::CPtr best;
+    IPosition::CPtr best;
     if (trackBest) {
       best = Io::getPosition(bestFileName);
     }
-    return std::pair<sa::core::IPosition::CPtr, sa::core::IPosition::CPtr>{std::move(best),
-                                                                           Io::getPosition(loadedPath)};
+    return std::pair<IPosition::CPtr, IPosition::CPtr>{std::move(best), Io::getPosition(loadedPath)};
   });
 }
 

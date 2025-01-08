@@ -49,8 +49,7 @@ std::string toString(std::optional<double> val)
   }
 }
 
-void printGlobalMetrics(const GlobalMetrics& globalMetrics, const sa::core::IPosition::CPtr& allTimeBest,
-                        std::stringstream& ss)
+void printGlobalMetrics(const GlobalMetrics& globalMetrics, const IPosition::CPtr& allTimeBest, std::stringstream& ss)
 {
   ImGui::TextUnformatted("---- Global metrics ----");
   ss.str("");
@@ -294,7 +293,7 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
   ImPlot::EndPlot();
 }
 
-void SAOutputUI::handleResults(const sa::core::IPosition::CPtr& allTimeBest)
+void SAOutputUI::handleResults(const IPosition::CPtr& allTimeBest)
 {
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
@@ -307,7 +306,7 @@ void SAOutputUI::handleResults(const sa::core::IPosition::CPtr& allTimeBest)
   printGlobalMetrics(monitor->globalMetrics, allTimeBest, ss);
 }
 
-void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const sa::core::IPosition::CPtr& allTimeBest,
+void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const IPosition::CPtr& allTimeBest,
                                 bool isSimulating)
 {
   bool simulated = monitor && !isSimulating;
