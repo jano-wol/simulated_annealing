@@ -49,7 +49,7 @@ std::string toString(std::optional<double> val)
   }
 }
 
-void printGlobalMetrics(const GlobalMetrics& globalMetrics, const std::unique_ptr<sa::core::IPosition>& allTimeBest,
+void printGlobalMetrics(const GlobalMetrics& globalMetrics, const sa::core::IPosition::CPtr& allTimeBest,
                         std::stringstream& ss)
 {
   ImGui::TextUnformatted("---- Global metrics ----");
@@ -178,8 +178,7 @@ void SAOutputUI::init()
   sliderValue = progresses[scrollIdx];
 }
 
-void SAOutputUI::handleAllTimeBestButton(float plotSize, const std::unique_ptr<IPosition>& allTimeBest,
-                                         bool isSimulating)
+void SAOutputUI::handleAllTimeBestButton(float plotSize, const IPosition::CPtr& allTimeBest, bool isSimulating)
 {
   if (allTimeBest && !isSimulating) {
     float totalButtonsWidth = getTotalButtonsWidth();
@@ -295,7 +294,7 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
   ImPlot::EndPlot();
 }
 
-void SAOutputUI::handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest)
+void SAOutputUI::handleResults(const sa::core::IPosition::CPtr& allTimeBest)
 {
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
@@ -308,8 +307,8 @@ void SAOutputUI::handleResults(const std::unique_ptr<sa::core::IPosition>& allTi
   printGlobalMetrics(monitor->globalMetrics, allTimeBest, ss);
 }
 
-void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
-                                const std::unique_ptr<sa::core::IPosition>& allTimeBest, bool isSimulating)
+void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition, const sa::core::IPosition::CPtr& allTimeBest,
+                                bool isSimulating)
 {
   bool simulated = monitor && !isSimulating;
   loadAllTimeBest = false;

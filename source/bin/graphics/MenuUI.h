@@ -42,7 +42,7 @@ public:
   std::filesystem::path displayPath;
   char saveFileName[256];
   char bestFileName[256];
-  std::future<std::pair<std::unique_ptr<sa::core::IPosition>, std::unique_ptr<sa::core::IPosition>>> parsingFuture;
+  std::future<std::pair<sa::core::IPosition::CPtr, sa::core::IPosition::CPtr>> parsingFuture;
   std::future<bool> savingFuture;
   bool trackBestCandidate = true;
   bool trackBest = true;

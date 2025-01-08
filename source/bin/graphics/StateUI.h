@@ -47,8 +47,8 @@ public:
   SACallUI saCallUI;
   SAOutputUI saOutputUI;
   sa::sa::SAFactory::CPtr saFactory = nullptr;
-  std::unique_ptr<sa::core::IPosition> currentPosition = nullptr;
-  std::unique_ptr<sa::core::IPosition> allTimeBest = nullptr;
+  sa::core::IPosition::CPtr currentPosition = nullptr;
+  sa::core::IPosition::CPtr allTimeBest = nullptr;
   std::mutex mtx;
 };
 

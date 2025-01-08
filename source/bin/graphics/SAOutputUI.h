@@ -15,11 +15,10 @@ public:
   void handleButtons(float plotSize);
   void handleNavigator(float plotSize);
   void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
-  void handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest);
-  void handleAllTimeBestButton(float plotSize, const std::unique_ptr<sa::core::IPosition>& allTimeBest,
-                               bool isSimulating);
-  void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition,
-                      const std::unique_ptr<sa::core::IPosition>& allTimeBest, bool isSimulating);
+  void handleResults(const sa::core::IPosition::CPtr& allTimeBest);
+  void handleAllTimeBestButton(float plotSize, const sa::core::IPosition::CPtr& allTimeBest, bool isSimulating);
+  void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition, const sa::core::IPosition::CPtr& allTimeBest,
+                      bool isSimulating);
   void init();
   int getSnapshotIdx() const;
   void startLoadingAllTimeBest(const sa::core::IPosition::CPtr& allTimeBest);
@@ -30,7 +29,7 @@ public:
   bool isSnapshotBest = false;
   bool loadAllTimeBest = false;
   sa::monitor::Monitor::CPtr monitor = nullptr;
-  std::future<std::unique_ptr<sa::core::IPosition>> loadAllTimeBestFuture;
+  std::future<sa::core::IPosition::CPtr> loadAllTimeBestFuture;
   float sliderValue;
   std::vector<double> progresses;
   const ImVec4 disabledColor = {0.3f, 0.3f, 0.3f, 1.0f};
