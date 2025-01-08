@@ -80,15 +80,15 @@ void printGlobalMetrics(const GlobalMetrics& globalMetrics, const std::unique_pt
   ss.str("");
 }
 
-void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& ss)
+void printSnapshotMetrics(const Monitor::CPtr& monitor, int snapshotIdx, std::stringstream& ss)
 {
-  const auto& snapshot = sa->monitor->snapshots[snapshotIdx];
+  const auto& snapshot = monitor->snapshots[snapshotIdx];
   const auto& snapshotMetrics = snapshot.globalMetrics;
   int iterations = 0;
   int acceptances = 0;
   int upEnergyChanges = 0;
   if (0 < snapshotIdx) {
-    const auto& snapshotPrev = sa->monitor->snapshots[snapshotIdx - 1];
+    const auto& snapshotPrev = monitor->snapshots[snapshotIdx - 1];
     iterations = snapshot.globalMetrics.idx - snapshotPrev.globalMetrics.idx;
     acceptances = snapshot.globalMetrics.acceptance - snapshotPrev.globalMetrics.acceptance;
     upEnergyChanges = snapshot.globalMetrics.upEnergyChanges - snapshotPrev.globalMetrics.upEnergyChanges;
@@ -101,10 +101,10 @@ void printSnapshotMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream
   ss.str("");
 }
 
-void printLocalMetrics(const SA::CPtr& sa, int snapshotIdx, std::stringstream& ss)
+void printLocalMetrics(const Monitor::CPtr& monitor, int snapshotIdx, std::stringstream& ss)
 {
-  const auto& candidate = sa->monitor->snapshots[snapshotIdx].candidate;
-  const auto& acceptance = sa->monitor->snapshots[snapshotIdx].acceptance;
+  const auto& candidate = monitor->snapshots[snapshotIdx].candidate;
+  const auto& acceptance = monitor->snapshots[snapshotIdx].acceptance;
   ImGui::TextUnformatted("---- Candidate and Acceptance local metrics ----");
   ss.str("");
   ss << std::setprecision(4) << std::fixed;
@@ -137,12 +137,12 @@ int SAOutputUI::getSnapshotIdx() const
   }
 }
 
-void SAOutputUI::init(const SA::CPtr& sa)
+void SAOutputUI::init()
 {
-  bestValue = sa->monitor->snapshots[0].position->getEnergy();
+  bestValue = monitor->snapshots[0].position->getEnergy();
   bestScrollIdx = 0;
-  for (int idx = 1; idx < int(sa->monitor->snapshots.size()); ++idx) {
-    auto currValue = sa->monitor->snapshots[idx].position->getEnergy();
+  for (int idx = 1; idx < int(monitor->snapshots.size()); ++idx) {
+    auto currValue = monitor->snapshots[idx].position->getEnergy();
     if (currValue < bestValue) {
       bestValue = currValue;
       bestScrollIdx = idx;
@@ -151,26 +151,26 @@ void SAOutputUI::init(const SA::CPtr& sa)
 
   isSnapshotBest = true;
   progresses.clear();
-  progresses.reserve(sa->monitor->snapshots.size() + 1);
-  if (sa->monitor->bestPosition && sa->monitor->bestPosition->getEnergy() < bestValue) {
+  progresses.reserve(monitor->snapshots.size() + 1);
+  if (monitor->bestPosition && monitor->bestPosition->getEnergy() < bestValue) {
     isSnapshotBest = false;
-    bestValue = sa->monitor->bestPosition->getEnergy();
-    double bestProgress = sa->monitor->globalMetrics.bestProgress;
+    bestValue = monitor->bestPosition->getEnergy();
+    double bestProgress = monitor->globalMetrics.bestProgress;
     int idx = 0;
-    while (sa->monitor->snapshots[idx].globalMetrics.progress < bestProgress) {
-      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+    while (monitor->snapshots[idx].globalMetrics.progress < bestProgress) {
+      progresses.push_back(monitor->snapshots[idx].globalMetrics.progress);
       ++idx;
     }
     progresses.push_back(bestProgress);
     bestScrollIdx = idx;
-    while (idx < int(sa->monitor->snapshots.size())) {
-      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+    while (idx < int(monitor->snapshots.size())) {
+      progresses.push_back(monitor->snapshots[idx].globalMetrics.progress);
       ++idx;
     }
   } else {
     int idx = 0;
-    while (idx < int(sa->monitor->snapshots.size())) {
-      progresses.push_back(sa->monitor->snapshots[idx].globalMetrics.progress);
+    while (idx < int(monitor->snapshots.size())) {
+      progresses.push_back(monitor->snapshots[idx].globalMetrics.progress);
       ++idx;
     }
   }
@@ -179,13 +179,13 @@ void SAOutputUI::init(const SA::CPtr& sa)
 }
 
 void SAOutputUI::handleAllTimeBestButton(float plotSize, const std::unique_ptr<IPosition>& allTimeBest,
-                                         const SA::CPtr& sa, bool isSimulating)
+                                         bool isSimulating)
 {
   if (allTimeBest && !isSimulating) {
     float totalButtonsWidth = getTotalButtonsWidth();
     float centerOffset = getCenterOffset(plotSize, totalButtonsWidth);
     ImGui::SetCursorPosX(centerOffset);
-    if (sa) {
+    if (monitor) {
       float widgetHeight = ImGui::GetItemRectSize().y;
       float verticalSkip = 0.1f * widgetHeight;
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalSkip);
@@ -295,24 +295,23 @@ void SAOutputUI::handlePlot(const IPosition::CPtr& plotPosition, float plotSize)
   ImPlot::EndPlot();
 }
 
-void SAOutputUI::handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest, const SA::CPtr& sa)
+void SAOutputUI::handleResults(const std::unique_ptr<sa::core::IPosition>& allTimeBest)
 {
   std::stringstream ss;
   ss << std::setprecision(2) << std::fixed;
   int snapshotIdx = getSnapshotIdx();
   ImGui::TextUnformatted("");
-  printSnapshotMetrics(sa, snapshotIdx, ss);
+  printSnapshotMetrics(monitor, snapshotIdx, ss);
   ImGui::TextUnformatted("");
-  printLocalMetrics(sa, snapshotIdx, ss);
+  printLocalMetrics(monitor, snapshotIdx, ss);
   ImGui::TextUnformatted("");
-  printGlobalMetrics(sa->monitor->globalMetrics, allTimeBest, ss);
+  printGlobalMetrics(monitor->globalMetrics, allTimeBest, ss);
 }
 
 void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
-                                const std::unique_ptr<sa::core::IPosition>& allTimeBest, const SA::CPtr& sa,
-                                bool isSimulating)
+                                const std::unique_ptr<sa::core::IPosition>& allTimeBest, bool isSimulating)
 {
-  bool simulated = sa && !isSimulating;
+  bool simulated = monitor && !isSimulating;
   loadAllTimeBest = false;
   ImVec2 windowSize = ImGui::GetContentRegionAvail();
   float graphicsRatio = 0.7f;
@@ -326,7 +325,7 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
   if (simulated) {
     handleNavigator(plotSize);
   }
-  handleAllTimeBestButton(plotSize, allTimeBest, sa, isSimulating);
+  handleAllTimeBestButton(plotSize, allTimeBest, isSimulating);
   ImGui::EndChild();
   ImGui::SameLine();
   auto style = ImGui::GetStyle();
@@ -338,10 +337,10 @@ void SAOutputUI::saOutputUpdate(const IPosition::CPtr& plotPosition,
   ImGui::TextUnformatted(ss.str().c_str());
   if (simulated) {
     if ((isSnapshotBest || (scrollIdx != bestScrollIdx))) {
-      handleResults(allTimeBest, sa);
+      handleResults(allTimeBest);
     } else {
       ImGui::TextUnformatted("");
-      printGlobalMetrics(sa->monitor->globalMetrics, allTimeBest, ss);
+      printGlobalMetrics(monitor->globalMetrics, allTimeBest, ss);
     }
   }
   ImGui::EndChild();

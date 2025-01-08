@@ -9,12 +9,12 @@ using namespace sa::sa;
 
 const IPosition::CPtr& StateUI::getPlotPosition() const
 {
-  if (sa && !isSimulating) {
+  if (saOutputUI.monitor && !isSimulating) {
     int snapshotIdx = saOutputUI.getSnapshotIdx();
     if (snapshotIdx == -1) {
-      return sa->monitor->bestPosition;
+      return saOutputUI.monitor->bestPosition;
     } else {
-      return sa->monitor->snapshots[snapshotIdx].position;
+      return saOutputUI.monitor->snapshots[snapshotIdx].position;
     }
   } else {
     return currentPosition;
@@ -23,7 +23,7 @@ const IPosition::CPtr& StateUI::getPlotPosition() const
 
 bool StateUI::currentPositionPlotted() const
 {
-  if (currentPosition && (!sa || (isSimulating) || (saOutputUI.scrollIdx == 0))) {
+  if (currentPosition && (!saOutputUI.monitor || (isSimulating) || (saOutputUI.scrollIdx == 0))) {
     return true;
   }
   return false;
@@ -38,7 +38,7 @@ void StateUI::updateParsing()
         currentPosition = std::move(loadingPosition);
         allTimeBest = std::move(best);
         ImPlot::SetNextAxesToFit();
-        sa = nullptr;
+        saOutputUI.monitor = nullptr;
       } else {
         updateInformating("Parsing failed.");
       }
@@ -74,12 +74,13 @@ void StateUI::updateSimulating()
 {
   if (isSimulating) {
     if (saCallUI.simulatingFuture.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-      auto allTimeBestCandidate = saCallUI.simulatingFuture.get();
-      if (allTimeBestCandidate) {
-        allTimeBest = std::move(allTimeBestCandidate);
+      auto [sa, best] = saCallUI.simulatingFuture.get();
+      if (best) {
+        allTimeBest = std::move(best);
       }
       isSimulating = false;
-      saOutputUI.init(sa);
+      saOutputUI.monitor = std::move(sa->monitor);
+      saOutputUI.init();
       saCallUI.progress = 0;
       saCallUI.stop.store(false);
       mtx.unlock();
@@ -95,7 +96,7 @@ void StateUI::updateAllTimeBestLoading()
       if (loadedPosition) {
         currentPosition = std::move(loadedPosition);
         ImPlot::SetNextAxesToFit();
-        sa = nullptr;
+        saOutputUI.monitor = nullptr;
       } else {
         updateInformating("All time best load failed.");
       }
@@ -160,9 +161,8 @@ void StateUI::handleSACall()
       }
       if (mtx.try_lock()) {
         saFactoryUI.setRandomSeed();
-        sa = saFactory->create();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, sa, pool);
+        saCallUI.startSimulating(currentPosition, allTimeBest, menuUI.trackBest, menuUI.bestFileName, saFactory, pool);
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;
@@ -180,7 +180,7 @@ void StateUI::handleSAOutput()
 {
   if (currentPosition) {
     const auto& plotPosition = getPlotPosition();
-    saOutputUI.saOutputUpdate(plotPosition, allTimeBest, sa, isSimulating);
+    saOutputUI.saOutputUpdate(plotPosition, allTimeBest, isSimulating);
     if (saOutputUI.loadAllTimeBest) {
       if (mtx.try_lock()) {
         isLoadingAllTime = true;

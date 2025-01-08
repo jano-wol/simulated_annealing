@@ -4,7 +4,9 @@
 
 #include <io/Io.h>
 
+using namespace sa::core;
 using namespace sa::io;
+using namespace sa::sa;
 
 void updateProgressBar(double progress, float width, float height)
 {
@@ -56,17 +58,20 @@ void SACallUI::saCallUpdate(bool isSimulating)
 
 void SACallUI::startSimulating(const sa::core::IPosition::CPtr& currPosition,
                                const sa::core::IPosition::CPtr& allTimeBest, bool trackBest,
-                               const std::string& allTimeBestFile, sa::sa::SA::CPtr& sa, BS::thread_pool<0>& pool)
+                               const std::string& allTimeBestFile, const SAFactory::CPtr& saFactory,
+                               BS::thread_pool<0>& pool)
 {
-  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &sa]() {
+  simulatingFuture = pool.submit_task([&currPosition, &allTimeBest, trackBest, allTimeBestFile, &saFactory]() {
+    auto sa = saFactory->create();
+    IPosition::CPtr bestPosition = nullptr;
     sa->anneal(currPosition);
     if (trackBest) {
       const auto& currBestPosition = sa->getBest();
       if ((!allTimeBest) || (currBestPosition->getEnergy() + sa->monitor->catchPrecision < allTimeBest->getEnergy())) {
         Io::savePosition(allTimeBestFile, currBestPosition);
-        return currBestPosition->clone();
+        bestPosition = currBestPosition->clone();
       }
     }
-    return sa::core::IPosition::CPtr(nullptr);
+    return std::pair<sa::sa::SA::CPtr, sa::core::IPosition::CPtr>(std::move(sa), std::move(bestPosition));
   });
 }
