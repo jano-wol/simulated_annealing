@@ -25,6 +25,14 @@ void readDoubleNonNeg(const char* text, const char* id, double* val)
   }
 }
 
+void readDoubleMin(const char* text, const char* id, double* val, double min)
+{
+  readDoubleNonNeg(text, id, val);
+  if (*val < min) {
+    *val = min;
+  }
+}
+
 void readDouble01(const char* text, const char* id, double* val)
 {
   readDoubleNonNeg(text, id, val);
@@ -51,11 +59,32 @@ void readP32(const char* text, const char* id, int* val)
   }
 }
 
+void read32MinMax(const char* text, const char* id, int* val, int min, int max)
+{
+  readU32(text, id, val);
+  if (*val == 0) {
+    *val = 1;
+  }
+  if (*val < min) {
+    *val = min;
+  } else if (*val > max) {
+    *val = max;
+  }
+}
+
 void readU64(const char* text, const char* id, std::size_t* val)
 {
   ImGui::TextUnformatted(text);
   ImGui::SameLine();
   ImGui::InputScalar(id, ImGuiDataType_U64, val);
+}
+
+void readP64(const char* text, const char* id, std::size_t* val)
+{
+  readU64(text, id, val);
+  if (*val == 0) {
+    *val = 1;
+  }
 }
 
 void combo(const char* text, const char* id, int* index, const std::vector<const char*>& v)
@@ -191,10 +220,10 @@ void SAFactoryUI::saFactoryUpdate()
   combo("Resource Policy:", "##ResourcePolicy", &loadedParams.resourceIndex, resourceNames);
   ImGui::SameLine();
   if (loadedParams.resourceIndex == 0) {
-    readDoubleNonNeg("Duration(s):", "##DurationInSecondsInput", &loadedParams.durationInSeconds);
+    readDoubleMin("Duration(s):", "##DurationInSecondsInput", &loadedParams.durationInSeconds, 0.1);
   }
   if (loadedParams.resourceIndex == 1) {
-    readU64("Iteration:", "##IterationInput", &loadedParams.iteration);
+    readP64("Iteration:", "##IterationInput", &loadedParams.iteration);
   }
 
   combo("Acceptance Policy:", "##AcceptancePolicy", &loadedParams.acceptanceIndex, acceptanceNames);
@@ -222,19 +251,22 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readP32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
-    readP32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
+    readP32("MemoryLimit(Gb/thread):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
   if (loadedParams.monitorIndex == 1) {
     ImGui::SameLine();
     readP32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
-    readP32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
+    readP32("MemoryLimit(Gb/thread):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
   combo("Random seed:", "##RandomLevel", &loadedParams.randomIndex, randomNames);
   if (loadedParams.randomIndex == 1) {
     ImGui::SameLine();
     readU32("Seed:", "##seedInput", &loadedParams.seed);
   }
+  read32MinMax("Parallel threads:", "##threadInput", &loadedParams.threads, 1, loadedParams.threadsMaximum);
+  ImGui::SameLine();
+  readP32("Repeats:", "##repeatInput", &loadedParams.repeats);
   ImGui::PopItemWidth();
 }
 

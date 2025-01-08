@@ -163,12 +163,11 @@ void StateUI::handleSACall()
       }
       if (mtx.try_lock()) {
         isSimulating = true;
-        std::size_t allTasks = 40;
-        std::size_t numberOfThreads = 8;
         auto& pool = ThreadPoolManager::getPool();
-        pool.reset(numberOfThreads);
+        pool.reset(saFactoryUI.loadedParams.threads);
         saCallUI.progresses.clear();
-        for (std::size_t i = 0; i < allTasks; ++i) {
+        int allTasks = saFactoryUI.loadedParams.threads * saFactoryUI.loadedParams.repeats;
+        for (int i = 0; i < allTasks; ++i) {
           saCallUI.progresses.emplace_back(0);
         }
         saFactoryUI.setRandomSeed();

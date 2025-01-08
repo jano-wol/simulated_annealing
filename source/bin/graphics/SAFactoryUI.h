@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <deque>
+#include <thread>
 
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
@@ -36,10 +37,14 @@ public:
     int monitorIndex = 0;
     int localEnvLength = 1000;
     int steps = 100;
-    int memoryLimitInGb = 2;
+    int memoryLimitInGb = 1;
 
     int randomIndex = 0;
     int seed = 0;
+
+    int repeats = 1;
+    int threads = 1;
+    int threadsMaximum = std::thread::hardware_concurrency() - 1;
 
     bool operator==(const Params& other) const;
     bool operator!=(const Params& other) const;
@@ -63,7 +68,6 @@ public:
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Snapshots", "All"};
   std::vector<const char*> randomNames{"Time-based", "Explicit"};
-  Params currentParams;
   Params loadedParams;
 };
 
