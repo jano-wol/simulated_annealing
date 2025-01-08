@@ -136,8 +136,9 @@ int SAOutputUI::getSnapshotIdx() const
   }
 }
 
-void SAOutputUI::init()
+void SAOutputUI::init(Monitor::CPtr monitor_)
 {
+  monitor = std::move(monitor_);
   bestValue = monitor->snapshots[0].position->getEnergy();
   bestScrollIdx = 0;
   for (int idx = 1; idx < int(monitor->snapshots.size()); ++idx) {

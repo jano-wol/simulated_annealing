@@ -12,7 +12,7 @@
 class SAOutputUI
 {
 public:
-  void init();
+  void init(sa::monitor::Monitor::CPtr monitor_);
   void handleButtons(float plotSize);
   void handleNavigator(float plotSize);
   void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
