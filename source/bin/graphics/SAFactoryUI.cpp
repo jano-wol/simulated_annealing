@@ -94,43 +94,6 @@ void combo(const char* text, const char* id, int* index, const std::vector<const
   ImGui::Combo(id, index, v.data(), v.size());
 }
 
-SAFactoryUI::Params& SAFactoryUI::Params::operator=(const SAFactoryUI::Params& other)
-{
-  if (this != &other) {
-    resourceIndex = other.resourceIndex;
-    durationInSeconds = other.durationInSeconds;
-    iteration = other.iteration;
-
-    acceptanceIndex = other.acceptanceIndex;
-    normalizator = other.normalizator;
-
-    coolingIndex = other.coolingIndex;
-    c = other.c;
-    t0 = other.t0;
-
-    moveSelectorIndex = other.moveSelectorIndex;
-    k = other.k;
-
-    monitorIndex = other.monitorIndex;
-    localEnvLength = other.localEnvLength;
-    steps = other.steps;
-    memoryLimitInGb = other.memoryLimitInGb;
-  }
-  return *this;
-}
-
-bool SAFactoryUI::Params::operator==(const SAFactoryUI::Params& other) const
-{
-  return resourceIndex == other.resourceIndex && almostEqual(durationInSeconds, other.durationInSeconds) &&
-         iteration == other.iteration && acceptanceIndex == other.acceptanceIndex &&
-         almostEqual(normalizator, other.normalizator) && coolingIndex == other.coolingIndex &&
-         almostEqual(c, other.c) && almostEqual(t0, other.t0) && moveSelectorIndex == other.moveSelectorIndex &&
-         k == other.k && monitorIndex == other.monitorIndex && localEnvLength == other.localEnvLength &&
-         steps == other.steps && memoryLimitInGb == other.memoryLimitInGb;
-}
-
-bool SAFactoryUI::Params::operator!=(const SAFactoryUI::Params& other) const { return !(*this == other); }
-
 IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
 {
   if (acceptanceIndex == 0) {

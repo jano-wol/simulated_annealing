@@ -18,8 +18,6 @@ public:
   class Params
   {
   public:
-    Params& operator=(const Params& other);
-
     int resourceIndex = 0;
     double durationInSeconds = 5.0;
     std::size_t iteration = 1000000;
@@ -45,9 +43,6 @@ public:
     int repeats = 1;
     int threads = 1;
     int threadsMaximum = std::thread::hardware_concurrency() - 1;
-
-    bool operator==(const Params& other) const;
-    bool operator!=(const Params& other) const;
 
     sa::policies::IAcceptance::CPtr getAcceptance();
     sa::policies::ICooling::CPtr getCooling();
