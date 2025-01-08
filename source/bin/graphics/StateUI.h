@@ -44,7 +44,6 @@ public:
   SAFactoryUI saFactoryUI;
   SACallUI saCallUI;
   SAOutputUI saOutputUI;
-  sa::sa::SAFactory::CPtr saFactory = nullptr;
   sa::core::IPosition::CPtr currentPosition = nullptr;
   sa::core::IPosition::CPtr allTimeBest = nullptr;
   std::mutex mtx;

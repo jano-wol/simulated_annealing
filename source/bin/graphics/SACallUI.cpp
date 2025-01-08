@@ -26,9 +26,10 @@ void updateProgressBar(double progress, float width, float height)
   draw_list->AddText(textPos, IM_COL32(255, 255, 255, 255), progressText.c_str());
 }
 
-SA::CPtr simulate(const IPosition::CPtr& currPosition, const SAFactory::CPtr& saFactory, const std::uint64_t /*n*/)
+SA::CPtr simulate(const IPosition::CPtr& currPosition, const std::vector<SAFactory::CPtr>& factories,
+                  const std::uint64_t n)
 {
-  auto sa = saFactory->create();
+  auto sa = factories[n]->create();
   IPosition::CPtr bestPosition = nullptr;
   sa->anneal(currPosition);
   return SA::CPtr{std::move(sa)};
@@ -61,18 +62,18 @@ void SACallUI::saCallUpdate(bool isAnnealing)
     }
   }
   if (isAnnealing) {
-    updateProgressBar(progress.load(), buttonWidth * 2, buttonHeight);
+    updateProgressBar(progresses[0].load(), buttonWidth * 2, buttonHeight);
   }
 }
 
-void SACallUI::startSimulating(const IPosition::CPtr& currPosition, const SAFactory::CPtr& saFactory)
+void SACallUI::startSimulating(const IPosition::CPtr& currPosition, std::vector<SAFactory::CPtr> factories_)
 {
+  std::size_t tasks = factories_.size();
   auto& pool = ThreadPoolManager::getPool();
-  int allTasks = 40;
-  int numberOfThreads = 8;
-  pool.reset(numberOfThreads);
-  simulatingFutures = pool.submit_sequence(
-      0, 1, [&currPosition, &saFactory](std::uint64_t n) { return simulate(currPosition, saFactory, n); });
+  simulatingFutures =
+      pool.submit_sequence(0, tasks, [&currPosition, factories = std::move(factories_)](std::uint64_t n) {
+        return simulate(currPosition, factories, n);
+      });
 }
 
 void SACallUI::postProcessResults(const IPosition::CPtr& allTimeBest, bool trackBest,

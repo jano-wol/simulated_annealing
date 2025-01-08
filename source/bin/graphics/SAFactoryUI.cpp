@@ -173,6 +173,17 @@ SAFactory::CPtr SAFactoryUI::Params::getFactory(std::atomic<double>& progress, s
                                      getMonitor(progress), std::move(callback));
 }
 
+std::vector<sa::sa::SAFactory::CPtr> SAFactoryUI::Params::getFactories(std::deque<std::atomic<double>>& progresses,
+                                                                       std::atomic<bool>& stop)
+{
+  std::vector<SAFactory::CPtr> ret;
+  ret.reserve(progresses.size());
+  for (auto& p : progresses) {
+    ret.push_back(getFactory(p, stop));
+  }
+  return ret;
+}
+
 void SAFactoryUI::saFactoryUpdate()
 {
   ImGui::PushItemWidth(ImGui::GetWindowHeight() * 0.15f);

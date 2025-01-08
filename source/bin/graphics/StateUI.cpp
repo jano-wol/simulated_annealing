@@ -1,4 +1,5 @@
 #include "StateUI.h"
+#include "ThreadPoolManager.h"
 
 #include <sstream>
 
@@ -89,7 +90,7 @@ void StateUI::updateSimulating()
         allTimeBest = std::move(best);
       }
       saOutputUI.init(std::move(sa->monitor));
-      saCallUI.progress = 0;
+      saCallUI.progresses.clear();
       saCallUI.stop.store(false);
       isPostProcessing = false;
       mtx.unlock();
@@ -151,14 +152,7 @@ void StateUI::handleMenu()
   updateSaving();
 }
 
-void StateUI::handleSAFactory()
-{
-  saFactoryUI.saFactoryUpdate();
-  if (!saFactory || (saFactoryUI.loadedParams != saFactoryUI.currentParams)) {
-    saFactory = saFactoryUI.loadedParams.getFactory(saCallUI.progress, saCallUI.stop);
-    saFactoryUI.currentParams = saFactoryUI.loadedParams;
-  }
-}
+void StateUI::handleSAFactory() { saFactoryUI.saFactoryUpdate(); }
 
 void StateUI::handleSACall()
 {
@@ -169,9 +163,18 @@ void StateUI::handleSACall()
         currentPosition = getPlotPosition()->clone();
       }
       if (mtx.try_lock()) {
-        saFactoryUI.setRandomSeed();
         isSimulating = true;
-        saCallUI.startSimulating(currentPosition, saFactory);
+        std::size_t allTasks = 40;
+        std::size_t numberOfThreads = 8;
+        auto& pool = ThreadPoolManager::getPool();
+        pool.reset(numberOfThreads);
+        saCallUI.progresses.clear();
+        for (std::size_t i = 0; i < allTasks; ++i) {
+          saCallUI.progresses.emplace_back(0);
+        }
+        saFactoryUI.setRandomSeed();
+        auto factories = saFactoryUI.loadedParams.getFactories(saCallUI.progresses, saCallUI.stop);
+        saCallUI.startSimulating(currentPosition, std::move(factories));
         saCallUI.saCalled = false;
       } else {
         saCallUI.saCalled = false;

@@ -2,6 +2,7 @@
 #define SIMULATED_ANNEALING_GRAPHICS_SA_FACTORY_UI_H_
 
 #include <atomic>
+#include <deque>
 
 #include <monitor/Monitor.h>
 #include <policies/Acceptance.h>
@@ -49,6 +50,8 @@ public:
     sa::policies::IResource::CPtr getResource();
     sa::monitor::Monitor::CPtr getMonitor(std::atomic<double>& progress);
     sa::sa::SAFactory::CPtr getFactory(std::atomic<double>& progress, std::atomic<bool>& stop);
+    std::vector<sa::sa::SAFactory::CPtr> getFactories(std::deque<std::atomic<double>>& progresses,
+                                                      std::atomic<bool>& stop);
   };
 
   void saFactoryUpdate();
