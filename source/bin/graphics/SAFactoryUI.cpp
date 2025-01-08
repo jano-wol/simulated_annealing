@@ -80,7 +80,6 @@ SAFactoryUI::Params& SAFactoryUI::Params::operator=(const SAFactoryUI::Params& o
     k = other.k;
 
     monitorIndex = other.monitorIndex;
-    bestCatchQ = other.bestCatchQ;
     localEnvLength = other.localEnvLength;
     steps = other.steps;
     memoryLimitInGb = other.memoryLimitInGb;
@@ -94,8 +93,8 @@ bool SAFactoryUI::Params::operator==(const SAFactoryUI::Params& other) const
          iteration == other.iteration && acceptanceIndex == other.acceptanceIndex &&
          almostEqual(normalizator, other.normalizator) && coolingIndex == other.coolingIndex &&
          almostEqual(c, other.c) && almostEqual(t0, other.t0) && moveSelectorIndex == other.moveSelectorIndex &&
-         k == other.k && monitorIndex == other.monitorIndex && almostEqual(bestCatchQ, other.bestCatchQ) &&
-         localEnvLength == other.localEnvLength && steps == other.steps && memoryLimitInGb == other.memoryLimitInGb;
+         k == other.k && monitorIndex == other.monitorIndex && localEnvLength == other.localEnvLength &&
+         steps == other.steps && memoryLimitInGb == other.memoryLimitInGb;
 }
 
 bool SAFactoryUI::Params::operator!=(const SAFactoryUI::Params& other) const { return !(*this == other); }
@@ -154,11 +153,11 @@ sa::monitor::Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& 
 {
   auto callback = [&progress](double newProgress) { progress.store(newProgress); };
   if (monitorIndex == 0) {
-    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, bestCatchQ, 1e-6, localEnvLength,
-                                                  steps, memoryLimitInGb * 1000000000UL, std::move(callback));
+    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::Medium, 0.9, 1e-6, localEnvLength, steps,
+                                                  memoryLimitInGb * 1000000000UL, std::move(callback));
   }
   if (monitorIndex == 1) {
-    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, bestCatchQ, 1e-6, localEnvLength, 20,
+    return std::make_unique<sa::monitor::Monitor>(sa::monitor::MonitorLevel::High, 0.9, 1e-6, localEnvLength, 20,
                                                   memoryLimitInGb * 1000000000UL, std::move(callback));
   }
   return nullptr;
@@ -209,15 +208,11 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readP32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ1Input", &loadedParams.bestCatchQ);
-    ImGui::SameLine();
     readP32("MemoryLimit(Gb):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
   if (loadedParams.monitorIndex == 1) {
     ImGui::SameLine();
     readP32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
-    ImGui::SameLine();
-    readDouble01("BestCatchQ:", "##BestQ2Input", &loadedParams.bestCatchQ);
     ImGui::SameLine();
     readP32("MemoryLimit(Gb):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }

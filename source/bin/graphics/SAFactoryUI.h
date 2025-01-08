@@ -33,7 +33,6 @@ public:
     int k = 1;
 
     int monitorIndex = 0;
-    double bestCatchQ = 0.9;
     int localEnvLength = 1000;
     int steps = 20;
     int memoryLimitInGb = 2;
