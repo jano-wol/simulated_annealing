@@ -90,7 +90,6 @@ void StateUI::updateSimulating()
         allTimeBest = std::move(best);
       }
       saOutputUI.init(std::move(sa->monitor));
-      saCallUI.progresses.clear();
       saCallUI.stop.store(false);
       isPostProcessing = false;
       mtx.unlock();
