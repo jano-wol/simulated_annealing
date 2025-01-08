@@ -71,6 +71,6 @@ void SACallUI::startSimulating(const IPosition::CPtr& currPosition, const IPosit
         bestPosition = currBestPosition->clone();
       }
     }
-    return std::pair<SA::CPtr, IPosition::CPtr>(std::move(sa), std::move(bestPosition));
+    return std::pair<SA::CPtr, IPosition::CPtr>{std::move(sa), std::move(bestPosition)};
   });
 }

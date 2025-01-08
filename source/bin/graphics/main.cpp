@@ -9,8 +9,6 @@
 #include "WindowBegin.h"
 #include "WindowEnd.h"
 
-using namespace sa::io;
-
 int main()
 {
   GLFWwindow* window = GLFWInit("SA");

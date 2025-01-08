@@ -12,6 +12,7 @@
 class SAOutputUI
 {
 public:
+  void init();
   void handleButtons(float plotSize);
   void handleNavigator(float plotSize);
   void handlePlot(const sa::core::IPosition::CPtr& plotPosition, float plotSize);
@@ -19,7 +20,6 @@ public:
   void handleAllTimeBestButton(float plotSize, const sa::core::IPosition::CPtr& allTimeBest, bool isSimulating);
   void saOutputUpdate(const sa::core::IPosition::CPtr& plotPosition, const sa::core::IPosition::CPtr& allTimeBest,
                       bool isSimulating);
-  void init();
   int getSnapshotIdx() const;
   void startLoadingAllTimeBest(const sa::core::IPosition::CPtr& allTimeBest);
 
