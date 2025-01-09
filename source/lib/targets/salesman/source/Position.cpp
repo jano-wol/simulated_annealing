@@ -4,6 +4,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include <imgui/imgui.h>
+#include <implot/implot.h>
+
 #include <core/IPosition.h>
 #include <core/Random.h>
 #include <core/Rounding.h>
@@ -16,12 +19,14 @@ double SalesmanPosition::getEnergy() const { return energy; }
 
 IMove::CPtr SalesmanPosition::generateMove() const
 {
-  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
-  std::size_t idx2 = r.randomInt(0, cities.size() - 1);
-  if (idx1 == idx2) {
-    return std::make_unique<SalesmanMove>(idx1, idx2, 0);
+  if (cities.size() < 2) {
+    return std::make_unique<SalesmanMove>(0, 0, 0);
   }
-  if (idx2 < idx1) {
+  std::size_t idx1 = r.randomInt(0, cities.size() - 1);
+  std::size_t idx2 = r.randomInt(0, cities.size() - 2);
+  if (idx2 >= idx1) {
+    ++idx2;
+  } else {
     std::swap(idx1, idx2);
   }
   if (idx1 == 0 && idx2 == cities.size() - 1) {
@@ -59,7 +64,7 @@ int SalesmanPosition::size() const
          sizeof(std::pair<double, double>) * cities.capacity();
 }
 
-IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities, r); }
+IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities); }
 
 std::pair<std::size_t, std::size_t> SalesmanPosition::getNeighbourIdxs(std::size_t idx) const
 {
@@ -117,3 +122,17 @@ IPosition::CPtr SalesmanPosition::fromString(const std::string& data)
 }
 
 std::string SalesmanPosition::getTypeId() { return "salesman"; }
+
+void SalesmanPosition::plot() const
+{
+  for (const auto& [x, y] : cities) {
+    ImPlot::PlotScatter("Points", &x, &y, 1);
+  }
+  for (size_t idx = 0; idx < cities.size(); ++idx) {
+    const auto& [x1, y1] = cities[idx];
+    const auto& [x2, y2] = cities[(idx + 1) % cities.size()];
+    double xs[2] = {x1, x2};
+    double ys[2] = {y1, y2};
+    ImPlot::PlotLine("Edges", xs, ys, 2);
+  }
+}

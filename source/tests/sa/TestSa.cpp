@@ -243,20 +243,20 @@ Random DummyFastMove3::r;
 void testSnapshot(const Snapshot& snapshot, double localDerivative, double minEnergy, double maxEnergy,
                   double deltaMean, double deltaDeviation)
 {
-  EXPECT_NEAR(snapshot.localDerivative, localDerivative, precision);
-  EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
-  EXPECT_NEAR(snapshot.minEnergy, minEnergy, precision);
-  EXPECT_NEAR(snapshot.maxEnergy, maxEnergy, precision);
-  EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
-  EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
-  EXPECT_NEAR(*snapshot.deltaStats.mean, deltaMean, 1e-3);
-  EXPECT_NEAR(*snapshot.deltaStats.deviation, deltaDeviation, 1e-3);
+  EXPECT_NEAR(snapshot.candidate.localDerivative, localDerivative, precision);
+  EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.candidate.minEnergy, precision);
+  EXPECT_NEAR(snapshot.candidate.minEnergy, minEnergy, precision);
+  EXPECT_NEAR(snapshot.candidate.maxEnergy, maxEnergy, precision);
+  EXPECT_TRUE(snapshot.candidate.deltaStats.mean.has_value());
+  EXPECT_TRUE(snapshot.candidate.deltaStats.deviation.has_value());
+  EXPECT_NEAR(*snapshot.candidate.deltaStats.mean, deltaMean, 1e-3);
+  EXPECT_NEAR(*snapshot.candidate.deltaStats.deviation, deltaDeviation, 1e-3);
 }
 
 void testSnapshotAlignment(const Snapshot& s, const Snapshot& ss)
 {
-  EXPECT_NEAR(*s.deltaStats.mean, *ss.deltaStats.mean, 1e-3);
-  EXPECT_NEAR(*s.deltaStats.deviation, *ss.deltaStats.deviation, 1e-3);
+  EXPECT_NEAR(*s.candidate.deltaStats.mean, *ss.candidate.deltaStats.mean, 1e-3);
+  EXPECT_NEAR(*s.candidate.deltaStats.deviation, *ss.candidate.deltaStats.deviation, 1e-3);
   EXPECT_NEAR(s.position->getEnergy(), ss.position->getEnergy(), 1e-3);
 }
 }  // namespace
@@ -341,20 +341,20 @@ TEST(Sa, FastAnnealingMonitorMedium)
   EXPECT_EQ(sa.monitor->globalMetrics.bestEnergy, -1000);
   EXPECT_NEAR(sa.currPosition->getEnergy(), -1000, precision);
   auto& snapshot0 = sa.monitor->snapshots[0];
-  EXPECT_TRUE(snapshot0.deltaStats.mean.has_value());
-  EXPECT_TRUE(snapshot0.deltaStats.deviation.has_value());
-  EXPECT_NEAR(*snapshot0.deltaStats.mean, -1, precision);
-  EXPECT_NEAR(*snapshot0.deltaStats.deviation, 0, precision);
-  EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
+  EXPECT_TRUE(snapshot0.candidate.deltaStats.mean.has_value());
+  EXPECT_TRUE(snapshot0.candidate.deltaStats.deviation.has_value());
+  EXPECT_NEAR(*snapshot0.candidate.deltaStats.mean, -1, precision);
+  EXPECT_NEAR(*snapshot0.candidate.deltaStats.deviation, 0, precision);
+  EXPECT_NEAR(snapshot0.candidate.localDerivative, 0, precision);
   std::vector<int> toTest{1, 2, 3, 17, 18, 19, 20};
   for (auto idx : toTest) {
     auto& snapshot = sa.monitor->snapshots[idx];
-    EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
-    EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
-    EXPECT_NEAR(*snapshot.deltaStats.mean, -1, precision);
-    EXPECT_NEAR(*snapshot.deltaStats.deviation, 0, precision);
-    EXPECT_NEAR(snapshot.localDerivative, -1, precision);
-    EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
+    EXPECT_TRUE(snapshot.candidate.deltaStats.mean.has_value());
+    EXPECT_TRUE(snapshot.candidate.deltaStats.deviation.has_value());
+    EXPECT_NEAR(*snapshot.candidate.deltaStats.mean, -1, precision);
+    EXPECT_NEAR(*snapshot.candidate.deltaStats.deviation, 0, precision);
+    EXPECT_NEAR(snapshot.candidate.localDerivative, -1, precision);
+    EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.candidate.minEnergy, precision);
   }
   nullStatics();
 }
@@ -400,11 +400,12 @@ TEST(Sa, SnapshotCount3)
     sa.monitor->snapshotsMemoryLimit = 1000;
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
-    if (i < 9) {
+    EXPECT_EQ(sa.monitor->snapshots[0].size(), 200);
+    if (i < 6) {
       EXPECT_EQ(sa.monitor->snapshots.size(), sa.monitor->steps + 1);
     } else {
-      EXPECT_EQ(sa.monitor->snapshots.size(), 9);
-      EXPECT_EQ(sa.monitor->snapshotsMemory, 1152);
+      EXPECT_EQ(sa.monitor->snapshots.size(), 6);
+      EXPECT_EQ(sa.monitor->snapshotsMemory, 1200);
     }
     nullStatics();
   }
@@ -443,7 +444,7 @@ TEST(Sa, SnapshotCount6)
     sa.monitor->snapshotsMemoryLimit = 1000;
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
-    EXPECT_EQ(sa.monitor->snapshots.size(), std::min(l + 1, 9UL));
+    EXPECT_EQ(sa.monitor->snapshots.size(), std::min(l + 1, 6UL));
   }
 }
 
@@ -455,21 +456,27 @@ TEST(Sa, Statistics1)
     IPosition::CPtr position = std::make_unique<DummyFastPosition>(0);
     sa.anneal(position);
     auto& snapshot0 = sa.monitor->snapshots[0];
-    EXPECT_TRUE(snapshot0.deltaStats.mean.has_value());
-    EXPECT_TRUE(snapshot0.deltaStats.deviation.has_value());
-    EXPECT_NEAR(*snapshot0.deltaStats.mean, -1, precision);
-    EXPECT_NEAR(*snapshot0.deltaStats.deviation, 0, precision);
-    EXPECT_NEAR(snapshot0.localDerivative, 0, precision);
-    EXPECT_NEAR(snapshot0.globalMetrics.bestEnergy, snapshot0.minEnergy, precision);
+    EXPECT_TRUE(snapshot0.candidate.deltaStats.mean.has_value());
+    EXPECT_TRUE(snapshot0.candidate.deltaStats.deviation.has_value());
+    EXPECT_NEAR(*snapshot0.candidate.deltaStats.mean, -1, precision);
+    EXPECT_FALSE(snapshot0.acceptance.deltaStats.mean.has_value());
+    EXPECT_FALSE(snapshot0.acceptance.deltaStats.deviation.has_value());
+    EXPECT_NEAR(*snapshot0.candidate.deltaStats.deviation, 0, precision);
+    EXPECT_NEAR(snapshot0.candidate.localDerivative, 0, precision);
+    EXPECT_NEAR(snapshot0.acceptance.localDerivative, 0, precision);
+    EXPECT_NEAR(snapshot0.globalMetrics.bestEnergy, snapshot0.candidate.minEnergy, precision);
     std::vector<int> toTest{1, 2, 3, 17, 18, 19, 20};
     for (auto idx : toTest) {
       auto& snapshot = sa.monitor->snapshots[idx];
-      EXPECT_TRUE(snapshot.deltaStats.mean.has_value());
-      EXPECT_TRUE(snapshot.deltaStats.deviation.has_value());
-      EXPECT_NEAR(*snapshot.deltaStats.mean, -1, precision);
-      EXPECT_NEAR(*snapshot.deltaStats.deviation, 0, precision);
-      EXPECT_NEAR(snapshot.localDerivative, -1, precision);
-      EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.minEnergy, precision);
+      EXPECT_TRUE(snapshot.candidate.deltaStats.mean.has_value());
+      EXPECT_TRUE(snapshot.candidate.deltaStats.deviation.has_value());
+      EXPECT_NEAR(*snapshot.candidate.deltaStats.mean, -1, precision);
+      EXPECT_NEAR(*snapshot.acceptance.deltaStats.mean, -1, precision);
+      EXPECT_NEAR(*snapshot.candidate.deltaStats.deviation, 0, precision);
+      EXPECT_NEAR(*snapshot.acceptance.deltaStats.deviation, 0, precision);
+      EXPECT_NEAR(snapshot.candidate.localDerivative, -1, precision);
+      EXPECT_NEAR(snapshot.acceptance.localDerivative, -1, precision);
+      EXPECT_NEAR(snapshot.globalMetrics.bestEnergy, snapshot.candidate.minEnergy, precision);
     }
     nullStatics();
   }

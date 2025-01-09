@@ -18,6 +18,8 @@ public:
   virtual void makeMove(IMove::CPtr move) = 0;
   virtual int size() const = 0;
   virtual CPtr clone() const = 0;
+
+  virtual void plot() const {}
   virtual ~IPosition() = default;
 };
 }  // namespace sa::core

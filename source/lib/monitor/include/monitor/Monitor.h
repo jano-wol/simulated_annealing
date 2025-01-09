@@ -2,6 +2,7 @@
 #define SIMULATED_ANNEALING_MONITOR_MONITOR_H_
 
 #include <chrono>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -22,7 +23,9 @@ public:
 
   double bestEnergy = 0;
   std::size_t bestIdx = 0;
+  double bestProgress = 0;
   std::size_t idx = 0;
+  double progress = 0;
   std::size_t upEnergyChanges = 0;
   std::size_t acceptance = 0;
   std::size_t bestCatch = 0;
@@ -30,11 +33,10 @@ public:
   double speed = 0;
 };
 
-class Snapshot
+class LocalStats
 {
 public:
-  Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_, const core::CircularBuffer& deltas,
-           const core::CircularBuffer& energies);
+  LocalStats(const core::CircularBuffer& deltas, const core::CircularBuffer& energies, double bestEnergy);
 
   int size() const;
 
@@ -42,6 +44,19 @@ public:
   double minEnergy;
   double maxEnergy;
   core::Statistics deltaStats;
+};
+
+class Snapshot
+{
+public:
+  Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_,
+           const core::CircularBuffer& deltasCandidate, const core::CircularBuffer& deltasAcceptance,
+           const core::CircularBuffer& energiesCandidate, const core::CircularBuffer& energiesAcceptance);
+
+  int size() const;
+
+  LocalStats candidate;
+  LocalStats acceptance;
   GlobalMetrics globalMetrics;
   core::IPosition::CPtr position;
 };
@@ -50,16 +65,22 @@ class Monitor
 {
 public:
   using CPtr = std::unique_ptr<Monitor>;
-  Monitor(MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
-          std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL)
+  using ProgressCallback = std::function<void(double)>;
+  Monitor(
+      MonitorLevel level_, double bestCatchQ_ = 0.9, double catchPrecision_ = 1e-6, std::size_t localEnv_ = 1000,
+      std::size_t steps_ = 20, std::size_t snapshotsMemoryLimit_ = 2 * 1000000000UL,
+      ProgressCallback progressCallback_ = [](double /*progress*/) {})
       : level(level_),
         bestCatchQ(bestCatchQ_),
         catchPrecision(catchPrecision_),
         localEnv(localEnv_),
         steps(steps_),
         snapshotsMemoryLimit(snapshotsMemoryLimit_),
-        deltas(localEnv),
-        energies(localEnv)
+        progressCallback(std::move(progressCallback_)),
+        deltasCandidate(localEnv),
+        deltasAcceptance(localEnv),
+        energiesCandidate(localEnv),
+        energiesAcceptance(localEnv)
   {}
 
   void onStart(const core::IPosition::CPtr& startPosition);
@@ -67,9 +88,9 @@ public:
   void onAcceptance(const core::IPosition::CPtr& position, double delta, double progress, double energy);
   void onEnd(const core::IPosition::CPtr& position);
   void bestCatch(const core::IPosition::CPtr& position, double progress);
-  void addSnapshot(const core::IPosition::CPtr& position);
+  void addSnapshot(const core::IPosition::CPtr& position, double progress);
   void addSnapshotChecked(const core::IPosition::CPtr& position, double progress);
-  void refreshGlobalMetrics();
+  void refreshGlobalMetrics(double progress);
   std::string toString() const;
   CPtr clone() const;
 
@@ -80,6 +101,7 @@ public:
   std::size_t localEnv;
   std::size_t steps;
   std::size_t snapshotsMemoryLimit;
+  ProgressCallback progressCallback;
   std::size_t snapshotsMemory = 0;
 
   // low
@@ -88,8 +110,10 @@ public:
 
   // medium
   std::size_t stalledAcceptance = 0;
-  core::CircularBuffer deltas;
-  core::CircularBuffer energies;
+  core::CircularBuffer deltasCandidate;
+  core::CircularBuffer deltasAcceptance;
+  core::CircularBuffer energiesCandidate;
+  core::CircularBuffer energiesAcceptance;
   std::vector<Snapshot> snapshots;
 };
 

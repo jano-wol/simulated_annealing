@@ -1,6 +1,3 @@
-#ifndef SIMULATED_ANNEALING_TARGETS_SALESMAN_TESTER_H_
-#define SIMULATED_ANNEALING_TARGETS_SALESMAN_TESTER_H_
-
 #include <sstream>
 
 #include <core/Random.h>
@@ -30,10 +27,11 @@ IPosition::CPtr SalesmanGenerator::getStartPosition_5x5(int idx) const
   std::vector<int> chosenSubsquares;
   std::vector<int> chosenSubsquaresDensity;
   chosenSubsquares.push_back(0);
+  chosenSubsquaresDensity.push_back(0);
   for (int i = 1; i < 25; ++i) {
     int rr = r.randomInt(0, 4);
     if (rr == 0) {
-      chosenSubsquares.push_back(0);
+      chosenSubsquares.push_back(i);
     }
   }
 
@@ -76,5 +74,3 @@ std::string SalesmanGenerator::getGeneratorName() const
   }
   return ss.str();
 }
-
-#endif  // SIMULATED_ANNEALING_TARGETS_SALESMAN_TESTER_H_

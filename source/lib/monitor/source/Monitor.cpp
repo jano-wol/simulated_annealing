@@ -3,18 +3,18 @@
 #include <algorithm>
 #include <sstream>
 
+using namespace sa::core;
 using namespace sa::monitor;
 
 int GlobalMetrics::size() const { return sizeof(*this); }
 
-Snapshot::Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalMetrics_,
-                   const core::CircularBuffer& deltas, const core::CircularBuffer& energies)
-    : deltaStats(deltas.getData()), globalMetrics(std::move(globalMetrics_)), position(position_->clone())
+LocalStats::LocalStats(const CircularBuffer& deltas, const CircularBuffer& energies, double bestEnergy)
+    : deltaStats(deltas.getData())
 {
   if (energies.isEmpty()) {
     localDerivative = 0;
-    minEnergy = globalMetrics.bestEnergy;
-    maxEnergy = globalMetrics.bestEnergy;
+    minEnergy = bestEnergy;
+    maxEnergy = bestEnergy;
   } else {
     auto sp = energies.getData();
     auto [minIt, maxIt] = std::minmax_element(sp.begin(), sp.end());
@@ -28,40 +28,54 @@ Snapshot::Snapshot(const core::IPosition::CPtr& position_, GlobalMetrics globalM
   }
 }
 
-int Snapshot::size() const { return 3 * sizeof(double) + deltaStats.size() + globalMetrics.size() + position->size(); }
+int LocalStats::size() const { return 3 * sizeof(double) + deltaStats.size(); }
 
-void Monitor::onStart(const core::IPosition::CPtr& startPosition)
+Snapshot::Snapshot(const IPosition::CPtr& position_, GlobalMetrics globalMetrics_,
+                   const CircularBuffer& deltasCandidate, const CircularBuffer& deltasAcceptance,
+                   const CircularBuffer& energiesCandidate, const CircularBuffer& energiesAcceptance)
+    : candidate(deltasCandidate, energiesCandidate, globalMetrics_.bestEnergy),
+      acceptance(deltasAcceptance, energiesAcceptance, globalMetrics_.bestEnergy),
+      globalMetrics(std::move(globalMetrics_)),
+      position(position_->clone())
+{}
+
+int Snapshot::size() const { return candidate.size() + acceptance.size() + globalMetrics.size() + position->size(); }
+
+void Monitor::onStart(const IPosition::CPtr& startPosition)
 {
   startTime = std::chrono::high_resolution_clock::now();
   globalMetrics.bestEnergy = startPosition->getEnergy();
 }
 
-void Monitor::onCandidate(const core::IPosition::CPtr& position, double delta, double energy, double progress)
+void Monitor::onCandidate(const IPosition::CPtr& position, double delta, double energy, double progress)
 {
   if (level > MonitorLevel::Low) {
-    deltas.push(delta);
-    energies.push(energy);
+    deltasCandidate.push(delta);
+    energiesCandidate.push(energy);
     if (level == MonitorLevel::Medium) {
       addSnapshotChecked(position, progress);
     }
     if ((level == MonitorLevel::High) && (stalledAcceptance == 0) && (snapshotsMemory < snapshotsMemoryLimit)) {
-      addSnapshot(position);
+      addSnapshot(position, progress);
     }
     ++stalledAcceptance;
   }
   ++globalMetrics.idx;
 }
 
-void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, double energy, double progress)
+void Monitor::onAcceptance(const IPosition::CPtr& position, double delta, double energy, double progress)
 {
   ++globalMetrics.acceptance;
   if (delta > 0) {
     ++globalMetrics.upEnergyChanges;
   }
+  deltasAcceptance.push(delta);
+  energiesAcceptance.push(energy);
   if ((energy < globalMetrics.bestEnergy) ||
       (bestCatchQ < progress && !bestPosition && (energy - globalMetrics.bestEnergy < catchPrecision))) {
     globalMetrics.bestEnergy = energy;
     globalMetrics.bestIdx = globalMetrics.idx;
+    globalMetrics.bestProgress = progress;
     bestCatch(position, progress);
   }
   if (level > MonitorLevel::Low) {
@@ -69,25 +83,26 @@ void Monitor::onAcceptance(const core::IPosition::CPtr& position, double delta, 
   }
 }
 
-void Monitor::onEnd(const core::IPosition::CPtr& position)
+void Monitor::onEnd(const IPosition::CPtr& position)
 {
-  refreshGlobalMetrics();
+  refreshGlobalMetrics(1.0);
   if (level > MonitorLevel::Low) {
-    energies.push(position->getEnergy());
+    energiesCandidate.push(position->getEnergy());
     if (level == MonitorLevel::Medium || ((level == MonitorLevel::High) && (stalledAcceptance == 0))) {
-      addSnapshot(position);
+      addSnapshot(position, 1.0);
     }
   }
 }
 
-void Monitor::refreshGlobalMetrics()
+void Monitor::refreshGlobalMetrics(double progress)
 {
   auto elapsed = std::chrono::high_resolution_clock::now() - startTime;
   globalMetrics.duration = std::chrono::duration<double>(elapsed).count();
   globalMetrics.speed = double(globalMetrics.idx) / globalMetrics.duration;
+  globalMetrics.progress = progress;
 }
 
-void Monitor::bestCatch(const core::IPosition::CPtr& position, double progress)
+void Monitor::bestCatch(const IPosition::CPtr& position, double progress)
 {
   if (bestCatchQ <= progress) {
     ++globalMetrics.bestCatch;
@@ -95,19 +110,21 @@ void Monitor::bestCatch(const core::IPosition::CPtr& position, double progress)
   }
 }
 
-void Monitor::addSnapshot(const core::IPosition::CPtr& position)
+void Monitor::addSnapshot(const IPosition::CPtr& position, double progress)
 {
-  refreshGlobalMetrics();
-  snapshots.push_back({position, globalMetrics, deltas, energies});
+  refreshGlobalMetrics(progress);
+  snapshots.push_back(
+      {position, globalMetrics, deltasCandidate, deltasAcceptance, energiesCandidate, energiesAcceptance});
   snapshotsMemory += snapshots.back().size();
+  progressCallback(progress);
 }
 
-void Monitor::addSnapshotChecked(const core::IPosition::CPtr& position, double progress)
+void Monitor::addSnapshotChecked(const IPosition::CPtr& position, double progress)
 {
   if (((snapshots.size() < steps) && (snapshots.size() <= progress * double(steps)) &&
        (snapshotsMemory < snapshotsMemoryLimit)) ||
       (snapshots.size() == 0)) {
-    addSnapshot(position);
+    addSnapshot(position, progress);
   }
 }
 
@@ -133,5 +150,6 @@ std::ostream& sa::monitor::operator<<(std::ostream& os, const GlobalMetrics& gm)
 
 Monitor::CPtr Monitor::clone() const
 {
-  return std::make_unique<Monitor>(level, bestCatchQ, catchPrecision, localEnv, steps, snapshotsMemoryLimit);
+  return std::make_unique<Monitor>(level, bestCatchQ, catchPrecision, localEnv, steps, snapshotsMemoryLimit,
+                                   progressCallback);
 }
