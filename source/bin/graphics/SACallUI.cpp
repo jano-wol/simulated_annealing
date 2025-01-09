@@ -47,6 +47,7 @@ void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float 
 SA::CPtr simulate(const IPosition::CPtr& currPosition, const std::vector<SAFactory::CPtr>& factories,
                   const std::uint64_t n)
 {
+  Random::setEffectiveSeed(n);
   auto sa = factories[n]->create();
   IPosition::CPtr bestPosition = nullptr;
   sa->anneal(currPosition);

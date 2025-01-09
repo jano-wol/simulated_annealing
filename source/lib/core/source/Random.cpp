@@ -5,8 +5,11 @@
 using namespace sa::core;
 
 int Random::seed = 0;
+thread_local int Random::effectiveSeed = 0;
 
 void Random::setSeed(int s) { seed = s; }
+
+void Random::setEffectiveSeed(int taskIdx) { effectiveSeed = seed ^ (taskIdx * 31); }
 
 int Random::randomInt(int min, int max) const
 {

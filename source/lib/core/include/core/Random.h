@@ -8,7 +8,7 @@ namespace sa::core
 class Random
 {
 public:
-  Random() : r(seed) {}
+  Random() : r(effectiveSeed) {}
   Random(int s) : r(s) {}
   Random(const Random& other) : r(other.r) {}
   Random(Random&& other) noexcept : r(std::move(other.r)) {}
@@ -30,11 +30,12 @@ public:
   int randomInt(int min, int max) const;
   double randomDouble(double min, double max) const;
   static void setSeed(int s);
+  static void setEffectiveSeed(int taskIdx);
 
 private:
   mutable std::mt19937 r;
-
   static int seed;
+  static thread_local int effectiveSeed;
 };
 }  // namespace sa::core
 
