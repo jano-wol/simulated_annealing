@@ -102,10 +102,8 @@ void SACallUI::postProcessResults(const IPosition::CPtr& allTimeBest, bool track
       std::launch::async, [&allTimeBest, trackBest, allTimeBestFile, results = std::move(results_)]() mutable {
         double bestEnergy = results[0]->getBest()->getEnergy();
         std::size_t bestIdx = 0;
-        std::cout << bestEnergy << "\n";
         for (std::size_t i = 1; i < results.size(); ++i) {
           double currEnergy = results[i]->getBest()->getEnergy();
-          std::cout << currEnergy << "\n";
           if (currEnergy < bestEnergy) {
             bestIdx = i;
             bestEnergy = currEnergy;
