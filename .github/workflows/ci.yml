@@ -15,7 +15,7 @@ jobs:
       - name: Set up environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ninja-build
+          sudo apt-get install -y build-essential ninja-build libglfw3 libglfw3-dev
       - name: Run configure script for release
         run: ./source/scripts/configure.sh release
       - name: Run build script for release
@@ -31,7 +31,7 @@ jobs:
       - name: Set up environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ninja-build
+          sudo apt-get install -y build-essential ninja-build libglfw3 libglfw3-dev
       - name: Run configure script for debug
         run: ./source/scripts/configure.sh debug
       - name: Run build script for debug
