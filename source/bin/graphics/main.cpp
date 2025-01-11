@@ -9,6 +9,10 @@
 #include "WindowBegin.h"
 #include "WindowEnd.h"
 
+// delete this
+#include <salesman/Position.h>
+#include <salesman_angle/Position.h>
+
 int main()
 {
   GLFWwindow* window = GLFWInit("SA");

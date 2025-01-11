@@ -2,45 +2,34 @@
 
 #include <sstream>
 
-#include <salesman/Position.h>
-#include <salesman_angle/Position.h>
-
 using namespace sa::core;
 using namespace sa::serializator;
-using namespace sa::targets::salesman;
-using namespace sa::targets::salesman_angle;
-
-std::string Serializator::getTypeId(const core::IPosition::CPtr& iPosition)
-{
-  if (dynamic_cast<SalesmanPosition*>(iPosition.get())) {
-    return SalesmanPosition::getTypeId();
-  } else if (dynamic_cast<SalesmanAnglePosition*>(iPosition.get())) {
-    return SalesmanAnglePosition::getTypeId();
-  } else {
-    return "";
-  }
-}
 
 IPosition::CPtr Serializator::fromString(const std::string& data)
 {
   std::istringstream ss(data);
   std::string typeId;
   ss >> typeId;
+  std::string dataRaw;
+  std::getline(ss, dataRaw);
+  dataRaw.erase(0, dataRaw.find_first_not_of(" \t"));
   auto it = getFromStringMap().find(typeId);
   if (it == getFromStringMap().end()) {
     return nullptr;
   }
-  return it->second(data);
+  return it->second(dataRaw);
 }
 
 std::string Serializator::toString(const core::IPosition::CPtr& iPosition)
 {
-  std::string typeId = getTypeId(iPosition);
+  std::string typeId = iPosition->getTypeId();
   auto it = getToStringMap().find(typeId);
   if (it == getToStringMap().end()) {
     return "";
   }
-  return it->second(iPosition);
+  std::stringstream ss;
+  ss << typeId << " " << it->second(iPosition);
+  return ss.str();
 }
 
 void Serializator::registerFromStringType(const std::string& type, FromString fromString)
@@ -64,11 +53,3 @@ std::unordered_map<std::string, Serializator::ToString>& Serializator::getToStri
   static std::unordered_map<std::string, ToString> toStringMap;
   return toStringMap;
 }
-
-static bool initFactory = [] {
-  Serializator::registerFromStringType(SalesmanPosition::getTypeId(), SalesmanPosition::fromString);
-  Serializator::registerToStringType(SalesmanPosition::getTypeId(), SalesmanPosition::toString);
-  Serializator::registerFromStringType(SalesmanAnglePosition::getTypeId(), SalesmanAnglePosition::fromString);
-  Serializator::registerToStringType(SalesmanAnglePosition::getTypeId(), SalesmanAnglePosition::toString);
-  return true;
-}();

@@ -24,8 +24,7 @@ std::string getFileName(int idx)
 
 std::string getFolderName(const IGenerator::CPtr& generator, const IPosition::CPtr& position)
 {
-  return std::filesystem::path(Io::getTargetsPath()) / Serializator::getTypeId(position) /
-         generator->getGeneratorName();
+  return std::filesystem::path(Io::getTargetsPath()) / position->getTypeId() / generator->getGeneratorName();
 }
 
 std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator::CPtr& generator, int idx)
@@ -67,7 +66,6 @@ std::string Io::getFontPath()
   static std::string fontsPath = std::filesystem::path(getFontsPath()) / "Cousine-Regular.ttf";
   return fontsPath;
 }
-
 
 std::string Io::getDataPath()
 {

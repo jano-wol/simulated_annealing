@@ -15,7 +15,6 @@ public:
   using FromString = std::function<core::IPosition::CPtr(const std::string&)>;
   using ToString = std::function<std::string(const core::IPosition::CPtr&)>;
 
-  static std::string getTypeId(const core::IPosition::CPtr& iPosition);
   static core::IPosition::CPtr fromString(const std::string& data);
   static std::string toString(const core::IPosition::CPtr& iPosition);
   static void registerFromStringType(const std::string& type, FromString fromString);
