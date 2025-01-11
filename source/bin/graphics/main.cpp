@@ -6,6 +6,7 @@
 #include "SAFactoryUI.h"
 #include "Scale.h"
 #include "StateUI.h"
+#include "Targets.h"
 #include "WindowBegin.h"
 #include "WindowEnd.h"
 

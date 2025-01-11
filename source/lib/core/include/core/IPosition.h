@@ -18,6 +18,7 @@ public:
   virtual void makeMove(IMove::CPtr move) = 0;
   virtual int size() const = 0;
   virtual CPtr clone() const = 0;
+  virtual std::string getTypeId() const = 0;
 
   virtual void plot() const {}
   virtual ~IPosition() = default;

@@ -122,7 +122,6 @@ std::string SalesmanAnglePosition::toString(const IPosition::CPtr& iPosition)
   SalesmanAnglePosition* position = dynamic_cast<SalesmanAnglePosition*>(iPosition.get());
   std::stringstream ss;
   ss << std::setprecision(Rounding::precision) << std::fixed;
-  ss << getTypeId() << " ";
   for (const auto& [d1, d2] : position->cities) {
     ss << d1 << " " << d2 << " ";
   }
@@ -132,9 +131,6 @@ std::string SalesmanAnglePosition::toString(const IPosition::CPtr& iPosition)
 IPosition::CPtr SalesmanAnglePosition::fromString(const std::string& data)
 {
   std::istringstream ss(data);
-  std::string typeId;
-  ss >> typeId;
-
   std::vector<std::pair<double, double>> cities;
   double d1, d2;
   while (ss >> d1 >> d2) {
@@ -143,8 +139,6 @@ IPosition::CPtr SalesmanAnglePosition::fromString(const std::string& data)
   auto position = std::make_unique<SalesmanAnglePosition>(std::move(cities));
   return position;
 }
-
-std::string SalesmanAnglePosition::getTypeId() { return "salesman_angle"; }
 
 void SalesmanAnglePosition::plot() const
 {

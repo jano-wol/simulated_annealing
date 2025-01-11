@@ -6,6 +6,7 @@
 #include <core/IPosition.h>
 #include <core/Random.h>
 #include <salesman/Move.h>
+#include <serializator/Serializator.h>
 
 namespace sa::targets::salesman
 {
@@ -21,6 +22,9 @@ public:
       : energy(energy_), cities(std::move(cities_))
   {}
 
+  static std::string toString(const core::IPosition::CPtr& position);
+  static core::IPosition::CPtr fromString(const std::string& data);
+
   double getEnergy() const override;
   core::IMove::CPtr generateMove() const override;
   void makeMove(core::IMove::CPtr move) override;
@@ -32,13 +36,11 @@ public:
   double distance(const std::pair<double, double>& city1, const std::pair<double, double>& city2) const;
   double calcEnergy() const;
 
-  static std::string getTypeId();
-  static std::string toString(const core::IPosition::CPtr& position);
-  static core::IPosition::CPtr fromString(const std::string& data);
-
   double energy;
   std::vector<std::pair<double, double>> cities;
   core::Random r;
+
+  REGISTER_TARGET_BY_ID(salesman)
 };
 }  // namespace sa::targets::salesman
 

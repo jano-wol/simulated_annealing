@@ -115,6 +115,8 @@ public:
     return std::make_unique<DummySlowPosition>(energy);
   }
 
+  std::string getTypeId() const override { return "DummySlowPosition"; }
+
   double energy;
   static std::size_t energyConstructorCounter;
   static std::size_t copyConstructorCounter;
@@ -177,6 +179,8 @@ public:
     auto ret = std::make_unique<DummyFastPosition>(energy);
     return ret;
   }
+
+  std::string getTypeId() const override { return "DummyFastPosition"; }
 
   double energy;
   static std::size_t energyConstructorCounter;
