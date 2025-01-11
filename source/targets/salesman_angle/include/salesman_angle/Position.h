@@ -22,6 +22,9 @@ public:
       : energy(energy_), cities(std::move(cities_))
   {}
 
+  static std::string toString(const core::IPosition::CPtr& position);
+  static core::IPosition::CPtr fromString(const std::string& data);
+
   double getEnergy() const override;
   core::IMove::CPtr generateMove() const override;
   void makeMove(core::IMove::CPtr move) override;
@@ -34,20 +37,11 @@ public:
   double angle(std::size_t curr, std::size_t prev, std::size_t next) const;
   double calcEnergy() const;
 
-  static std::string toString(const core::IPosition::CPtr& position);
-  static core::IPosition::CPtr fromString(const std::string& data);
-
   double energy;
   std::vector<std::pair<double, double>> cities;
   core::Random r;
 
-  static std::string getTypeIdStatic() { return "salesman_angle"; }
-  std::string getTypeId() const override { return getTypeIdStatic(); }
-  inline static const bool registered = []() {
-    serializator::Serializator::registerFromStringType(getTypeIdStatic(), fromString);
-    serializator::Serializator::registerToStringType(getTypeIdStatic(), toString);
-    return true;
-  }();
+  REGISTER_TARGET_BY_ID(salesman_angle)
 };
 }  // namespace sa::targets::salesman_angle
 

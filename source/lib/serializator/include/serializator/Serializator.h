@@ -7,6 +7,15 @@
 
 #include <core/IPosition.h>
 
+#define REGISTER_TARGET_BY_ID(target)                                                  \
+  static std::string getTypeIdStatic() { return #target; }                             \
+  std::string getTypeId() const override { return getTypeIdStatic(); }                 \
+  inline static const bool registered = []() {                                         \
+    serializator::Serializator::registerFromStringType(getTypeIdStatic(), fromString); \
+    serializator::Serializator::registerToStringType(getTypeIdStatic(), toString);     \
+    return true;                                                                       \
+  }();
+
 namespace sa::serializator
 {
 class Serializator
