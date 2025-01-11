@@ -8,10 +8,7 @@
 #include "StateUI.h"
 #include "WindowBegin.h"
 #include "WindowEnd.h"
-
-// delete this
-#include <salesman/Position.h>
-#include <salesman_angle/Position.h>
+#include "Targets.h"
 
 int main()
 {
