@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-linux-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+      - name: Run configure script for release
+        run: ./source/scripts/configure.sh release
+      - name: Run build script for release
+        run: ./source/scripts/build.sh release
+      - name: Run test script for release
+        run: ./source/scripts/test.sh release
+
+  build-linux-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+      - name: Run configure script for debug
+        run: ./source/scripts/configure.sh debug
+      - name: Run build script for debug
+        run: ./source/scripts/build.sh debug
+      - name: Run test script for debug
+        run: ./source/scripts/test.sh debug
