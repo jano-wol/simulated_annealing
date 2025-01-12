@@ -83,9 +83,9 @@ void printSnapshotMetrics(const Monitor::CPtr& monitor, int snapshotIdx, std::st
 {
   const auto& snapshot = monitor->snapshots[snapshotIdx];
   const auto& snapshotMetrics = snapshot.globalMetrics;
-  int iterations = 0;
-  int acceptances = 0;
-  int upEnergyChanges = 0;
+  std::size_t iterations = 0;
+  std::size_t acceptances = 0;
+  std::size_t upEnergyChanges = 0;
   if (0 < snapshotIdx) {
     const auto& snapshotPrev = monitor->snapshots[snapshotIdx - 1];
     iterations = snapshot.globalMetrics.idx - snapshotPrev.globalMetrics.idx;
@@ -175,7 +175,7 @@ void SAOutputUI::init(Monitor::CPtr monitor_)
     }
   }
   scrollIdx = bestScrollIdx;
-  sliderValue = progresses[scrollIdx];
+  sliderValue = float(progresses[scrollIdx]);
 }
 
 void SAOutputUI::handleAllTimeBestButton(float plotSize, const IPosition::CPtr& allTimeBest, bool isAnnealing)
@@ -263,22 +263,22 @@ void SAOutputUI::handleButtons(float plotSize)
     }
     ImGui::SameLine();
     if (ImGui::Button(">>")) {
-      scrollIdx = progresses.size() - 1;
+      scrollIdx = int(progresses.size()) - 1;
       sliderValue = float(progresses[scrollIdx]);
     }
   }
-  sliderValue = progresses[scrollIdx];
+  sliderValue = float(progresses[scrollIdx]);
 }
 
 void SAOutputUI::handleNavigator(float plotSize)
 {
   ImGui::SetNextItemWidth(plotSize);
   if (ImGui::SliderFloat("##SnapshotSlider", &sliderValue, 0, 1, "%.2f")) {
-    auto closestIt = std::min_element(progresses.begin(), progresses.end(), [&](float a, float b) {
+    auto closestIt = std::min_element(progresses.begin(), progresses.end(), [&](double a, double b) {
       return std::abs(a - sliderValue) < std::abs(b - sliderValue);
     });
     scrollIdx = int(std::distance(progresses.begin(), closestIt));
-    sliderValue = progresses[scrollIdx];
+    sliderValue = float(progresses[scrollIdx]);
   }
   handleButtons(plotSize);
 }

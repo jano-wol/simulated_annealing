@@ -37,7 +37,7 @@ public:
   bool loadedVisible;
   int selection;
   std::vector<File> filesInScope;
-  bool operationRequest;
+  bool operationRequest = false;
   std::filesystem::path loadedPath;
   std::filesystem::path displayPath;
   char saveFileName[256];

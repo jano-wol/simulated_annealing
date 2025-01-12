@@ -91,7 +91,7 @@ void combo(const char* text, const char* id, int* index, const std::vector<const
 {
   ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::Combo(id, index, v.data(), v.size());
+  ImGui::Combo(id, index, v.data(), int(v.size()));
 }
 
 IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
@@ -139,7 +139,7 @@ IResource::CPtr SAFactoryUI::Params::getResource()
     return std::make_unique<Time>(durationInSeconds);
   }
   if (resourceIndex == 1) {
-    return std::make_unique<Iteration>(iteration);
+    return std::make_unique<Iteration>(double(iteration));
   }
   return nullptr;
 }
