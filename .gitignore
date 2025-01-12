@@ -3,7 +3,9 @@
 **/*.s
 **/*.log
 **/*.out
+**/out
 **/.depend
+**/.vs
 **/.vscode
 **/.idea
 **/__pycache__

@@ -2,6 +2,7 @@
 #define SIMULATED_ANNEALING_CORE_IPOSITION_H_
 
 #include <memory>
+#include <string>
 
 #include <core/IMove.h>
 

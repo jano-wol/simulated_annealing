@@ -1,6 +1,7 @@
 #include <policies/Cooling.h>
 
 #include <cmath>
+#include <numbers>
 #include <sstream>
 
 using namespace sa::policies;
@@ -63,7 +64,7 @@ std::string Quadratic::toString() const
 
 ICooling::CPtr Quadratic::clone() const { return std::make_unique<Quadratic>(t0); }
 
-double Cosine::getTemperature(double progress) const { return t0 * (1.0 + std::cos(M_PI * progress)) / 2.0; }
+double Cosine::getTemperature(double progress) const { return t0 * (1.0 + std::cos(std::numbers::pi * progress)) / 2.0; }
 
 std::string Cosine::toString() const
 {

@@ -24,7 +24,7 @@ std::string getFileName(int idx)
 
 std::string getFolderName(const IGenerator::CPtr& generator, const IPosition::CPtr& position)
 {
-  return std::filesystem::path(Io::getTargetsPath()) / position->getTypeId() / generator->getGeneratorName();
+  return (std::filesystem::path(Io::getTargetsPath()) / position->getTypeId() / generator->getGeneratorName()).string();
 }
 
 std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator::CPtr& generator, int idx)
@@ -32,56 +32,56 @@ std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator:
   auto position = generator->generatePosition(idx);
   std::filesystem::path folder(getFolderName(generator, position));
   std::filesystem::path filePath = folder / getFileName(idx);
-  return {filePath, std::move(position)};
+  return {filePath.string(), std::move(position)};
 }
 }  // namespace
 
 std::string Io::getWorkspaceRootPath()
 {
   static std::string workspaceRootPath =
-      std::filesystem::absolute(__FILE__).parent_path().parent_path().parent_path().parent_path().parent_path();
+      std::filesystem::absolute(__FILE__).parent_path().parent_path().parent_path().parent_path().parent_path().string();
   return workspaceRootPath;
 }
 
 std::string Io::getSourcePath()
 {
-  static std::string sourcePath = std::filesystem::path(getWorkspaceRootPath()) / "source";
+  static std::string sourcePath = (std::filesystem::path(getWorkspaceRootPath()) / "source").string();
   return sourcePath;
 }
 
 std::string Io::getExtPath()
 {
-  static std::string extPath = std::filesystem::path(getSourcePath()) / "ext";
+  static std::string extPath = (std::filesystem::path(getSourcePath()) / "ext").string();
   return extPath;
 }
 
 std::string Io::getFontsPath()
 {
-  static std::string fontsPath = std::filesystem::path(getExtPath()) / "imgui" / "imgui" / "fonts";
+  static std::string fontsPath = (std::filesystem::path(getExtPath()) / "imgui" / "imgui" / "fonts").string();
   return fontsPath;
 }
 
 std::string Io::getFontPath()
 {
-  static std::string fontsPath = std::filesystem::path(getFontsPath()) / "Cousine-Regular.ttf";
+  static std::string fontsPath = (std::filesystem::path(getFontsPath()) / "Cousine-Regular.ttf").string();
   return fontsPath;
 }
 
 std::string Io::getDataPath()
 {
-  static std::string dataPath = std::filesystem::path(getWorkspaceRootPath()) / "data";
+  static std::string dataPath = (std::filesystem::path(getWorkspaceRootPath()) / "data").string();
   return dataPath;
 }
 
 std::string Io::getTargetsPath()
 {
-  static std::string targetsPath = std::filesystem::path(getDataPath()) / "targets";
+  static std::string targetsPath = (std::filesystem::path(getDataPath()) / "targets").string();
   return targetsPath;
 }
 
 std::string Io::getTargetPath(const std::string& target)
 {
-  std::string targetPath = std::filesystem::path(getTargetsPath()) / target;
+  std::string targetPath = (std::filesystem::path(getTargetsPath()) / target).string();
   return targetPath;
 }
 
@@ -159,7 +159,7 @@ void Io::refreshBest(const std::string& path)
   dirIter.iterate([&file, &root](const std::string& filePath) {
     std::filesystem::path p(filePath);
     if (p.parent_path().filename() == "best" && p.extension() == ".txt") {
-      auto position = getPosition(p);
+      auto position = getPosition(p.string());
       file << p.lexically_relative(root).string() << " " << Rounding::roundDouble(position->getEnergy()) << "\n";
     }
   });

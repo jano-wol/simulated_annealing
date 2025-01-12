@@ -134,7 +134,7 @@ void MenuUI::render()
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
       nextPath = filesInScope[selection].path;
       strncpy(saveFileName, nextPath.filename().string().c_str(), IM_ARRAYSIZE(saveFileName));
-      strncpy(bestFileName, Io::getCorrespondingBest(nextPath).c_str(), IM_ARRAYSIZE(bestFileName));
+      strncpy(bestFileName, Io::getCorrespondingBest(nextPath.string()).c_str(), IM_ARRAYSIZE(bestFileName));
     }
     if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
       get_files_in_path(nextPath, filesInScope);
@@ -197,14 +197,14 @@ void MenuUI::startParsing()
     if (trackBest) {
       best = Io::getPosition(bestFileName);
     }
-    return std::pair<IPosition::CPtr, IPosition::CPtr>{std::move(best), Io::getPosition(loadedPath)};
+    return std::pair<IPosition::CPtr, IPosition::CPtr>{std::move(best), Io::getPosition(loadedPath.string())};
   });
 }
 
 void MenuUI::startSaving(const IPosition::CPtr& currPosition)
 {
   savingFuture = std::async(std::launch::async, [this, &currPosition]() {
-    Io::savePosition(loadedPath, currPosition);
+    Io::savePosition(loadedPath.string(), currPosition);
     if (std::filesystem::exists(loadedPath) && std::filesystem::is_regular_file(loadedPath) &&
         (std::filesystem::file_size(loadedPath) != 0)) {
       return true;
