@@ -12,7 +12,7 @@ void scale()
   int fontSize = (glfwGetVideoMode(glfwGetPrimaryMonitor())->width) / characterInRow;
   std::string fontPath = sa::io::Io::getFontPath();
   ImGuiIO& io = ImGui::GetIO();
-  (void)io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontSize);
+  (void)io.Fonts->AddFontFromFileTTF(fontPath.c_str(), float(fontSize));
   ImGui::GetStyle().ScaleAllSizes((float)fontSize / 13.0f);
 }
 

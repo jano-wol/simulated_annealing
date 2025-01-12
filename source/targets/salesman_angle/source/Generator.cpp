@@ -44,7 +44,7 @@ IPosition::CPtr SalesmanAngleGenerator::getStartPosition_5x5(int idx) const
   std::vector<std::pair<double, double>> cities;
   cities.reserve(numCities);
   for (int c = 0; c < numCities; ++c) {
-    int rr = r.randomInt(0, chosenSubsquaresDensity.size() - 1);
+    int rr = r.randomInt(0, int(chosenSubsquaresDensity.size()) - 1);
     int sq = chosenSubsquaresDensity[rr];
     int x = sq / 5;
     int y = sq % 5;

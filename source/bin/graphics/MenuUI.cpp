@@ -52,6 +52,7 @@ MenuUI::MenuUI()
       selection(-1)
 {
   saveFileName[0] = '\0';
+  bestFileName[0] = '\0';
 }
 
 void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
@@ -102,7 +103,7 @@ void MenuUI::renderSave()
   ImGui::Spacing();
   ImGui::Text("File name:");
   ImGui::SameLine();
-  ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * (1.0 / 3.0));
+  ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * (1.0f / 3.0f));
   ImGui::InputText("##InputSaveFileName", saveFileName, IM_ARRAYSIZE(saveFileName));
   std::filesystem::path savePath = currentDirPath / saveFileName;
 
@@ -125,16 +126,16 @@ void MenuUI::render()
   }
 
   bool isOpen = true;
-  float minWidth = ImGui::GetWindowWidth() * (2.0 / 3.0);
+  float minWidth = ImGui::GetWindowWidth() * (2.0f / 3.0f);
   float maxWidth = ImGui::GetWindowWidth();
   float maxHeight = ImGui::GetWindowHeight() * 0.8f;
   ImGui::SetNextWindowSizeConstraints(ImVec2(minWidth, -1), ImVec2(maxWidth, maxHeight));
   ImGui::SetNextWindowPos({0, 0});
   if (ImGui::BeginPopupModal(title.c_str(), &isOpen, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-    if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, filesInScope.size(), 10)) {
+    if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, int(filesInScope.size()), 10)) {
       nextPath = filesInScope[selection].path;
-      strncpy(saveFileName, nextPath.filename().string().c_str(), IM_ARRAYSIZE(saveFileName));
-      strncpy(bestFileName, Io::getCorrespondingBest(nextPath.string()).c_str(), IM_ARRAYSIZE(bestFileName));
+      std::snprintf(saveFileName, IM_ARRAYSIZE(saveFileName), "%s", nextPath.filename().string().c_str());
+      std::snprintf(bestFileName, IM_ARRAYSIZE(bestFileName), "%s", Io::getCorrespondingBest(nextPath.string()).c_str());
     }
     if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
       get_files_in_path(nextPath, filesInScope);
@@ -182,7 +183,7 @@ void MenuUI::menuUpdate()
     }
     {
       ImGuiIO& io = ImGui::GetIO();
-      ImGui::SetCursorPosX(ImGui::GetWindowWidth() * (9.0 / 10.0));
+      ImGui::SetCursorPosX(ImGui::GetWindowWidth() * (9.0f / 10.0f));
       ImGui::Text("FPS: %.1f", io.Framerate);
     }
     ImGui::EndMenuBar();

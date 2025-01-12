@@ -17,7 +17,7 @@ void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float 
   double totalProgress = 0.0;
   ImVec2 firstBarPos, lastBarEnd;
   for (std::size_t i = 0; i < progresses.size(); ++i) {
-    float fraction = progresses[i].load();
+    double fraction = progresses[i].load();
     totalProgress += fraction;
     if (i == 0) {
       ImGui::SameLine();
@@ -25,7 +25,7 @@ void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float 
     } else {
       ImGui::SameLine(0.0f, 0.0f);
     }
-    ImGui::ProgressBar(fraction, ImVec2(progressBarWidth, totalHeight), "");
+    ImGui::ProgressBar(float(fraction), ImVec2(progressBarWidth, totalHeight), "");
     if (i == progresses.size() - 1) {
       lastBarEnd = ImGui::GetItemRectMax();
     }
@@ -47,7 +47,7 @@ void updateProgressBar(const std::deque<std::atomic<double>>& progresses, float 
 SA::CPtr simulate(const IPosition::CPtr& currPosition, const std::vector<SAFactory::CPtr>& factories,
                   const std::uint64_t n)
 {
-  Random::setEffectiveSeed(n);
+  Random::setEffectiveSeed(int(n));
   auto sa = factories[n]->create();
   IPosition::CPtr bestPosition = nullptr;
   sa->anneal(currPosition);

@@ -16,7 +16,7 @@ using namespace sa::policies;
 using namespace sa::sa;
 using namespace sa::targets::salesman_angle;
 
-void print(const SA& sa, int idx)
+void print(const SA& sa, std::size_t idx)
 {
   std::cout << "idx=" << idx << "\n"
             << sa.toString() << "\n"
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
     std::vector<double> l{1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 100.0, 100.0};
     for (std::size_t idx = 0; idx < 8; ++idx) {
       for (int b = 0; b < 2; ++b) {
-        IGenerator::CPtr g = std::make_unique<SalesmanAngleGenerator>(nc[idx], l[idx], b);
+        IGenerator::CPtr g = std::make_unique<SalesmanAngleGenerator>(nc[idx], int(l[idx]), bool(b));
         auto position = Io::getPosition(g, 1);
         if (mode == "save") {
           Io::savePosition(g, 1);
