@@ -91,7 +91,7 @@ void combo(const char* text, const char* id, int* index, const std::vector<const
 {
   ImGui::TextUnformatted(text);
   ImGui::SameLine();
-  ImGui::Combo(id, index, v.data(), v.size());
+  ImGui::Combo(id, index, v.data(), int(v.size()));
 }
 
 IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
