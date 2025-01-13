@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies using vcpkg
         run: |
           C:/vcpkg/vcpkg update
-          C:/vcpkg/vcpkg install glfw3 opengl
+          C:/vcpkg/vcpkg install glfw3
 
       - name: Configure CMake for release build
         run: |
