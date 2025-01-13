@@ -51,6 +51,11 @@ jobs:
           $vs = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
           if ($vs) { Write-Host "Found Visual Studio at $vs" } else { Write-Host "Visual Studio not found" }
 
+      - name: Install dependencies using vcpkg
+        run: |
+          C:/vcpkg/vcpkg update
+          C:/vcpkg/vcpkg install glfw3 opengl32
+
       - name: Configure CMake for release build
         run: |
           cmake -S . -B build/release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
