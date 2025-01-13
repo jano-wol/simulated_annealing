@@ -64,4 +64,8 @@ jobs:
         run: |
           cmake --build build/release --config Release
 
+      - name: Run tests (Release)
+        run: |
+          ctest --test-dir build/release --output-on-failure
+
 
