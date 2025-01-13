@@ -38,3 +38,43 @@ jobs:
         run: ./source/scripts/build.sh debug
       - name: Run test script for debug
         run: ./source/scripts/test.sh debug
+
+  build-windows-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up environment
+        run: |
+          C:/vcpkg/vcpkg update
+          C:/vcpkg/vcpkg install glfw3
+      - name: Configure for release
+        run: |
+          cmake -S . -B build/release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+      - name: Build for release
+        run: |
+          cmake --build build/release --config Release
+      - name: Test for release
+        run: |
+          ctest --test-dir build/release --output-on-failure
+
+  build-windows-debug:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up environment
+        run: |
+          C:/vcpkg/vcpkg update
+          C:/vcpkg/vcpkg install glfw3
+      - name: Configure for debug
+        run: |
+          cmake -S . -B build/debug -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug
+      - name: Build for debug
+        run: |
+          cmake --build build/debug --config Debug
+      - name: Test for debug
+        run: |
+          ctest --test-dir build/debug --output-on-failure
+
+
