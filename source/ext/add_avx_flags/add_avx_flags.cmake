@@ -1,4 +1,4 @@
-macro(CHECK_AVX)
+macro(ADD_AVX_FLAGS)
     set(AVX_FLAGS)
 
     include(CheckCXXSourceRuns)
