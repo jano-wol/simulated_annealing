@@ -1,5 +1,6 @@
 macro(ADD_AVX_FLAGS)
     set(AVX_FLAGS)
+    set(OLD_LOG_LEVEL "${CMAKE_MESSAGE_LOG_LEVEL}")
 
     include(CheckCXXSourceRuns)
     set(CMAKE_REQUIRED_FLAGS)
@@ -12,6 +13,7 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx")
     endif ()
+    set(CMAKE_MESSAGE_LOG_LEVEL "WARNING")
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -31,8 +33,12 @@ macro(ADD_AVX_FLAGS)
           return 0;
         }"
         HAVE_AVX)
+    set(CMAKE_MESSAGE_LOG_LEVEL "${OLD_LOG_LEVEL}")  
     if (HAVE_AVX)
+        message(STATUS "AVX support set.")
         list(APPEND AVX_FLAGS "-mavx")
+    else()
+        message(STATUS "AVX support not available.")        
     endif()
 
     # Check for AVX2
@@ -43,6 +49,7 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx2")
     endif ()
+    set(CMAKE_MESSAGE_LOG_LEVEL "WARNING")
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -62,8 +69,12 @@ macro(ADD_AVX_FLAGS)
           return 0;
         }"
         HAVE_AVX2)
+    set(CMAKE_MESSAGE_LOG_LEVEL "${OLD_LOG_LEVEL}")      
     if (HAVE_AVX2)
+        message(STATUS "AVX2 support set.")
         list(APPEND AVX_FLAGS "-mavx2")
+    else()
+        message(STATUS "AVX2 support not available.")        
     endif()
 
     # Check for AVX512
@@ -74,6 +85,7 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx512f")
     endif ()
+    set(CMAKE_MESSAGE_LOG_LEVEL "WARNING")
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -93,8 +105,12 @@ macro(ADD_AVX_FLAGS)
           return 0;
         }"
         HAVE_AVX512)
+    set(CMAKE_MESSAGE_LOG_LEVEL "${OLD_LOG_LEVEL}")    
     if (HAVE_AVX512)
+        message(STATUS "AVX512 support set.")
         list(APPEND AVX_FLAGS "-mavx512f")
+    else()
+        message(STATUS "AVX512 support not available.")
     endif()
 
     # Set flags according to check results
