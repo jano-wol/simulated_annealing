@@ -1,9 +1,13 @@
 macro(ADD_AVX_FLAGS)
+    include(CheckCXXSourceRuns)
     set(AVX_FLAGS)
     set(OLD_LOG_LEVEL "${CMAKE_MESSAGE_LOG_LEVEL}")
-
-    include(CheckCXXSourceRuns)
     set(CMAKE_REQUIRED_FLAGS)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        set(MSCV TRUE)
+    else()
+        set(MSCV FALSE)
+    endif()
 
     # Check for AVX
     if (MSVC)
