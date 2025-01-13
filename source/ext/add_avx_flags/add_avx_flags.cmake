@@ -12,7 +12,6 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx")
     endif ()
-
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -31,7 +30,10 @@ macro(ADD_AVX_FLAGS)
           }
           return 0;
         }"
-        HAVE_AVX_EXTENSIONS)
+        HAVE_AVX)
+    if (HAVE_AVX)
+        list(APPEND AVX_FLAGS "-mavx")
+    endif()
 
     # Check for AVX2
     if (MSVC)
@@ -41,7 +43,6 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx2")
     endif ()
-
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -60,7 +61,10 @@ macro(ADD_AVX_FLAGS)
           }
           return 0;
         }"
-        HAVE_AVX2_EXTENSIONS)
+        HAVE_AVX2)
+    if (HAVE_AVX2)
+        list(APPEND AVX_FLAGS "-mavx2")
+    endif()
 
     # Check for AVX512
     if (MSVC)
@@ -70,7 +74,6 @@ macro(ADD_AVX_FLAGS)
     else ()
         set(CMAKE_REQUIRED_FLAGS "-mavx512f")
     endif ()
-
     check_cxx_source_runs("
         #include <immintrin.h>
         int main()
@@ -89,7 +92,10 @@ macro(ADD_AVX_FLAGS)
           }
           return 0;
         }"
-        HAVE_AVX512_EXTENSIONS)
+        HAVE_AVX512)
+    if (HAVE_AVX512)
+        list(APPEND AVX_FLAGS "-mavx512f")
+    endif()
 
     # Set flags according to check results
     if (MSVC)
@@ -112,5 +118,5 @@ macro(ADD_AVX_FLAGS)
 
     if (AVX_FLAGS)
         add_compile_options(${AVX_FLAGS})
-    endif ()
+    endif()
 endmacro(ADD_AVX_FLAGS)
