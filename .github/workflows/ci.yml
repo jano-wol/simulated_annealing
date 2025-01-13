@@ -56,9 +56,13 @@ jobs:
           C:/vcpkg/vcpkg update
           C:/vcpkg/vcpkg install glfw3 opengl
 
+      - name: Install Ninja
+        run: |
+          choco install ninja
+
       - name: Configure CMake for release build
         run: |
-          cmake -S . -B build/release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build/release -G Ninja -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
 
       - name: Build the project (Release)
         run: |
