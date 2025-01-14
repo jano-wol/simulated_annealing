@@ -8,5 +8,6 @@ set(sources ${source_path}/DirectoryIterator.cpp
             ${source_path}/Io.cpp
 			)
 add_library(${target} ${sources} ${headers})
+target_compile_definitions(${target} PUBLIC WORKSPACE_ROOT_PATH="${CMAKE_SOURCE_DIR}")
 target_link_libraries(${target} PUBLIC core serializator)
 target_include_directories(${target} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")

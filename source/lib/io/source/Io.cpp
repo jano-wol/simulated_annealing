@@ -38,9 +38,11 @@ std::pair<std::string, IPosition::CPtr> getFilePathAndPosition(const IGenerator:
 
 std::string Io::getWorkspaceRootPath()
 {
-  static std::string workspaceRootPath =
-      std::filesystem::absolute(__FILE__).parent_path().parent_path().parent_path().parent_path().parent_path().string();
-  return workspaceRootPath;
+  #ifdef WORKSPACE_ROOT_PATH
+    return std::string(WORKSPACE_ROOT_PATH);
+  #else
+    return "";
+  #endif
 }
 
 std::string Io::getSourcePath()
