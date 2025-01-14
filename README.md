@@ -20,7 +20,7 @@ During installation, please check the following components:
 vcpkg is a package manager for C++ libraries that makes it easy to install and integrate external libraries into your project.
 
 #### Install vcpkg
-1. Clone the **vcpkg** repository from GitHub:
+1. Clone the **vcpkg** repository from GitHub on C drive:
    ```bash
    git clone https://github.com/microsoft/vcpkg.git
    ```
@@ -29,27 +29,26 @@ vcpkg is a package manager for C++ libraries that makes it easy to install and i
    cd vcpkg
    ```
 3. Run the bootstrap script to build **vcpkg**:
-   - On **Windows** (PowerShell):
-     ```powershell
-     .bootstrap-vcpkg.bat
-     ```
+   ```bash
+   bootstrap-vcpkg.bat
+   ```     
 
 #### Install Required Libraries
 Once **vcpkg** is set up, use it to install the required libraries for the project: **glfw** and **opengl**.
 
 1. Install **glfw**:
    ```bash
-   .vcpkg install glfw3
+   vcpkg install glfw3
    ```
 2. Install **opengl**:
    ```bash
-   .cpkg install opengl
+   vcpkg install opengl
    ```
 
 #### Integrate vcpkg with Visual Studio
 To make **vcpkg** available in Visual Studio, run the following command:
 ```bash
-.vcpkg integrate install
+vcpkg integrate install
 ```
 This command ensures that **vcpkg** is automatically recognized by Visual Studio and CMake during the build process.
 
