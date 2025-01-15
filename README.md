@@ -1,10 +1,10 @@
 # Simulated Annealing Studio
 
-This repository is a personal project aimed at exploring and showcasing simulated annealing. It is designed for two main use cases:
+This repository is a personal project aimed at exploring and showcasing Simulated Annealing. It is designed for two main use cases:
 
-1. For those interested in understanding simulated annealing, the repository provides programmed use cases that demonstrate its principles. The examples allow for parameter adjustments and include visualizations to illustrate the optimization process and its outcomes.
+1. For those interested in understanding Simulated Annealing, the repository provides programmed use cases that demonstrate its principles. The examples allow for parameter adjustments and include visualizations to illustrate the optimization process and its outcomes.
 
-2. For C++ developers seeking to apply simulated annealing to specific problems, the repository offers a performant framework. By implementing a minimal set of problem-specific functions (such as ``getEnergy``, ``generateMove``, ``fromString`` etc.), users gain access to features like a graphical UI for visualization, process diagnostics, solution tracking, and parallel thread handling.
+2. For C++ developers seeking to apply Simulated Annealing to specific problems, the repository offers a performant framework. By implementing a minimal set of problem-specific functions (such as ``getEnergy``, ``generateMove``, ``fromString`` etc.), users gain access to features like a graphical UI for visualization, process diagnostics, solution tracking, and parallel thread handling.
 
 ## Project Setup for Windows
 
