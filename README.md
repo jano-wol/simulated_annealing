@@ -1,6 +1,6 @@
 # Simulated Annealing Studio
 
-This repository is a personal project aimed at exploring and showcasing Simulated Annealing. It is designed for two main use cases:
+This repository is a personal project aimed at exploring and showcasing [Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing). It is designed for two main use cases:
 
 1. For those interested in understanding Simulated Annealing, the repository provides programmed use cases that demonstrate its principles. The examples allow for parameter adjustments and include visualizations to illustrate the optimization process and its outcomes.
 
