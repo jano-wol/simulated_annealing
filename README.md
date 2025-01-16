@@ -49,14 +49,14 @@ vcpkg integrate install
 ```
 
 #### 3. Build
-1. Clone the repository to a desired location
+1. Clone the repository to a desired location:
 ```bash
 git clone https://github.com/jano-wol/simulated_annealing.git
 ```
 
-2. Review [CMakePresets.json](./CMakePresets.json). If the root folder of vcpkg was not cloned to C:\, modify the ``CMAKE_TOOLCHAIN_FILE`` path values twice (once for each build type).
+2. Review the [CMakePresets.json](./CMakePresets.json) file. If the root folder of vcpkg was not cloned to C:\, adapt the ``CMAKE_TOOLCHAIN_FILE`` path values twice (once for each build type).
 
-3. Open Visual Studio and choose 'Open a local folder', then select the root folder of simulated_annealing. Configuration should run automatically and complete successfully. Once the configuration is ready, build the project by selecting Build > Build All.
+3. Open ``Visual Studio`` and choose 'Open a local folder', then select the root folder of ``simulated_annealing``. Configuration should run automatically and complete successfully. Once the configuration is ready, build the project by selecting ``Build > Build All``.
 
 4. Run the UI: simulated_annealing/build/release/bin/graphics.exe   
 
