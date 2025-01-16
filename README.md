@@ -11,7 +11,6 @@ Cross-platform development is supported, with installation instructions for both
 ## Setup
 
 ### Linux
-#### Steps
 ```bash
 # 1. Update package lists
 sudo apt update
