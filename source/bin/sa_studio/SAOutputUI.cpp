@@ -51,7 +51,7 @@ std::string toString(std::optional<double> val)
 
 void printGlobalMetrics(const GlobalMetrics& globalMetrics, const IPosition::CPtr& allTimeBest, std::stringstream& ss)
 {
-  ImGui::TextUnformatted("---- Global metrics ----");
+  ImGui::TextUnformatted("--- Global metrics ---");
   ss.str("");
   ss << "iterations = " << globalMetrics.idx;
   ImGui::TextUnformatted(ss.str().c_str());
@@ -92,7 +92,7 @@ void printSnapshotMetrics(const Monitor::CPtr& monitor, int snapshotIdx, std::st
     acceptances = snapshot.globalMetrics.acceptance - snapshotPrev.globalMetrics.acceptance;
     upEnergyChanges = snapshot.globalMetrics.upEnergyChanges - snapshotPrev.globalMetrics.upEnergyChanges;
   }
-  ImGui::TextUnformatted("---- Snapshot metrics ----");
+  ImGui::TextUnformatted("--- Snapshot metrics ---");
   ss.str("");
   ss << "prog = " << snapshotMetrics.progress << "\niterations = " << iterations << "\nacceptances = " << acceptances
      << "\nup energy changes = " << upEnergyChanges;
@@ -104,7 +104,7 @@ void printLocalMetrics(const Monitor::CPtr& monitor, int snapshotIdx, std::strin
 {
   const auto& candidate = monitor->snapshots[snapshotIdx].candidate;
   const auto& acceptance = monitor->snapshots[snapshotIdx].acceptance;
-  ImGui::TextUnformatted("---- Candidate and Acceptance local metrics ----");
+  ImGui::TextUnformatted("--- Metrics for the last 1000 candidates and acceptances ---");
   ss.str("");
   ss << std::setprecision(4) << std::fixed;
   ss << "local derivatives = " << candidate.localDerivative << " and " << acceptance.localDerivative;

@@ -97,7 +97,7 @@ void combo(const char* text, const char* id, int* index, const std::vector<const
 IAcceptance::CPtr SAFactoryUI::Params::getAcceptance()
 {
   if (acceptanceIndex == 0) {
-    return std::make_unique<Metropolis>(normalizator);
+    return std::make_unique<Metropolis>();
   }
   if (acceptanceIndex == 1) {
     return std::make_unique<Greedy>();
@@ -148,11 +148,11 @@ Monitor::CPtr SAFactoryUI::Params::getMonitor(std::atomic<double>& progress)
 {
   auto callback = [&progress](double newProgress) { progress.store(newProgress); };
   if (monitorIndex == 0) {
-    return std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1e-6, localEnvLength, steps,
-                                     memoryLimitInGb * 1000000000UL, std::move(callback));
+    return std::make_unique<Monitor>(MonitorLevel::Medium, 0.9, 1e-6, 1000UL, steps, memoryLimitInGb * 1000000000UL,
+                                     std::move(callback));
   }
   if (monitorIndex == 1) {
-    return std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1e-6, localEnvLength, 20, memoryLimitInGb * 1000000000UL,
+    return std::make_unique<Monitor>(MonitorLevel::High, 0.9, 1e-6, 1000UL, 20, memoryLimitInGb * 1000000000UL,
                                      std::move(callback));
   }
   return nullptr;
@@ -190,10 +190,6 @@ void SAFactoryUI::saFactoryUpdate()
   }
 
   combo("Acceptance Policy:", "##AcceptancePolicy", &loadedParams.acceptanceIndex, acceptanceNames);
-  if (loadedParams.acceptanceIndex == 0) {
-    ImGui::SameLine();
-    readDoubleNonNeg("Normalizator:", "##NormalizatorInput", &loadedParams.normalizator);
-  }
 
   combo("Cooling Policy:", "##CoolingPolicy", &loadedParams.coolingIndex, coolingNames);
   if (loadedParams.coolingIndex == 3 || loadedParams.coolingIndex == 4) {
@@ -212,13 +208,9 @@ void SAFactoryUI::saFactoryUpdate()
     ImGui::SameLine();
     readP32("Snapshots:", "##Snapshots1Input", &loadedParams.steps);
     ImGui::SameLine();
-    readP32("LocalEnvLength:", "##localEnvLength1Input", &loadedParams.localEnvLength);
-    ImGui::SameLine();
     readP32("MemoryLimit(Gb/thread):", "##MemoryLimit1Input", &loadedParams.memoryLimitInGb);
   }
   if (loadedParams.monitorIndex == 1) {
-    ImGui::SameLine();
-    readP32("LocalEnvLength:", "##localEnvLength2Input", &loadedParams.localEnvLength);
     ImGui::SameLine();
     readP32("MemoryLimit(Gb/thread):", "##MemoryLimit2Input", &loadedParams.memoryLimitInGb);
   }
