@@ -22,7 +22,7 @@ sudo apt install build-essential cmake ninja-build git libglfw3-dev libopengl-de
 git clone https://github.com/jano-wol/simulated_annealing.git
 cd simulated_annealing
 
-# 4. Configure and build the project (change 'release to 'debug' to get debug build)
+# 4. Configure and build the project (change 'release' to 'debug' to get debug build)
 ./source/scripth/configure.sh release
 ./source/scripth/build.sh release
 
