@@ -26,7 +26,6 @@ public:
     int acceptanceIndex = 0;
 
     int coolingIndex = 0;
-    double c = 1.0;
     double t0 = 1.0;
 
     int moveSelectorIndex = 0;
@@ -58,7 +57,7 @@ public:
 
   std::vector<const char*> resourceNames{"Time", "Iteration"};
   std::vector<const char*> acceptanceNames{"Metropolis", "Greedy"};
-  std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine", "Exponential", "Logarithmic"};
+  std::vector<const char*> coolingNames{"Linear", "Quadratic", "Cosine"};
   std::vector<const char*> moveSelectorNames{"KBest"};
   std::vector<const char*> monitorNames{"Snapshots", "All"};
   std::vector<const char*> randomNames{"Time-based", "Explicit"};

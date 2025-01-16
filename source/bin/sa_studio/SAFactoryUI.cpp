@@ -116,12 +116,6 @@ ICooling::CPtr SAFactoryUI::Params::getCooling()
   if (coolingIndex == 2) {
     return std::make_unique<Cosine>(t0);
   }
-  if (coolingIndex == 3) {
-    return std::make_unique<Exponential>(c, t0);
-  }
-  if (coolingIndex == 4) {
-    return std::make_unique<Logarithmic>(c, t0);
-  }
   return nullptr;
 }
 
@@ -192,10 +186,6 @@ void SAFactoryUI::saFactoryUpdate()
   combo("Acceptance Policy:", "##AcceptancePolicy", &loadedParams.acceptanceIndex, acceptanceNames);
 
   combo("Cooling Policy:", "##CoolingPolicy", &loadedParams.coolingIndex, coolingNames);
-  if (loadedParams.coolingIndex == 3 || loadedParams.coolingIndex == 4) {
-    ImGui::SameLine();
-    readDoubleNonNeg("C:", "##CInput", &loadedParams.c);
-  }
   ImGui::SameLine();
   readDoubleNonNeg("T0:", "##T0Input", &loadedParams.t0);
 
