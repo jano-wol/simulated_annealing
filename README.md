@@ -27,7 +27,7 @@ cd simulated_annealing
 ./source/scripth/build.sh release
 
 # 5. Run the UI
-./build/release/bin/graphics
+./build/release/bin/sa_studio
 ```
 
 ### Windows
@@ -61,6 +61,6 @@ git clone https://github.com/jano-wol/simulated_annealing.git
 4. Run the UI:
 ```bash
 cd simulated_annealing
-build\release\bin\graphics.exe
+build\release\bin\sa_studio.exe
 ``` 
 

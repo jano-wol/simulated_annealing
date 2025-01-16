@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_INFO_UI_H_
-#define SIMULATED_ANNEALING_GRAPHICS_INFO_UI_H_
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_INFO_UI_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_INFO_UI_H_
 
 #include <filesystem>
 #include <future>
@@ -18,4 +18,4 @@ public:
   std::string message;
 };
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_INFO_UI_H_
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_INFO_UI_H_

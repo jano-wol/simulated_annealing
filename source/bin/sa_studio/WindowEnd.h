@@ -1,0 +1,8 @@
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_WINDOW_END_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_WINDOW_END_H_
+
+#include <imgui/imgui.h>
+
+void windowEnd() { ImGui::End(); }
+
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_WINDOW_END_H_

@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_
-#define SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_MENU_UI_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_MENU_UI_H_
 
 #include <filesystem>
 #include <future>
@@ -50,4 +50,4 @@ public:
   const std::vector<std::string> buttonNames = {"", "Select", "Save"};
 };
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_MENU_UI_H_
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_MENU_UI_H_

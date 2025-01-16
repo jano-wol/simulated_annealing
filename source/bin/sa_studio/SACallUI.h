@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_SA_CALL_UI_H_
-#define SIMULATED_ANNEALING_GRAPHICS_SA_CALL_UI_H_
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_SA_CALL_UI_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_SA_CALL_UI_H_
 
 #include <future>
 
@@ -23,4 +23,4 @@ public:
   std::future<std::pair<sa::sa::SA::CPtr, sa::core::IPosition::CPtr>> resultFuture;
 };
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_SA_CALL_UI_H_
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_SA_CALL_UI_H_
