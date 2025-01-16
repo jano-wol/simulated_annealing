@@ -58,5 +58,9 @@ git clone https://github.com/jano-wol/simulated_annealing.git
 
 3. Open ``Visual Studio`` and choose 'Open a local folder', then select the root folder of ``simulated_annealing``. Configuration should run automatically and complete successfully. Once the configuration is ready, build the project by selecting ``Build > Build All``.
 
-4. Run the UI: simulated_annealing/build/release/bin/graphics.exe   
+4. Run the UI:
+```bash
+cd simulated_annealing
+build\release\bin\graphics.exe
+``` 
 
