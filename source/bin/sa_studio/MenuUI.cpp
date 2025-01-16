@@ -7,6 +7,16 @@
 using namespace sa::core;
 using namespace sa::io;
 
+std::filesystem::path getValidPath(const std::filesystem::path& path)
+{
+  std::filesystem::path currentPath = path;
+  while ((!std::filesystem::exists(currentPath) || !std::filesystem::is_directory(currentPath)) &&
+         currentPath.has_parent_path()) {
+    currentPath = currentPath.parent_path();
+  }
+  return std::filesystem::exists(currentPath) ? currentPath : std::filesystem::path();
+}
+
 static void get_files_in_path(const std::filesystem::path& path, std::vector<MenuUI::File>& files)
 {
   files.clear();
@@ -68,6 +78,7 @@ void MenuUI::renderActiveButton(const std::filesystem::path& outPath)
   if (activateButton) {
     ImGui::CloseCurrentPopup();
     loadedPath = outPath;
+    std::snprintf(bestFileName, IM_ARRAYSIZE(bestFileName), "%s", Io::getCorrespondingBest(outPath.string()).c_str());
     operationRequest = true;
     visible = false;
     nextPath.clear();
@@ -120,6 +131,8 @@ void MenuUI::render()
   if (visible != loadedVisible) {
     visible = loadedVisible;
     if (visible) {
+      currentDirPath = getValidPath(currentDirPath);
+      displayPath = currentDirPath;
       get_files_in_path(currentDirPath, filesInScope);
       ImGui::OpenPopup(title.c_str());
     }
@@ -135,7 +148,6 @@ void MenuUI::render()
     if (ImGui::ListBox("##", &selection, vector_file_items_getter, &filesInScope, int(filesInScope.size()), 10)) {
       nextPath = filesInScope[selection].path;
       std::snprintf(saveFileName, IM_ARRAYSIZE(saveFileName), "%s", nextPath.filename().string().c_str());
-      std::snprintf(bestFileName, IM_ARRAYSIZE(bestFileName), "%s", Io::getCorrespondingBest(nextPath.string()).c_str());
     }
     if (!nextPath.empty() && std::filesystem::is_directory(nextPath)) {
       get_files_in_path(nextPath, filesInScope);
