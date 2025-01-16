@@ -14,7 +14,7 @@
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
       }
-    },    
+    },
     {
       "name": "x64-debug",
       "description": "Debug build for x64 architecture (Windows)",
