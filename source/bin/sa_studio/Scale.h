@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_SCALE_H_
-#define SIMULATED_ANNEALING_GRAPHICS_SCALE_H_
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_SCALE_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_SCALE_H_
 
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
@@ -16,4 +16,4 @@ void scale()
   ImGui::GetStyle().ScaleAllSizes((float)fontSize / 13.0f);
 }
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_SCALE_H_
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_SCALE_H_

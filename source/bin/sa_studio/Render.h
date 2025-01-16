@@ -1,5 +1,5 @@
-#ifndef SIMULATED_ANNEALING_GRAPHICS_RENDER_H_
-#define SIMULATED_ANNEALING_GRAPHICS_RENDER_H_
+#ifndef SIMULATED_ANNEALING_SA_STUDIO_RENDER_H_
+#define SIMULATED_ANNEALING_SA_STUDIO_RENDER_H_
 
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
@@ -20,4 +20,4 @@ void render(GLFWwindow* window)
   glfwSwapBuffers(window);
 }
 
-#endif  // SIMULATED_ANNEALING_GRAPHICS_RENDER_H_
+#endif  // SIMULATED_ANNEALING_SA_STUDIO_RENDER_H_

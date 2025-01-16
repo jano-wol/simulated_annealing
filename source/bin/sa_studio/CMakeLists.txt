@@ -1,4 +1,4 @@
-set(target graphics)
+set(target sa_studio)
 set(source_path "${CMAKE_CURRENT_SOURCE_DIR}")
 set(sources ${source_path}/main.cpp
             ${source_path}/InfoUI.cpp
