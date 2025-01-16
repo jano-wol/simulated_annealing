@@ -1,10 +1,36 @@
-# Simulated Annealing Studio
+# Simulated Annealing
 
-This repository is a personal project aimed at exploring and showcasing [Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing). It is designed for two main use cases:
+This is a personal project aimed at exploring and showcasing [Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing). It is designed for two main use cases:
 
 1. For those interested in understanding Simulated Annealing, the repository provides programmed use cases that demonstrate its principles. The examples allow for parameter adjustments and include visualizations to illustrate the optimization process and its outcomes.
 
 2. For C++ developers seeking to apply Simulated Annealing to specific problems, the repository offers a performant framework. By implementing a minimal set of problem-specific functions (such as ``getEnergy``, ``generateMove``, ``fromString`` etc.), users gain access to features like a graphical UI for visualization, process diagnostics, solution tracking, and parallel thread handling.
+
+Cross-platform development is supported, with installation instructions for both Linux and Windows.
+
+## Setup
+
+### Linux
+#### Steps
+```bash
+# 1. Update package lists
+sudo apt update
+
+# 2. Install required packages
+sudo apt install build-essential cmake ninja-build git libglfw3-dev libopengl-dev
+
+# 3. Clone the repository to a desired folder and navigate to it
+git clone https://github.com/jano-wol/simulated_annealing.git
+cd simulated_annealing
+
+# 4. Configure and build the project (change 'release to 'debug' to get debug build)
+./source/scripth/configure.sh release
+./source/scripth/build.sh release
+
+# 5. Run the UI
+./build/release/bin/graphics
+```
+
 
 ## Project Setup for Windows
 
