@@ -1,3 +1,4 @@
-add_subdirectory(sa_studio)
+add_subdirectory(minimal_spanning_tree)
 add_subdirectory(salesman)
 add_subdirectory(salesman_angle)
+add_subdirectory(sa_studio)
