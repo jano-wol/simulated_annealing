@@ -113,6 +113,7 @@ public:
     for (int i = 0; i < n; ++i) {
       addNode(i);
     }
+    validate();
   }
 
   void addNode(int value)
@@ -131,6 +132,7 @@ public:
     Node* y = nodes[v];
     makeRoot(x);
     x->parent = y;
+    validate();
   }
 
   void cut(int u, int v)
@@ -143,6 +145,7 @@ public:
       y->left = nullptr;
       x->parent = nullptr;
     }
+    validate();
   }
 
   void collectPath(Node* x, std::vector<int>& path)
@@ -154,6 +157,16 @@ public:
     collectPath(x->left, path);
     path.push_back(x->value);
     collectPath(x->right, path);
+    validate();
+  }
+
+  void validate()
+  {
+    for (auto node : nodes) {
+      if (node->parent == node) {
+        exit(1);
+      }
+    }
   }
 
   std::vector<int> getPath(int u, int v)
@@ -162,6 +175,7 @@ public:
     access(nodes[v]);
     std::vector<int> path;
     collectPath(nodes[v], path);
+    validate();
     return path;
   }
 
@@ -173,6 +187,7 @@ public:
     if ((nodes[v]->parent) && (nodes[v]->parent->value == u)) {
       return true;
     }
+    validate();
     return false;
   }
 
@@ -184,7 +199,7 @@ public:
         edges.push_back({node->value, node->parent->value});
       }
     }
-
+    validate();
     return edges;
   }
 

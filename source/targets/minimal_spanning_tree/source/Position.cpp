@@ -48,11 +48,14 @@ IMove::CPtr MinimalSpanningTreePosition::generateMove() const
 void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
 {
   auto* m = dynamic_cast<MinimalSpanningTreeMove*>(move.get());
-  energy += m->getDelta();
   std::size_t addIdx1 = m->addIdx1;
   std::size_t addIdx2 = m->addIdx2;
   std::size_t cutIdx1 = m->cutIdx1;
   std::size_t cutIdx2 = m->cutIdx2;
+  if (addIdx1 == addIdx2) {
+    return;
+  }
+  energy += m->getDelta();
   tree->cut(cutIdx1, cutIdx2);
   tree->link(addIdx1, addIdx2);
 }
