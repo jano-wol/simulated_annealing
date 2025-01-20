@@ -108,7 +108,12 @@ private:
 
 public:
   using CPtr = std::unique_ptr<LinkCutTree>;
-  LinkCutTree(int n) : nodes(n, nullptr) {}
+  LinkCutTree(int n) : nodes(n, nullptr)
+  {
+    for (int i = 0; i < n; ++i) {
+      addNode(i);
+    }
+  }
 
   void addNode(int value)
   {
@@ -140,24 +145,35 @@ public:
     }
   }
 
+  void collectPath(Node* x, std::vector<int>& path)
+  {
+    if (!x)
+      return;
+
+    push(x);
+    collectPath(x->left, path);
+    path.push_back(x->value);
+    collectPath(x->right, path);
+  }
+
   std::vector<int> getPath(int u, int v)
   {
     makeRoot(nodes[u]);
     access(nodes[v]);
     std::vector<int> path;
-    Node* current = nodes[v];
-    while (current) {
-      path.push_back(current->value);
-      current = current->right;
-    }
+    collectPath(nodes[v], path);
     return path;
   }
 
   bool isTreeEdge(int u, int v)
   {
-    makeRoot(nodes[u]);
-    access(nodes[v]);
-    return nodes[v]->left == nodes[u] || nodes[u]->parent == nodes[v];
+    if ((nodes[u]->parent) && (nodes[u]->parent->value == v)) {
+      return true;
+    }
+    if ((nodes[v]->parent) && (nodes[v]->parent->value == u)) {
+      return true;
+    }
+    return false;
   }
 
   std::vector<std::pair<int, int>> getEdges()
@@ -177,31 +193,28 @@ public:
   LinkCutTree::CPtr clone()
   {
     LinkCutTree::CPtr clonedTree = std::make_unique<LinkCutTree>(nodes.size());
-    std::unordered_map<Node*, Node*> originalToCloneMap;
-    for (Node* originalNode : nodes) {
+    for (int i = 0; i < int(nodes.size()); ++i) {
+      const auto& originalNode = nodes[i];
       if (originalNode) {
-        clonedTree->addNode(originalNode->value);
-        Node* clonedNode = new Node(originalNode->value);
-        clonedNode->isReversed = originalNode->isReversed;
-        originalToCloneMap[originalNode] = clonedNode;
-      }
-    }
-    for (Node* originalNode : nodes) {
-      if (originalNode && originalNode->parent) {
-        Node* originalParent = originalNode->parent;
-        Node* clonedNode = originalToCloneMap[originalNode];
-        Node* clonedParent = originalToCloneMap[originalParent];
-        clonedNode->parent = clonedParent;
-      }
-    }
-    for (Node* originalNode : nodes) {
-      if (originalNode) {
-        Node* clonedNode = originalToCloneMap[originalNode];
+        clonedTree->nodes[i]->value = originalNode->value;
+        clonedTree->nodes[i]->isReversed = originalNode->isReversed;
         if (originalNode->left) {
-          clonedNode->left = originalToCloneMap[originalNode->left];
+          int l = originalNode->left->value;
+          clonedTree->nodes[i]->left = clonedTree->nodes[l];
+        } else {
+          clonedTree->nodes[i]->left = nullptr;
         }
         if (originalNode->right) {
-          clonedNode->right = originalToCloneMap[originalNode->right];
+          int r = originalNode->right->value;
+          clonedTree->nodes[i]->right = clonedTree->nodes[r];
+        } else {
+          clonedTree->nodes[i]->right = nullptr;
+        }
+        if (originalNode->parent) {
+          int p = originalNode->parent->value;
+          clonedTree->nodes[i]->parent = clonedTree->nodes[p];
+        } else {
+          clonedTree->nodes[i]->parent = nullptr;
         }
       }
     }
