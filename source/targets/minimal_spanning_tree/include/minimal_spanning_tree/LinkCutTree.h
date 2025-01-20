@@ -1,6 +1,7 @@
 #ifndef SIMULATED_ANNEALING_TARGETS_MINIMAL_SPANNING_TREE_LINK_CUT_TREE_H_
 #define SIMULATED_ANNEALING_TARGETS_MINIMAL_SPANNING_TREE_LINK_CUT_TREE_H_
 
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -12,235 +13,269 @@ class LinkCutTree
 private:
   struct Node
   {
-    int value;
-    Node* left;
-    Node* right;
-    Node* parent;
-    bool isReversed;
-
-    Node(int v) : value(v), left(nullptr), right(nullptr), parent(nullptr), isReversed(false) {}
-    static int size() { return sizeof(int) + sizeof(bool) + 3 * sizeof(Node*); }
+    int sz, label;
+    Node *p, *pp, *l, *r;
+    Node() { p = pp = l = r = nullptr; }
+    static int size() { return 2 * sizeof(int) + 4 * sizeof(Node*); }
   };
 
-  std::vector<Node*> nodes;
-
-  // Helper functions
-  void push(Node* x)
+  void update(Node* x)
   {
-    if (x && x->isReversed) {
-      std::swap(x->left, x->right);
-      if (x->left)
-        x->left->isReversed ^= true;
-      if (x->right)
-        x->right->isReversed ^= true;
-      x->isReversed = false;
-    }
+    x->sz = 1;
+    if (x->l)
+      x->sz += x->l->sz;
+    if (x->r)
+      x->sz += x->r->sz;
   }
 
-  void rotate(Node* x)
+  void rotr(Node* x)
   {
-    Node* p = x->parent;
-    Node* g = p ? p->parent : nullptr;
-
-    if (p) {
-      push(p);
-      push(x);
-
-      if (x == p->left) {
-        p->left = x->right;
-        if (x->right)
-          x->right->parent = p;
-        x->right = p;
-      } else {
-        p->right = x->left;
-        if (x->left)
-          x->left->parent = p;
-        x->left = p;
-      }
-      p->parent = x;
+    Node *y, *z;
+    y = x->p, z = y->p;
+    if ((y->l = x->r))
+      y->l->p = y;
+    x->r = y, y->p = x;
+    if ((x->p = z)) {
+      if (y == z->l)
+        z->l = x;
+      else
+        z->r = x;
     }
+    x->pp = y->pp;
+    y->pp = 0;
+    update(y);
+  }
 
-    x->parent = g;
-    if (g) {
-      if (g->left == p)
-        g->left = x;
-      else if (g->right == p)
-        g->right = x;
+  void rotl(Node* x)
+  {
+    Node *y, *z;
+    y = x->p, z = y->p;
+    if ((y->r = x->l))
+      y->r->p = y;
+    x->l = y, y->p = x;
+    if ((x->p = z)) {
+      if (y == z->l)
+        z->l = x;
+      else
+        z->r = x;
     }
+    x->pp = y->pp;
+    y->pp = 0;
+    update(y);
   }
 
   void splay(Node* x)
   {
-    while (x->parent) {
-      Node* p = x->parent;
-      Node* g = p->parent;
-      if (!g) {
-        rotate(x);
-      } else if ((g->left == p) == (p->left == x)) {
-        rotate(p);
-        rotate(x);
+    Node *y, *z;
+    while (x->p) {
+      y = x->p;
+      if (y->p == 0) {
+        if (x == y->l)
+          rotr(x);
+        else
+          rotl(x);
       } else {
-        rotate(x);
-        rotate(x);
+        z = y->p;
+        if (y == z->l) {
+          if (x == y->l)
+            rotr(y), rotr(x);
+          else
+            rotl(x), rotr(x);
+        } else {
+          if (x == y->r)
+            rotl(y), rotl(x);
+          else
+            rotr(x), rotl(x);
+        }
       }
     }
-    push(x);
+    update(x);
   }
 
   Node* access(Node* x)
   {
-    Node* last = nullptr;
-    for (Node* y = x; y; y = y->parent) {
-      splay(y);
-      y->right = last;
-      last = y;
-    }
     splay(x);
+    if (x->r) {
+      x->r->pp = x;
+      x->r->p = 0;
+      x->r = 0;
+      update(x);
+    }
+
+    Node* last = x;
+    while (x->pp) {
+      Node* y = x->pp;
+      last = y;
+      splay(y);
+      if (y->r) {
+        y->r->pp = y;
+        y->r->p = 0;
+      }
+      y->r = x;
+      x->p = y;
+      x->pp = 0;
+      update(y);
+      splay(x);
+    }
     return last;
   }
 
-  void makeRoot(Node* x)
+  Node* rootN(Node* x)
   {
     access(x);
-    x->isReversed ^= true;
-    push(x);
+    while (x->l) x = x->l;
+    splay(x);
+    return x;
   }
+
+  void cutN(Node* x)
+  {
+    access(x);
+    x->l->p = 0;
+    x->l = 0;
+    update(x);
+  }
+
+  void linkN(Node* x, Node* y)
+  {
+    access(x);
+    access(y);
+    x->l = y;
+    y->p = x;
+    update(x);
+  }
+
+  Node* lcaN(Node* x, Node* y)
+  {
+    access(x);
+    return access(y);
+  }
+
+  int depthN(Node* x)
+  {
+    access(x);
+    return x->sz - 1;
+  }
+
+  Node* nodes;
 
 public:
   using CPtr = std::unique_ptr<LinkCutTree>;
-  LinkCutTree(int n) : nodes(n, nullptr)
+  int n = 0;
+  LinkCutTree(int n_)
   {
-    for (int i = 0; i < n; ++i) {
-      addNode(i);
-    }
-    validate();
-  }
-
-  void addNode(int value)
-  {
-    if (value >= int(nodes.size())) {
-      nodes.resize(value + 1, nullptr);
-    }
-    if (!nodes[value]) {
-      nodes[value] = new Node(value);
+    n = n_;
+    nodes = new Node[n];
+    for (int i = 0; i < n; i++) {
+      nodes[i].label = i;
+      update(&nodes[i]);
     }
   }
 
-  void link(int u, int v)
-  {
-    Node* x = nodes[u];
-    Node* y = nodes[v];
-    makeRoot(x);
-    x->parent = y;
-    validate();
-  }
+  ~LinkCutTree() { delete[] nodes; }
+
+  void link(int u, int v) { linkN(&nodes[u], &nodes[v]); }
+
+  void cut(int u) { cutN(&nodes[u]); }
 
   void cut(int u, int v)
   {
-    Node* x = nodes[u];
-    Node* y = nodes[v];
-    makeRoot(x);
-    access(y);
-    if (y->left == x) {
-      y->left = nullptr;
-      x->parent = nullptr;
-    }
-    validate();
-  }
-
-  void collectPath(Node* x, std::vector<int>& path)
-  {
-    if (!x)
-      return;
-
-    push(x);
-    collectPath(x->left, path);
-    path.push_back(x->value);
-    collectPath(x->right, path);
-    validate();
-  }
-
-  void validate()
-  {
-    for (auto node : nodes) {
-      if (node->parent == node) {
-        exit(1);
+    if (isTreeEdge(u, v)) {
+      auto w = lca(u, v);
+      if (w == u) {
+        cut(v);
+      } else {
+        cut(u);
       }
     }
   }
 
+  int root(int u) { return rootN(&nodes[u])->label; }
+
+  int depth(int u) { return depthN(&nodes[u]); }
+
+  int lca(int u, int v) { return lcaN(&nodes[u], &nodes[v])->label; }
+
   std::vector<int> getPath(int u, int v)
   {
-    makeRoot(nodes[u]);
-    access(nodes[v]);
-    std::vector<int> path;
-    collectPath(nodes[v], path);
-    validate();
-    return path;
+    access(&nodes[u]);
+    access(&nodes[v]);
+    auto w = lca(u, v);
+    std::vector<int> uPath;
+    std::vector<int> vPath;
+    int curr = u;
+    while (curr != w) {
+      uPath.push_back(curr);
+      curr = nodes[curr].p->label;
+    }
+    uPath.push_back(w);
+    curr = v;
+    while (curr != w) {
+      vPath.push_back(curr);
+      curr = nodes[curr].p->label;
+    }
+    std::vector<int> reversedVPath = vPath;
+    std::reverse(reversedVPath.begin(), reversedVPath.end());
+    uPath.insert(uPath.end(), reversedVPath.begin(), reversedVPath.end());
+    return uPath;
   }
 
   bool isTreeEdge(int u, int v)
   {
-    if ((nodes[u]->parent) && (nodes[u]->parent->value == v)) {
-      return true;
-    }
-    if ((nodes[v]->parent) && (nodes[v]->parent->value == u)) {
-      return true;
-    }
-    validate();
-    return false;
+    access(&nodes[u]);
+    access(&nodes[v]);
+    auto w = lca(u, v);
+    return (u == w) || (v == w);
   }
 
   std::vector<std::pair<int, int>> getEdges()
   {
     std::vector<std::pair<int, int>> edges;
-    for (Node* node : nodes) {
-      if (node && node->parent) {
-        edges.push_back({node->value, node->parent->value});
+    for (int i = 0; i < n; ++i) {
+      access(&nodes[i]);
+      Node* node = &nodes[i];
+      if (node && node->p) {
+        edges.push_back({node->label, node->p->label});
       }
     }
-    validate();
     return edges;
   }
 
-  int size() { return sizeof(std::vector<Node*>) + Node::size() * nodes.capacity(); }
+  int size() { return sizeof(int) + Node::size() * n; }
 
   LinkCutTree::CPtr clone()
   {
-    LinkCutTree::CPtr clonedTree = std::make_unique<LinkCutTree>(nodes.size());
-    for (int i = 0; i < int(nodes.size()); ++i) {
-      const auto& originalNode = nodes[i];
-      if (originalNode) {
-        clonedTree->nodes[i]->value = originalNode->value;
-        clonedTree->nodes[i]->isReversed = originalNode->isReversed;
-        if (originalNode->left) {
-          int l = originalNode->left->value;
-          clonedTree->nodes[i]->left = clonedTree->nodes[l];
-        } else {
-          clonedTree->nodes[i]->left = nullptr;
-        }
-        if (originalNode->right) {
-          int r = originalNode->right->value;
-          clonedTree->nodes[i]->right = clonedTree->nodes[r];
-        } else {
-          clonedTree->nodes[i]->right = nullptr;
-        }
-        if (originalNode->parent) {
-          int p = originalNode->parent->value;
-          clonedTree->nodes[i]->parent = clonedTree->nodes[p];
-        } else {
-          clonedTree->nodes[i]->parent = nullptr;
-        }
+    LinkCutTree::CPtr clonedTree = std::make_unique<LinkCutTree>(n);
+    for (int i = 0; i < n; ++i) {
+      auto& originalNode = nodes[i];
+      clonedTree->nodes[i].sz = originalNode.sz;
+      clonedTree->nodes[i].label = originalNode.label;
+      if (originalNode.l) {
+        int l = originalNode.l->label;
+        clonedTree->nodes[i].l = &clonedTree->nodes[l];
+      } else {
+        clonedTree->nodes[i].l = nullptr;
+      }
+      if (originalNode.r) {
+        int r = originalNode.r->label;
+        clonedTree->nodes[i].r = &clonedTree->nodes[r];
+      } else {
+        clonedTree->nodes[i].r = nullptr;
+      }
+      if (originalNode.p) {
+        int p = originalNode.p->label;
+        clonedTree->nodes[i].p = &clonedTree->nodes[p];
+      } else {
+        clonedTree->nodes[i].p = nullptr;
+      }
+      if (originalNode.pp) {
+        int pp = originalNode.pp->label;
+        clonedTree->nodes[i].pp = &clonedTree->nodes[pp];
+      } else {
+        clonedTree->nodes[i].pp = nullptr;
       }
     }
     return clonedTree;
-  }
-
-  ~LinkCutTree()
-  {
-    for (Node* node : nodes) {
-      delete node;
-    }
   }
 };
 }  // namespace sa::targets::minimal_spanning_tree
