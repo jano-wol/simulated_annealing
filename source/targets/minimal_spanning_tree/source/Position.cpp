@@ -21,7 +21,7 @@ double MinimalSpanningTreePosition::getEnergy() const { return energy; }
 IMove::CPtr MinimalSpanningTreePosition::generateMove() const
 {
   if (cities.size() < 2) {
-    return std::make_unique<MinimalSpanningTreeMove>(0, 0, 0, 0, 0);
+    return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
   }
   std::size_t idx1 = r.randomInt(0, int(cities.size()) - 1);
   std::size_t idx2 = r.randomInt(0, int(cities.size()) - 2);
@@ -30,7 +30,7 @@ IMove::CPtr MinimalSpanningTreePosition::generateMove() const
   } else {
     std::swap(idx1, idx2);
   }
-  if (tree->isTreeEdge(idx1, idx2)) {
+  if (tree->isTreeEdge(int(idx1), int(idx2))) {
     return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
   }
   std::size_t addIdx1 = idx1;
