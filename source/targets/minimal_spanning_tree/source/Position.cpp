@@ -36,7 +36,7 @@ IMove::CPtr MinimalSpanningTreePosition::generateMove() const
   std::size_t addIdx1 = idx1;
   std::size_t addIdx2 = idx2;
   auto path = tree->getPath(idx1, idx2);
-  std::size_t idx = r.randomInt(0, int(path.size()) - 1);
+  std::size_t idx = r.randomInt(0, int(path.size()) - 2);
   std::size_t cutIdx1 = path[idx];
   std::size_t cutIdx2 = path[idx + 1];
   double delta = distance(addIdx1, addIdx2);
