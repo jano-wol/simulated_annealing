@@ -31,11 +31,11 @@ IMove::CPtr MinimalSpanningTreePosition::generateMove() const
     std::swap(idx1, idx2);
   }
   if (tree->isTreeEdge(idx1, idx2)) {
-    return std::make_unique<MinimalSpanningTreeMove>(0, 0, 0, 0, 0);
+    return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
   }
   std::size_t addIdx1 = idx1;
   std::size_t addIdx2 = idx2;
-  auto path = tree->getPath(idx1, idx2);
+  auto path = tree->getPath(int(idx1), int(idx2));
   std::size_t idx = r.randomInt(0, int(path.size()) - 2);
   std::size_t cutIdx1 = path[idx];
   std::size_t cutIdx2 = path[idx + 1];
@@ -56,8 +56,8 @@ void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
     return;
   }
   energy += m->getDelta();
-  tree->cut(cutIdx1, cutIdx2);
-  tree->link(addIdx1, addIdx2);
+  tree->cut(int(cutIdx1), int(cutIdx2));
+  tree->link(int(addIdx1), int(addIdx2));
 }
 
 int MinimalSpanningTreePosition::size() const

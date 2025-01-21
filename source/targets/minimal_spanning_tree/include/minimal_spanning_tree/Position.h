@@ -15,7 +15,7 @@ class MinimalSpanningTreePosition final : public core::IPosition
 {
 public:
   MinimalSpanningTreePosition(std::vector<std::pair<double, double>> cities_)
-      : cities(std::move(cities_)), tree(std::make_unique<Tree>(cities.size()))
+      : cities(std::move(cities_)), tree(std::make_unique<Tree>(int(cities.size())))
   {
     energy = 0;
     for (int i = 1; i < int(cities.size()); ++i) {
