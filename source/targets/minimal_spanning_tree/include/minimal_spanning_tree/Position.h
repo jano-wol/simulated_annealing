@@ -5,8 +5,8 @@
 
 #include <core/IPosition.h>
 #include <core/Random.h>
-#include <minimal_spanning_tree/LinkCutTree.h>
 #include <minimal_spanning_tree/Move.h>
+#include <minimal_spanning_tree/Tree.h>
 #include <serializator/Serializator.h>
 
 namespace sa::targets::minimal_spanning_tree
@@ -15,7 +15,7 @@ class MinimalSpanningTreePosition final : public core::IPosition
 {
 public:
   MinimalSpanningTreePosition(std::vector<std::pair<double, double>> cities_)
-      : cities(std::move(cities_)), tree(std::make_unique<LinkCutTree>(cities.size()))
+      : cities(std::move(cities_)), tree(std::make_unique<Tree>(cities.size()))
   {
     energy = 0;
     for (int i = 1; i < int(cities.size()); ++i) {
@@ -24,7 +24,7 @@ public:
     }
   }
 
-  MinimalSpanningTreePosition(double energy_, std::vector<std::pair<double, double>> cities_, LinkCutTree::CPtr tree_)
+  MinimalSpanningTreePosition(double energy_, std::vector<std::pair<double, double>> cities_, Tree::CPtr tree_)
       : energy(energy_), cities(std::move(cities_)), tree(std::move(tree_))
   {}
 
@@ -42,7 +42,7 @@ public:
 
   double energy;
   std::vector<std::pair<double, double>> cities;
-  LinkCutTree::CPtr tree;
+  Tree::CPtr tree;
   core::Random r;
 
   REGISTER_TARGET_BY_ID(minimal_spanning_tree)

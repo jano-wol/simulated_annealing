@@ -107,7 +107,7 @@ IPosition::CPtr MinimalSpanningTreePosition::fromString(const std::string& data)
     ss >> d1 >> d2;
     cities.emplace_back(Rounding::roundDouble(d1), Rounding::roundDouble(d2));
   }
-  auto tree = std::make_unique<LinkCutTree>(int(n));
+  auto tree = std::make_unique<Tree>(int(n));
   double energy = 0;
   for (std::size_t i = 0; i < n; ++i) {
     int d1, d2;
