@@ -10,7 +10,7 @@ Cross-platform development is supported, with installation instructions for both
 
 ## Watch the Features in Action 🎥
 
-1. Check out this [video](https://www.youtube.com/watch?v=ahaUEE61HSA) for a quick demonstration of the repository's features, including its visualizations and optimization process.
+1. Check out this [video](https://www.youtube.com/watch?v=ahaUEE61HSA) for a demonstration of the repository's features, including its visualizations and optimization process.
 
 2. Check out this [video](https://www.youtube.com/watch?v=ahaUEE61HSA) for a guide on how to extend the framework and add your own problem-specific implementation.
 
