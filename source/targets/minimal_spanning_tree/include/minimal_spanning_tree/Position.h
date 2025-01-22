@@ -32,10 +32,10 @@ public:
   static core::IPosition::CPtr fromString(const std::string& data);
 
   double getEnergy() const override;
-  core::IMove::CPtr generateMove() const override;
+  core::IMove::CPtr generateMoveCandidate() const override;
   void makeMove(core::IMove::CPtr move) override;
-  int size() const override;
   core::IPosition::CPtr clone() const override;
+  int size() const override;
   void plot() const override;
 
   double distance(std::size_t u, std::size_t v) const;

@@ -119,7 +119,7 @@ TEST(Salesman, MoveRand)
   auto cities = getRandomCities(n);
   IPosition::CPtr curr = std::make_unique<SalesmanPosition>(cities);
   for (int i = 0; i < m; ++i) {
-    auto move = curr->generateMove();
+    auto move = curr->generateMoveCandidate();
     curr->makeMove(std::move(move));
   }
   auto* endPosition = dynamic_cast<SalesmanPosition*>(curr.get());
@@ -151,7 +151,7 @@ TEST(Salesman, Fast)
   for (int i = 0; i < m; ++i) {
     auto* p = dynamic_cast<SalesmanPosition*>(curr.get());
     EXPECT_NEAR(curr->getEnergy(), p->calcEnergy(), precision);
-    auto move = curr->generateMove();
+    auto move = curr->generateMoveCandidate();
     curr->makeMove(std::move(move));
   }
 }

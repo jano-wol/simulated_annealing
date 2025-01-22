@@ -17,7 +17,7 @@ using namespace sa::targets::salesman;
 
 double SalesmanPosition::getEnergy() const { return energy; }
 
-IMove::CPtr SalesmanPosition::generateMove() const
+IMove::CPtr SalesmanPosition::generateMoveCandidate() const
 {
   if (cities.size() < 2) {
     return std::make_unique<SalesmanMove>(0, 0, 0);
@@ -61,7 +61,7 @@ void SalesmanPosition::makeMove(IMove::CPtr move)
 int SalesmanPosition::size() const
 {
   return int(sizeof(double) + sizeof(std::vector<std::pair<double, double>>) +
-         sizeof(std::pair<double, double>) * cities.capacity());
+             sizeof(std::pair<double, double>) * cities.capacity());
 }
 
 IPosition::CPtr SalesmanPosition::clone() const { return std::make_unique<SalesmanPosition>(energy, cities); }

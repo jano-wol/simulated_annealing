@@ -7,9 +7,9 @@ using namespace sa::policies;
 
 IMove::CPtr KBest::selectMove(const IPosition::CPtr& position) const
 {
-  auto bestMove = position->generateMove();
+  auto bestMove = position->generateMoveCandidate();
   for (int i = 1; i < k; ++i) {
-    auto move = position->generateMove();
+    auto move = position->generateMoveCandidate();
     if (move->getDelta() < bestMove->getDelta()) {
       bestMove = std::move(move);
     }
