@@ -28,8 +28,8 @@ public:
   double getEnergy() const override;
   core::IMove::CPtr generateMove() const override;
   void makeMove(core::IMove::CPtr move) override;
-  int size() const override;
   core::IPosition::CPtr clone() const override;
+  int size() const override;
   void plot() const override;
 
   std::pair<std::size_t, std::size_t> getNeighbourIdxs(std::size_t idx) const;
