@@ -44,7 +44,6 @@ IMove::CPtr MinimalSpanningTreePosition::generateMove() const
   return std::make_unique<MinimalSpanningTreeMove>(addIdx1, addIdx2, cutIdx1, cutIdx2, delta);
 }
 
-#include <iostream>
 void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
 {
   auto* m = dynamic_cast<MinimalSpanningTreeMove*>(move.get());
