@@ -18,7 +18,7 @@ using namespace sa::targets::salesman_angle;
 
 double SalesmanAnglePosition::getEnergy() const { return energy; }
 
-IMove::CPtr SalesmanAnglePosition::generateMove() const
+IMove::CPtr SalesmanAnglePosition::generateMoveCandidate() const
 {
   if (cities.size() < 2) {
     return std::make_unique<SalesmanAngleMove>(0, 0, 0);
@@ -69,7 +69,7 @@ void SalesmanAnglePosition::makeMove(IMove::CPtr move)
 int SalesmanAnglePosition::size() const
 {
   return int(sizeof(double) + sizeof(std::vector<std::pair<double, double>>) +
-         sizeof(std::pair<double, double>) * cities.capacity());
+             sizeof(std::pair<double, double>) * cities.capacity());
 }
 
 IPosition::CPtr SalesmanAnglePosition::clone() const { return std::make_unique<SalesmanAnglePosition>(energy, cities); }

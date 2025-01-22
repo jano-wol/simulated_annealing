@@ -32,7 +32,7 @@ public:
   static core::IPosition::CPtr fromString(const std::string& data);
 
   double getEnergy() const override;
-  core::IMove::CPtr generateMove() const override;
+  core::IMove::CPtr generateMoveCandidate() const override;
   void makeMove(core::IMove::CPtr move) override;
   core::IPosition::CPtr clone() const override;
   int size() const override;

@@ -92,7 +92,7 @@ public:
     return energy;
   }
 
-  IMove::CPtr generateMove() const override
+  IMove::CPtr generateMoveCandidate() const override
   {
     auto candidate = std::make_unique<DummySlowPosition>(*this);
     --candidate->energy;
@@ -124,7 +124,7 @@ public:
   static std::size_t copyAssignmentCounter;
   static std::size_t moveAssignmentCounter;
   static std::size_t getEnergyCounter;
-  static std::size_t generateMoveCounter;
+  static std::size_t generateMoveCandidateCounter;
   static std::size_t makeMoveCounter;
   static std::size_t cloneCounter;
 };
@@ -157,7 +157,7 @@ public:
     ++getEnergyCounter;
     return energy;
   }
-  IMove::CPtr generateMove() const override
+  IMove::CPtr generateMoveCandidate() const override
   {
     if (mode == 0) {
       return std::make_unique<DummyFastMove>();
@@ -189,7 +189,7 @@ public:
   static std::size_t copyAssignmentCounter;
   static std::size_t moveAssignmentCounter;
   static std::size_t getEnergyCounter;
-  static std::size_t generateMoveCounter;
+  static std::size_t generateMoveCandidateCounter;
   static std::size_t makeMoveCounter;
   static std::size_t cloneCounter;
   static int mode;
@@ -203,7 +203,7 @@ void nullStatics()
   DummySlowPosition::copyAssignmentCounter = 0;
   DummySlowPosition::moveAssignmentCounter = 0;
   DummySlowPosition::getEnergyCounter = 0;
-  DummySlowPosition::generateMoveCounter = 0;
+  DummySlowPosition::generateMoveCandidateCounter = 0;
   DummySlowPosition::makeMoveCounter = 0;
   DummySlowPosition::cloneCounter = 0;
   DummyFastPosition::energyConstructorCounter = 0;
@@ -212,7 +212,7 @@ void nullStatics()
   DummyFastPosition::copyAssignmentCounter = 0;
   DummyFastPosition::moveAssignmentCounter = 0;
   DummyFastPosition::getEnergyCounter = 0;
-  DummyFastPosition::generateMoveCounter = 0;
+  DummyFastPosition::generateMoveCandidateCounter = 0;
   DummyFastPosition::makeMoveCounter = 0;
   DummyFastPosition::cloneCounter = 0;
   DummyFastPosition::mode = 0;
@@ -227,7 +227,7 @@ std::size_t DummySlowPosition::moveConstructorCounter = 0;
 std::size_t DummySlowPosition::copyAssignmentCounter = 0;
 std::size_t DummySlowPosition::moveAssignmentCounter = 0;
 std::size_t DummySlowPosition::getEnergyCounter = 0;
-std::size_t DummySlowPosition::generateMoveCounter = 0;
+std::size_t DummySlowPosition::generateMoveCandidateCounter = 0;
 std::size_t DummySlowPosition::makeMoveCounter = 0;
 std::size_t DummySlowPosition::cloneCounter = 0;
 std::size_t DummyFastPosition::energyConstructorCounter = 0;
@@ -236,7 +236,7 @@ std::size_t DummyFastPosition::moveConstructorCounter = 0;
 std::size_t DummyFastPosition::copyAssignmentCounter = 0;
 std::size_t DummyFastPosition::moveAssignmentCounter = 0;
 std::size_t DummyFastPosition::getEnergyCounter = 0;
-std::size_t DummyFastPosition::generateMoveCounter = 0;
+std::size_t DummyFastPosition::generateMoveCandidateCounter = 0;
 std::size_t DummyFastPosition::makeMoveCounter = 0;
 std::size_t DummyFastPosition::cloneCounter = 0;
 int DummyFastPosition::mode = 0;

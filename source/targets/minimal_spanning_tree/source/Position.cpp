@@ -18,7 +18,7 @@ using namespace sa::targets::minimal_spanning_tree;
 
 double MinimalSpanningTreePosition::getEnergy() const { return energy; }
 
-IMove::CPtr MinimalSpanningTreePosition::generateMove() const
+IMove::CPtr MinimalSpanningTreePosition::generateMoveCandidate() const
 {
   if (cities.size() < 2) {
     return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
