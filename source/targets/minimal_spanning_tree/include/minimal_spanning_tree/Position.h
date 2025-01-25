@@ -17,7 +17,9 @@ public:
   MinimalSpanningTreePosition(std::vector<std::pair<double, double>> cities_) : cities(std::move(cities_))
   {
     energy = 0;
+    adj.push_back({});
     for (int i = 1; i < int(cities.size()); ++i) {
+      adj.push_back({});
       adj[0].insert(i);
       adj[i].insert(0);
       edgeList.push_back({0, i});
