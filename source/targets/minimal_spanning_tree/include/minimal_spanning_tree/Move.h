@@ -10,18 +10,16 @@ namespace sa::targets::minimal_spanning_tree
 class MinimalSpanningTreeMove final : public core::IMove
 {
 public:
-  MinimalSpanningTreeMove(std::size_t addIdx1_, std::size_t addIdx2_, std::size_t cutIdx1_, std::size_t cutIdx2_,
-                          double delta_)
-      : addIdx1(addIdx1_), addIdx2(addIdx2_), cutIdx1(cutIdx1_), cutIdx2(cutIdx2_), delta(delta_)
+  MinimalSpanningTreeMove(int deleteEdgeIdx_, int addEdgeU_, int addEdgeV_, double delta_)
+      : deleteEdgeIdx(deleteEdgeIdx_), addEdgeU(addEdgeU_), addEdgeV(addEdgeV_), delta(delta_)
   {}
 
   double getDelta() const override;
   int size() const override;
 
-  std::size_t addIdx1;
-  std::size_t addIdx2;
-  std::size_t cutIdx1;
-  std::size_t cutIdx2;
+  int deleteEdgeIdx;
+  int addEdgeU;
+  int addEdgeV;
   double delta;
 };
 }  // namespace sa::targets::minimal_spanning_tree
