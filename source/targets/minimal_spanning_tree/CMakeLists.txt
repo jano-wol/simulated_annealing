@@ -4,7 +4,6 @@ set(source_path "${CMAKE_CURRENT_SOURCE_DIR}/source")
 set(headers ${include_path}/Generator.h
             ${include_path}/Move.h
             ${include_path}/Position.h
-            ${include_path}/Tree.h
             )
 set(sources ${source_path}/Generator.cpp
             ${source_path}/Move.cpp
