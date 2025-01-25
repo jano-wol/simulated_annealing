@@ -53,8 +53,8 @@ void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
   int deleteEdgeIdx = m->deleteEdgeIdx;
   int u = m->addEdgeU;
   int v = m->addEdgeV;
-  const auto& [uu, vv] = edgeList[deleteEdgeIdx];
-  if (u == uu && v == vv) {
+  auto [uu, vv] = edgeList[deleteEdgeIdx];
+  if ((u == uu) && (v == vv)) {
     return;
   }
   energy += m->getDelta();
