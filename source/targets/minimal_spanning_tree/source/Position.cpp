@@ -59,10 +59,10 @@ void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
   }
   energy += m->getDelta();
   edgeList[deleteEdgeIdx] = {u, v};
-  adj[u].insert(v);
-  adj[v].insert(u);
   adj[uu].erase(vv);
   adj[vv].erase(uu);
+  adj[u].insert(v);
+  adj[v].insert(u);
 }
 
 int MinimalSpanningTreePosition::size() const
@@ -127,7 +127,7 @@ IPosition::CPtr MinimalSpanningTreePosition::fromString(const std::string& data)
   }
   double energy = 0;
   std::vector<std::unordered_set<int>> adj(n);
-  for (std::size_t i = 0; i < n; ++i) {
+  for (std::size_t i = 0; i < n - 1; ++i) {
     int d1, d2;
     ss >> d1 >> d2;
     edgeList.push_back({std::min(d1, d2), std::max(d1, d2)});
