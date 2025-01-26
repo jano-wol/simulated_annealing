@@ -108,7 +108,7 @@ IPosition::CPtr MinimalSpanningTreePosition::fromString(const std::string& data)
   }
   auto tree = std::make_unique<Tree>(int(n));
   double energy = 0;
-  for (std::size_t i = 0; i < n; ++i) {
+  for (std::size_t i = 0; i + 1 < n; ++i) {
     int d1, d2;
     ss >> d1 >> d2;
     tree->link(d1, d2);
