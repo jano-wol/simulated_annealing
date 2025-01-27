@@ -1,5 +1,6 @@
 #include <minimal_spanning_tree/Position.h>
 
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <numbers>
@@ -20,43 +21,46 @@ double MinimalSpanningTreePosition::getEnergy() const { return energy; }
 
 IMove::CPtr MinimalSpanningTreePosition::generateMoveCandidate() const
 {
-  if (cities.size() < 2) {
-    return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
+  if (cities.size() <= 2) {
+    return std::make_unique<MinimalSpanningTreeMove>(-1, 0, 0, 0.0);
   }
-  std::size_t idx1 = r.randomInt(0, int(cities.size()) - 1);
-  std::size_t idx2 = r.randomInt(0, int(cities.size()) - 2);
-  if (idx2 >= idx1) {
-    ++idx2;
+  auto& edges = tree->getEdges();
+  int deleteIdx = r.randomInt(0, int(edges.size()) - 1);
+  auto [u, v] = edges[deleteIdx];
+  tree->cut(deleteIdx);
+  int newV = r.randomInt(0, int(cities.size() - 1));
+  while (newV == u || newV == v) {
+    newV = r.randomInt(0, int(cities.size() - 1));
+  }
+  int uu = u;
+  int vv = v;
+  if (tree->connected(u, newV)) {
+    uu = newV;
   } else {
-    std::swap(idx1, idx2);
+    vv = newV;
   }
-  if (tree->isTreeEdge(int(idx1), int(idx2))) {
-    return std::make_unique<MinimalSpanningTreeMove>(0UL, 0UL, 0UL, 0UL, 0.0);
+  if (uu > vv) {
+    std::swap(uu, vv);
   }
-  std::size_t addIdx1 = idx1;
-  std::size_t addIdx2 = idx2;
-  auto path = tree->getPath(int(idx1), int(idx2));
-  std::size_t idx = r.randomInt(0, int(path.size()) - 2);
-  std::size_t cutIdx1 = path[idx];
-  std::size_t cutIdx2 = path[idx + 1];
-  double delta = distance(addIdx1, addIdx2);
-  delta -= distance(cutIdx1, cutIdx2);
-  return std::make_unique<MinimalSpanningTreeMove>(addIdx1, addIdx2, cutIdx1, cutIdx2, delta);
+  tree->link(u, v);
+  std::swap(edges[deleteIdx], edges.back());
+  double delta = distance(uu, vv);
+  delta -= distance(u, v);
+  return std::make_unique<MinimalSpanningTreeMove>(deleteIdx, uu, vv, delta);
 }
 
 void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
 {
   auto* m = dynamic_cast<MinimalSpanningTreeMove*>(move.get());
-  std::size_t addIdx1 = m->addIdx1;
-  std::size_t addIdx2 = m->addIdx2;
-  std::size_t cutIdx1 = m->cutIdx1;
-  std::size_t cutIdx2 = m->cutIdx2;
-  if (addIdx1 == addIdx2) {
+  int deleteIdx = m->deleteIdx;
+  if (deleteIdx == -1) {
     return;
   }
+  int uNew = m->u;
+  int vNew = m->v;
   energy += m->getDelta();
-  tree->cut(int(cutIdx1), int(cutIdx2));
-  tree->link(int(addIdx1), int(addIdx2));
+  tree->cut(deleteIdx);
+  tree->link(uNew, vNew);
 }
 
 int MinimalSpanningTreePosition::size() const
@@ -106,7 +110,7 @@ IPosition::CPtr MinimalSpanningTreePosition::fromString(const std::string& data)
     ss >> d1 >> d2;
     cities.emplace_back(Rounding::roundDouble(d1), Rounding::roundDouble(d2));
   }
-  auto tree = std::make_unique<Tree>(int(n));
+  auto tree = std::make_unique<LinkCutTree>(int(n));
   double energy = 0;
   for (std::size_t i = 0; i + 1 < n; ++i) {
     int d1, d2;
