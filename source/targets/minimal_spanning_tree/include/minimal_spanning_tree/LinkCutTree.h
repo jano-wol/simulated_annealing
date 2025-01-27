@@ -19,6 +19,7 @@ public:
   {
     makeRoot(&node[u]);
     node[u].pp = &node[v];
+    edges.insert({std::min(u, v), std::max(u, v)});
   }
 
   void cut(int u, int v)
@@ -32,12 +33,24 @@ public:
       x->c[0] = top->p = 0;
       x->fix();
     }
+    edges.erase({std::min(u, v), std::max(u, v)});
   }
 
   bool connected(int u, int v)
   {
     Node* nu = access(&node[u])->first();
     return nu == access(&node[v])->first();
+  }
+
+  bool isTreeEdge(int u, int v) { return edges.count({std::min(u, v), std::max(u, v)}); }
+
+  const std::set<std::pair<int, int>>& getEdges() { return edges; }
+
+  int size() const
+  {
+    int totalSize = sizeof(*this);
+    totalSize += sizeof(Node) * node.capacity();
+    return totalSize;
   }
 
   LinkCutTree::CPtr clone() const
@@ -154,10 +167,8 @@ private:
   }
 
   std::vector<Node> node;
+  std::set<std::pair<int, int>> edges;
 };
-
-// std::vector<std::set<int>> inc;
-// std::set<std::pair<int, int>> edges;
 
 }  // namespace sa::targets::minimal_spanning_tree
 
