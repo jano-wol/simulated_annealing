@@ -64,6 +64,7 @@ public:
       newNode.c[0] = oldNode.c[0] ? &newTree->node[oldNode.c[0] - &node[0]] : nullptr;
       newNode.c[1] = oldNode.c[1] ? &newTree->node[oldNode.c[1] - &node[0]] : nullptr;
     }
+    newTree->edges = edges;
     return newTree;
   }
 

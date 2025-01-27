@@ -31,7 +31,7 @@ IMove::CPtr MinimalSpanningTreePosition::generateMoveCandidate() const
   int uu = r.randomInt(0, int(edges.size()));
   int vv = r.randomInt(0, int(edges.size()));
   while (uu == vv || tree->connected(uu, vv)) {
-    vv = r.randomInt(0, int(edges.size()));
+    vv = r.randomInt(0, int(cities.size() - 1));
   }
   tree->link(u, v);
   std::swap(edges[deleteIdx], edges.back());
