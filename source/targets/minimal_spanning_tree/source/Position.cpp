@@ -21,23 +21,29 @@ double MinimalSpanningTreePosition::getEnergy() const { return energy; }
 
 IMove::CPtr MinimalSpanningTreePosition::generateMoveCandidate() const
 {
-  if (cities.size() < 2) {
+  if (cities.size() <= 2) {
     return std::make_unique<MinimalSpanningTreeMove>(-1, 0, 0, 0.0);
   }
   auto& edges = tree->getEdges();
   int deleteIdx = r.randomInt(0, int(edges.size()) - 1);
   auto [u, v] = edges[deleteIdx];
   tree->cut(deleteIdx);
-  int uu = r.randomInt(0, int(cities.size() - 1));
-  int vv = r.randomInt(0, int(cities.size() - 1));
-  while (uu == vv || tree->connected(uu, vv)) {
-    vv = r.randomInt(0, int(cities.size() - 1));
+  int newV = r.randomInt(0, int(cities.size() - 1));
+  while (newV == u || newV == v) {
+    newV = r.randomInt(0, int(cities.size() - 1));
   }
-  tree->link(u, v);
-  std::swap(edges[deleteIdx], edges.back());
+  int uu = u;
+  int vv = v;
+  if (tree->connected(u, newV)) {
+    uu = newV;
+  } else {
+    vv = newV;
+  }
   if (uu > vv) {
     std::swap(uu, vv);
   }
+  tree->link(u, v);
+  std::swap(edges[deleteIdx], edges.back());
   double delta = distance(uu, vv);
   delta -= distance(u, v);
   return std::make_unique<MinimalSpanningTreeMove>(deleteIdx, uu, vv, delta);
@@ -52,10 +58,6 @@ void MinimalSpanningTreePosition::makeMove(IMove::CPtr move)
   }
   int uNew = m->u;
   int vNew = m->v;
-  auto [uOld, vOld] = tree->getEdges()[deleteIdx];
-  if (uNew == uOld && vNew == vOld) {
-    return;
-  }
   energy += m->getDelta();
   tree->cut(deleteIdx);
   tree->link(uNew, vNew);
