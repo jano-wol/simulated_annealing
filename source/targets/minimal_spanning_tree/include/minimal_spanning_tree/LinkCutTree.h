@@ -48,7 +48,7 @@ public:
   int size() const
   {
     int totalSize = sizeof(*this);
-    totalSize += sizeof(Node) * node.capacity();
+    totalSize += int(sizeof(Node) * node.capacity());
     return totalSize;
   }
 
