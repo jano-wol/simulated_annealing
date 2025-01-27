@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <set>
 #include <vector>
 
 namespace sa::targets::minimal_spanning_tree
@@ -19,11 +18,12 @@ public:
   {
     makeRoot(&node[u]);
     node[u].pp = &node[v];
-    edges.insert({std::min(u, v), std::max(u, v)});
+    edges.push_back({std::min(u, v), std::max(u, v)});
   }
 
-  void cut(int u, int v)
+  void cut(int edgeIdx)
   {
+    auto [u, v] = edges[edgeIdx];
     Node *x = &node[u], *top = &node[v];
     makeRoot(top);
     x->splay();
@@ -33,7 +33,8 @@ public:
       x->c[0] = top->p = 0;
       x->fix();
     }
-    edges.erase({std::min(u, v), std::max(u, v)});
+    std::swap(edges[edgeIdx], edges.back());
+    edges.pop_back();
   }
 
   bool connected(int u, int v)
@@ -42,9 +43,7 @@ public:
     return nu == access(&node[v])->first();
   }
 
-  bool isTreeEdge(int u, int v) { return edges.count({std::min(u, v), std::max(u, v)}); }
-
-  const std::set<std::pair<int, int>>& getEdges() { return edges; }
+  std::vector<std::pair<int, int>>& getEdges() { return edges; }
 
   int size() const
   {
@@ -167,7 +166,7 @@ private:
   }
 
   std::vector<Node> node;
-  std::set<std::pair<int, int>> edges;
+  std::vector<std::pair<int, int>> edges;
 };
 
 }  // namespace sa::targets::minimal_spanning_tree
