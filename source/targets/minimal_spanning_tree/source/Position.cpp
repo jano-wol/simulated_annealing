@@ -28,8 +28,8 @@ IMove::CPtr MinimalSpanningTreePosition::generateMoveCandidate() const
   int deleteIdx = r.randomInt(0, int(edges.size()) - 1);
   auto [u, v] = edges[deleteIdx];
   tree->cut(deleteIdx);
-  int uu = r.randomInt(0, int(edges.size()));
-  int vv = r.randomInt(0, int(edges.size()));
+  int uu = r.randomInt(0, int(cities.size() - 1));
+  int vv = r.randomInt(0, int(cities.size() - 1));
   while (uu == vv || tree->connected(uu, vv)) {
     vv = r.randomInt(0, int(cities.size() - 1));
   }
